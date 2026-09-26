@@ -1,0 +1,63 @@
+@keyframes shake {
+    0% { transform: rotate(0); }
+    20% { transform: rotate(15deg); }
+    40% { transform: rotate(-15deg); }
+    60% { transform: rotate(7deg); }
+    80% { transform: rotate(-7deg); }
+    100% { transform: rotate(0); }
+}
+
+.header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    /* position: sticky; */
+    /* top: var(--layout-padding); */
+}
+
+.header__blocks {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: flex-end;
+}
+
+.header__alertTrigger {
+    display: inline-flex;
+    line-height: 0;
+    cursor: pointer;
+}
+
+.header__alertButton {
+    height: 44px;
+    width: 44px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    background-color: var(--color-bg-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(20px)
+}
+
+.header__alertButton:hover svg {
+    animation: shake 0.5s var(--ease-standard) both;
+}
+.header__billingCard {
+    height: 44px;
+    width: max-content;
+    padding: 0 8px;
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    background-color: var(--color-bg-muted);
+    display: flex;
+    align-items: center;
+    backdrop-filter: blur(20px);
+    gap: 8px;
+}
+
+.billingCard__actionButton {
+    color: var(--color-primary);
+}

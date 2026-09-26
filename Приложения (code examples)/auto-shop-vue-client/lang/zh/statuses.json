@@ -1,0 +1,19 @@
+{
+  "client": {
+    "active": "已激活",
+    "pending": "注册申请中",
+    "blocked": "已封禁",
+    "rejected": "注册已拒绝"
+  },
+  "request": {
+    "new": "新建",
+    "new_or_in_work": "新建或进行中",
+    "in_work": "处理中",
+    "on_booking": "预订中",
+    "completed": "已完成",
+    "cancelled": "已取消",
+    "updated": "已更新",
+    "find_more": "继续查找",
+    "draft": "草稿"
+  }
+}

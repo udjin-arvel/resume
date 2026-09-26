@@ -1,0 +1,41 @@
+name: backend
+
+on:
+  push:
+    branches: [main, master, develop]
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+  pull_request:
+    paths:
+      - 'backend/**'
+      - '.github/workflows/backend.yml'
+
+jobs:
+  ci:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: backend
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-go@v6
+        with:
+          go-version-file: backend/go.mod
+
+      - name: Verify formatting
+        run: test -z "$(gofmt -l .)"
+
+      - name: Vet & tests
+        run: |
+          go vet ./...
+          go test ./...
+
+      - name: Docker image build (API)
+        uses: docker/build-push-action@v6
+        with:
+          context: backend
+          file: backend/deployments/docker/Dockerfile
+          push: false
+          tags: scanme-api:ci

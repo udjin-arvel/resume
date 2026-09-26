@@ -1,0 +1,12 @@
+{
+  "filter_label": "链接",
+  "types": {
+    "created": "新链接",
+    "taken_in_work": "已开始处理",
+    "answer_provided": "已提供回复",
+    "customer_reacted": "客户已回应",
+    "car_added": "您发送的链接已有回复，车辆已添加",
+    "reopened": "客户提出了问题"
+  },
+  "link_number": "链接 №{id}"
+}

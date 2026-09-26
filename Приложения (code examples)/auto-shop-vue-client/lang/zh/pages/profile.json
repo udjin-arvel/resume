@@ -1,0 +1,17 @@
+{
+  "block_telegram": "Telegram 通知",
+  "telegram_unbound_desc": "绑定您的 Telegram 账号以接收系统通知。",
+  "telegram_bound_success": "您的 Telegram 账号已成功绑定。",
+  "bind_telegram": "绑定 Telegram",
+  "telegram_bind_link_ready": "请打开 Telegram 并点击「开始」以完成绑定",
+  "telegram_open_bot": "在 Telegram 中打开机器人",
+  "unbind_telegram": "解绑",
+  "telegram_events_toggle": "在 Telegram 中接收事件通知",
+  "info": "修改个人信息",
+  "password": "修改密码",
+  "current_password": "当前密码",
+  "block_personal_data": "个人资料",
+  "block_photo": "头像",
+  "block_password": "修改密码",
+  "must_change_password_warning": "为继续使用，请先修改密码"
+}

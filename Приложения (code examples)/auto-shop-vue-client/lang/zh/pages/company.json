@@ -1,0 +1,13 @@
+{
+  "title": "公司",
+  "title_new": "新公司",
+  "balance": "余额",
+  "change_balance": "修改余额",
+  "china_expenses_title": "中国费用",
+  "china_expenses_default": "所有港口均为平台费用（默认）",
+  "china_expenses_below_base": "低于平台计算！",
+  "change_password": "修改密码",
+  "change_password_second": "更改密码",
+  "password_hint": "密码必须包含拉丁字母、数字、符号及标点字符。",
+  "password_min_length": "不少于 8 个字符"
+}

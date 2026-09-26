@@ -1,0 +1,379 @@
+@use './story-prose' as story-prose;
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    --surface: #1a1a1a;
+    --surface-elevated: #242424;
+    --surface-muted: #2c2c2c;
+    --on-surface-muted: #a8a8a8;
+    --content-max-width: 900px;
+    --sidebar-width: 88px;
+    --layout-gutter: 1.5rem;
+  }
+
+  @media (min-width: 640px) {
+    :root {
+      --layout-gutter: 2rem;
+    }
+  }
+
+  body {
+    @apply text-white antialiased;
+  }
+}
+
+@layer components {
+  @include story-prose.styles;
+
+  .app-background {
+    background-color: #212121;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(221, 176, 137, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(231, 140, 61, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(221, 176, 137, 0.03) 0%, transparent 70%),
+      repeating-radial-gradient(circle at 50% 50%, rgba(255, 255, 255, 0.015) 0 1px, transparent 1px 3px);
+    background-blend-mode: soft-light, soft-light, normal, overlay;
+  }
+
+  .app-shell {
+    @apply min-h-screen app-background flex w-full;
+  }
+
+  .app-main {
+    @apply flex-1 min-w-0 flex flex-col py-6 md:py-8;
+  }
+
+  .app-sidebar {
+    width: var(--sidebar-width);
+    @apply hidden md:flex flex-shrink-0 flex-col sticky top-0 h-screen;
+    @apply border-l border-beige/20 bg-black/80 backdrop-blur-md shadow-elevation-1 z-40;
+  }
+
+  .page-content {
+    @apply w-full mx-auto py-4;
+    max-width: var(--content-max-width);
+    padding-left: var(--layout-gutter);
+    @apply pr-6 lg:pr-0;
+  }
+
+  .page-header {
+    @apply w-full mx-auto;
+    max-width: var(--content-max-width);
+    padding-inline: var(--layout-gutter);
+  }
+
+  .surface-card {
+    @apply bg-surface-elevated rounded-2xl shadow-elevation-2;
+  }
+
+  .surface-card-soft {
+    @apply bg-surface rounded-2xl border border-white/5 shadow-elevation-1;
+  }
+
+  .md-list-item {
+    @apply flex items-center gap-2.5 px-2.5 py-1.5 rounded-lg transition-colors duration-200 text-sm;
+    @apply hover:bg-white/5 active:bg-white/10;
+  }
+
+  .md-list-item-active {
+    @apply bg-beige/10 text-beige border-l-2 border-beige;
+  }
+
+  .md-list-item-icon {
+    @apply w-7 h-7 rounded-full bg-beige/15 flex items-center justify-center flex-shrink-0;
+  }
+
+  .md-list-item-icon-svg {
+    @apply w-3.5 h-3.5 text-beige;
+  }
+
+  .md-icon-button {
+    @apply flex items-center justify-center rounded-full transition-all duration-200;
+    @apply hover:bg-white/5 active:scale-95;
+  }
+
+  .md-field {
+    @apply flex flex-col gap-1.5;
+  }
+
+  .md-label {
+    @apply text-xs font-medium text-on-surface-muted tracking-wide px-1;
+  }
+
+  .md-input {
+    @apply w-full bg-surface-muted border border-white/10 rounded-xl px-4 py-3 text-white text-sm;
+    @apply placeholder:text-on-surface-muted/60;
+    @apply focus:outline-none focus:ring-0 focus:border-beige/40 transition-colors duration-200;
+  }
+
+  .md-input-readonly {
+    @apply bg-surface/60 text-on-surface-muted cursor-default focus:ring-0 focus:border-white/10;
+  }
+
+  .md-select {
+    @apply md-input appearance-none cursor-pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 24 24' stroke='%23a8a8a8'%3E%3Cpath stroke-linecap='round' stroke-linejoin='round' stroke-width='2' d='M19 9l-7 7-7-7'%3E%3C/path%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 0.75rem center;
+    background-size: 1.25rem;
+    padding-right: 2.5rem;
+  }
+
+  .md-btn-filled {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 bg-beige text-black rounded-full font-medium text-sm shadow-elevation-1;
+    @apply hover:bg-gold active:scale-[0.98] transition-all duration-200 disabled:opacity-50 disabled:pointer-events-none;
+    @apply focus:outline-none focus:ring-0;
+  }
+
+  .md-btn-text {
+    @apply inline-flex items-center justify-center gap-2 px-6 py-2.5 text-beige rounded-full font-medium text-sm;
+    @apply hover:bg-white/5 active:scale-[0.98] transition-all duration-200;
+    @apply focus:outline-none focus:ring-0 border border-beige/40;
+  }
+
+  .md-stat-tile {
+    @apply bg-surface-muted rounded-2xl p-4 text-center border border-white/5;
+  }
+
+  .md-section-title {
+    @apply text-sm font-medium text-on-surface-muted uppercase tracking-wider mb-4;
+  }
+
+  .md-snackbar {
+    @apply flex items-center gap-3 px-4 py-3 rounded-xl text-sm mb-6;
+  }
+
+  .md-snackbar-success {
+    @apply md-snackbar;
+    background-color: rgba(20, 83, 45, 0.3);
+    border: 1px solid rgba(34, 197, 94, 0.3);
+    color: #bbf7d0;
+  }
+
+  .md-snackbar-error {
+    @apply md-snackbar;
+    background-color: rgba(255, 75, 68, 0.15);
+    border: 1px solid rgba(255, 75, 68, 0.3);
+    color: #fecaca;
+  }
+
+  .md-modal-root {
+    @apply fixed inset-0 z-50 flex items-center justify-center p-4;
+  }
+
+  .md-modal-overlay {
+    @apply absolute inset-0 bg-black/50 backdrop-blur-sm;
+  }
+
+  .md-modal-panel {
+    @apply relative w-full max-w-md bg-black border border-beige/40 rounded-lg shadow-elevation-3 overflow-hidden;
+  }
+
+  .md-modal-panel-lg {
+    @apply max-w-3xl;
+  }
+
+  .md-modal-panel-gallery {
+    @apply max-w-4xl rounded-2xl;
+  }
+
+  .md-gallery-viewport {
+    @apply relative flex items-center justify-center bg-surface-muted rounded-2xl min-h-[16rem] overflow-hidden;
+  }
+
+  .md-gallery-nav {
+    @apply md-icon-button absolute top-1/2 -translate-y-1/2 w-10 h-10 bg-surface-elevated/90 text-beige shadow-elevation-2 border border-white/10;
+    @apply hover:bg-surface-muted active:scale-95;
+  }
+
+  .md-gallery-thumb {
+    @apply w-14 h-14 rounded-lg object-cover border-2 border-transparent transition-all duration-200 opacity-60 hover:opacity-100;
+  }
+
+  .md-gallery-thumb-active {
+    @apply border-beige opacity-100 shadow-elevation-1;
+  }
+
+  .md-modal-header {
+    @apply flex justify-between items-start gap-4 px-6 py-5 border-b border-white/5;
+  }
+
+  .md-modal-title {
+    @apply text-lg font-semibold text-gold/90 leading-snug;
+  }
+
+  .md-modal-body {
+    @apply px-6 py-5;
+  }
+
+  .md-modal-body-center {
+    @apply md-modal-body text-center;
+  }
+
+  .md-modal-footer {
+    @apply flex flex-wrap justify-end gap-3 px-6 py-4 border-t border-white/5;
+  }
+
+  .md-modal-close {
+    @apply md-icon-button w-9 h-9 text-beige/80 hover:text-beige shrink-0 focus:outline-none;
+  }
+
+  .md-modal-icon {
+    @apply w-11 h-11 rounded-full flex items-center justify-center mx-auto mb-4;
+  }
+
+  .md-modal-message {
+    @apply text-white/80 text-sm leading-relaxed;
+  }
+
+  .md-modal-dropzone {
+    @apply border-2 border-dashed border-white/10 rounded-lg p-6 text-center cursor-pointer transition-colors duration-200;
+    @apply hover:border-beige/30;
+  }
+
+  .md-modal-dropzone-active {
+    @apply border-beige/40 bg-surface-muted/50;
+  }
+
+  .md-modal-list-item {
+    @apply p-3 bg-surface-muted border border-white/5 rounded-lg cursor-pointer transition-colors duration-200;
+    @apply hover:border-beige/30;
+  }
+
+  .md-form-page {
+    @apply space-y-5;
+  }
+
+  .md-page-header {
+    @apply flex flex-col sm:flex-row sm:justify-between sm:items-start gap-4;
+  }
+
+  .md-page-title {
+    @apply text-2xl md:text-3xl font-semibold text-gold/90 leading-snug;
+  }
+
+  .md-page-subtitle {
+    @apply text-on-surface-muted text-sm md:text-base leading-relaxed mt-1;
+  }
+
+  .md-form-card {
+    @apply bg-black border border-beige/40 rounded-lg overflow-hidden;
+  }
+
+  .md-form-card-body {
+    @apply p-4 md:p-6;
+  }
+
+  .md-form-card-footer {
+    @apply flex flex-col sm:flex-row gap-3 px-4 md:px-6 py-4 border-t border-white/5;
+  }
+
+  .md-tabs {
+    @apply flex overflow-x-auto border-b border-white/10;
+  }
+
+  .md-tab {
+    @apply px-4 md:px-6 py-3 text-sm font-medium whitespace-nowrap transition-colors focus:outline-none;
+    @apply text-on-surface-muted hover:text-white;
+  }
+
+  .md-tab-active {
+    @apply text-beige border-b-2 border-beige;
+  }
+
+  .md-chip {
+    @apply inline-flex items-center gap-2 bg-surface-muted border border-white/10 rounded-full px-3 py-1.5 text-sm text-white;
+    @apply cursor-pointer hover:border-beige/30 transition-colors duration-200;
+  }
+
+  .md-list-card {
+    @apply p-4 border border-white/10 rounded-xl cursor-pointer transition-colors duration-200;
+    @apply hover:border-beige/30;
+  }
+
+  .md-list-card-active {
+    @apply border-beige/40 bg-surface-muted;
+  }
+
+  .md-image-preview {
+    @apply max-w-xs max-h-48 rounded-xl border border-white/10 object-cover;
+  }
+
+  .md-checkbox-field {
+    @apply flex items-center gap-3;
+  }
+
+  .md-checkbox {
+    @apply w-5 h-5 rounded border-white/20 bg-surface-muted text-gold focus:ring-beige/40 focus:ring-offset-0;
+  }
+
+  .md-range {
+    @apply w-full accent-beige;
+  }
+
+  .md-hint {
+    @apply text-xs text-on-surface-muted;
+  }
+
+  .md-loading {
+    @apply flex flex-col items-center justify-center gap-3 w-full text-center py-12 px-6;
+  }
+
+  .md-empty-state {
+    @apply text-center py-8;
+  }
+
+  .md-empty-state-text {
+    @apply text-on-surface-muted text-sm;
+  }
+
+  .md-empty-state-text-error {
+    @apply text-reder;
+  }
+
+  .md-link-primary {
+    @apply inline-flex items-center gap-2 text-sm md:text-base text-beige hover:text-white hover:underline transition-colors focus:outline-none;
+    @apply disabled:opacity-50 disabled:pointer-events-none disabled:no-underline;
+  }
+
+  .md-link-secondary {
+    @apply inline-flex items-center gap-2 text-sm md:text-base text-on-surface-muted hover:text-white hover:underline transition-colors focus:outline-none;
+    @apply disabled:opacity-50 disabled:pointer-events-none disabled:no-underline;
+  }
+
+  .md-pagination-btn {
+    @apply inline-flex items-center justify-center min-w-[2.5rem] h-10 px-3 rounded-full text-sm font-medium transition-all duration-200 focus:outline-none focus:ring-2 focus:ring-beige/30;
+  }
+
+  .md-pagination-btn-active {
+    @apply bg-beige text-black shadow-elevation-1;
+  }
+
+  .md-pagination-btn-inactive {
+    @apply border border-beige/40 text-beige hover:bg-beige/10 active:scale-95;
+  }
+}
+
+.modal-enter-active,
+.modal-leave-active {
+  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from,
+.modal-leave-to {
+  opacity: 0;
+}
+
+.modal-enter-active .md-modal-panel,
+.modal-leave-active .md-modal-panel {
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.modal-enter-from .md-modal-panel,
+.modal-leave-to .md-modal-panel {
+  transform: scale(0.97) translateY(4px);
+}

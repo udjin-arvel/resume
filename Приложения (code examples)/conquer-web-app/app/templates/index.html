@@ -1,0 +1,48 @@
+{% extends "base.html" %}
+
+{% block title %}Conquer — AI-анализ сайта по одной ссылке{% endblock %}
+
+{% block content %}
+  <section class="hero">
+    <p class="brand">Conquer</p>
+    <h1><span class="text-gradient">Один URL</span> — и вы знаете о сайте всё</h1>
+    <p class="lead">
+      Сервис парсит сайт в headless-браузере, извлекает контент, контакты и цены,
+      а затем строит аналитическую сводку через AI: отрасль, продукты, УТП, риски.
+    </p>
+
+    <form class="analyze-form" method="post" action="/analyze">
+      <div class="analyze-form__row">
+        <label class="sr-only" for="url">Ссылка на сайт</label>
+        <input
+          id="url"
+          name="url"
+          type="text"
+          required
+          placeholder="https://example.com"
+          autocomplete="url"
+          value="{{ request.query_params.get('url', '') }}"
+        />
+        <button type="submit">Анализировать</button>
+      </div>
+      <div class="examples">
+        <span>Попробуйте:</span>
+        {% for ex in examples %}
+          <button type="button" class="example-chip" data-url="{{ ex }}">{{ ex }}</button>
+        {% endfor %}
+      </div>
+    </form>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script>
+    document.querySelectorAll(".example-chip").forEach((btn) => {
+      btn.addEventListener("click", () => {
+        const input = document.getElementById("url");
+        if (input) input.value = btn.dataset.url || "";
+        input?.focus();
+      });
+    });
+  </script>
+{% endblock %}

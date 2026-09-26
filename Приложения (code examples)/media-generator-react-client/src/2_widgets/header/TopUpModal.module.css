@@ -1,0 +1,250 @@
+@keyframes modal-in {
+    from { opacity: 0; transform: translateY(16px) scale(0.98); }
+    to   { opacity: 1; transform: translateY(0)    scale(1);    }
+}
+
+.topUpModal__backdrop {
+    position: fixed;
+    inset: 0;
+    background-color: var(--color-bg-muted);
+    backdrop-filter: brightness(10%) blur(2px);
+    z-index: 9999;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.topUpModal {
+
+    padding: 20px;
+    border-radius: 16px;
+    background-color: var(--color-bg-solid-alt);
+    border: 1px solid var(--color-border-muted);
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    animation: modal-in 0.2s var(--ease-spring) both;
+}
+
+/* --- header --- */
+
+.topUpModal__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+}
+
+.topUpModal__titleBlock {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    color: var(--color-text-primary);
+}
+
+.topUpModal__titleBlock h2 {
+    font-weight: 600;
+    font-size: 15px;
+}
+
+.topUpModal__closeButton {
+    width: 32px;
+    height: 32px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--color-bg-muted);
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border-muted);
+    flex-shrink: 0;
+    transition: background 0.15s var(--ease-standard);
+}
+
+.topUpModal__closeButton:hover {
+    background: color-mix(in srgb, var(--color-text-primary) 8%, var(--color-bg-muted));
+}
+
+/* --- packages grid --- */
+
+.topUpModal__packages {
+    display: grid;
+    grid-template-columns: repeat(5, minmax(100px, 1fr));
+    gap: 8px;
+}
+
+.topUpModal__package {
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    /* gap: 6px; */
+    padding: 12px 10px;
+    padding-top: 16px;
+    border-radius: 12px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border-muted);
+    cursor: pointer;
+    text-align: left;
+    transition:
+        border-color 0.15s var(--ease-standard),
+        background 0.15s var(--ease-standard);
+}
+
+.topUpModal__package:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 40%, var(--color-border-muted));
+    background: color-mix(in srgb, var(--color-primary) 4%, var(--color-bg-alt));
+}
+
+.topUpModal__package_active {
+    border-color: var(--color-primary);
+    background: color-mix(in srgb, var(--color-primary) 8%, var(--color-bg-alt));
+}
+
+.topUpModal__badge {
+    position: absolute;
+    top: -9px;
+    left: 50%;
+    transform: translateX(-50%);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    white-space: nowrap;
+    padding: 2px 7px;
+    border-radius: 20px;
+    background: var(--color-primary);
+    color: #fff;
+}
+
+.topUpModal__packageLabel {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    margin-bottom: 16px;
+}
+
+.topUpModal__packageTokens {
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--color-text-primary);
+    line-height: 1.2;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 3px;
+}
+
+.topUpModal__packageTokensUnit {
+    font-weight: 500;
+    font-size: 11px;
+    color: var(--color-text-muted);
+}
+
+.topUpModal__packageBonus {
+    font-size: 11px;
+    font-weight: 700;
+    color: var(--color-success);
+    background: color-mix(in srgb, var(--color-success) 12%, transparent);
+    padding: 1px 5px;
+    border-radius: 4px;
+}
+
+.topUpModal__packagePrice {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    margin-top: 2px;
+}
+
+/* --- custom amount --- */
+
+.topUpModal__custom {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.topUpModal__customLabel {
+    font-size: 13px;
+}
+
+.topUpModal__customInputWrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.topUpModal__customInput {
+    width: 100%;
+    height: 44px;
+    padding: 0 36px 0 14px;
+    border-radius: 10px;
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border-muted);
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 600;
+    color: var(--color-text-primary);
+    transition: border-color 0.15s var(--ease-standard);
+}
+
+.topUpModal__customInput::placeholder {
+    color: var(--color-text-muted);
+    font-weight: 400;
+}
+
+.topUpModal__customInput:focus {
+    outline: none;
+    border-color: var(--color-primary);
+}
+
+.topUpModal__customCurrency {
+    position: absolute;
+    right: 14px;
+    font-size: 15px;
+    font-weight: 600;
+    pointer-events: none;
+    color: var(--color-text-muted);
+}
+
+/* --- pay button --- */
+
+.topUpModal__payButton {
+    width: 100%;
+    height: 48px;
+    border-radius: 10px;
+    font-family: inherit;
+    font-size: 15px;
+    font-weight: 700;
+    color: #fff;
+    background: var(--color-primary);
+    border: none;
+    cursor: pointer;
+    transition:
+        background 0.15s var(--ease-standard),
+        opacity 0.15s;
+}
+
+.topUpModal__payButton:hover:not(:disabled) {
+    background: var(--color-primary-hover);
+}
+
+.topUpModal__payButton:disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+}
+
+.topUpModal__payButtonText {
+    font-weight: 700;
+    font-size: 14px;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.topUpModal__footerText {
+    text-align: center;
+    margin-top: -16px;
+    color: var(--color-text-muted);
+}

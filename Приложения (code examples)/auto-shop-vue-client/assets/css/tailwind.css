@@ -1,0 +1,80 @@
+@import url('https://fonts.googleapis.com/css2?family=Mulish:ital,wght@0,200..1000;1,200..1000&display=swap');
+@import 'keen-slider/keen-slider.min.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+
+#__nuxt {
+    @apply h-full;
+}
+
+body {
+    @apply text-black leading-[1.25];
+}
+
+.tablePendingBg {
+    @apply bg-yellow-50;
+}
+
+.tableBlockedBg {
+    @apply bg-red-50;
+}
+
+.tableBlueUnreadBg {
+    background-color: #f8fafc;
+}
+
+.tableHighlightedRow > td {
+    @apply bg-yellow-50;
+}
+
+.dp__cell_inner.dp__active_date {
+    @apply bg-black text-white font-semibold !important;
+    border-radius: 8px;
+}
+
+.dp__cell_inner.dp__active_date:hover {
+    @apply bg-black text-white !important;
+}
+
+.dp__cell_inner.dp__today:not(.dp__active_date) {
+    @apply border border-black !important;
+}
+
+.dp__cell_inner.dp__range_start {
+    @apply bg-black text-white !important;
+}
+
+.dp__cell_inner.dp__range_end {
+    @apply bg-black text-white !important;
+}
+
+.menu-elips-pos {
+    @apply absolute z-50 w-max max-w-96 rounded-md bg-white py-2 shadow-lg ring-1 ring-gray-900/5 focus:outline-none;
+}
+.menu-elips-bottom {
+    @apply top-full mt-2;
+}
+.menu-elips-top {
+    @apply bottom-full mb-2;
+}
+.menu-elips-start {
+    @apply left-0;
+}
+.menu-elips-end {
+    @apply right-0;
+}
+.menu-elips-origin-top-left {
+    transform-origin: top left;
+}
+.menu-elips-origin-top-right {
+    transform-origin: top right;
+}
+.menu-elips-origin-bottom-left {
+    transform-origin: bottom left;
+}
+.menu-elips-origin-bottom-right {
+    transform-origin: bottom right;
+}

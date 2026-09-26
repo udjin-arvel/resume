@@ -1,0 +1,8 @@
+{
+  "backward": "上一页",
+  "forward": "下一页",
+  "dots": "...",
+  "range_total": "第 {start} — {end}条，共 {items}条",
+  "range_infinity": "{start}-{end}",
+  "page_sizes": "每页显示:"
+}

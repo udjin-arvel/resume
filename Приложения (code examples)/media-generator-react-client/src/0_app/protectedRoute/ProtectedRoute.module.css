@@ -1,0 +1,19 @@
+.redirectLoader {
+    position: fixed;
+    inset: 0;
+    display: flex;
+    background-color: var(--color-bg-muted);
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    backdrop-filter: blur(1px) brightness(0.5);
+    z-index: 999;
+}
+
+.label {
+    font-size: 14px;
+    color: var(--color-text-muted);
+    text-align: center;
+    max-width: 280px;
+    line-height: 1.4;
+}

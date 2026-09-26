@@ -1,0 +1,19 @@
+{
+  "filter_label": "需求单",
+  "request_number": "需求单 #{id}",
+  "types": {
+    "taken_in_work": "需求单已开始处理",
+    "car_added": "已向需求单添加车辆",
+    "car_added_more": "已添加车辆（再找一些）",
+    "auto_car_added": "自动匹配：已添加车辆",
+    "closed": "需求单已关闭",
+    "changes_accepted": "需求单修改已被接受",
+    "created": "新需求单",
+    "updated": "需求单已修改",
+    "find_more_requested": "请求更多选项",
+    "closed_by_buyer": "买家已关闭需求单",
+    "car_rejected": "车辆不合适",
+    "auto_proposal_added": "自动匹配：找到车辆",
+    "completed": "需求单已完成"
+  }
+}

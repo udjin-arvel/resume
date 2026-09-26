@@ -1,0 +1,59 @@
+{
+  "title": "评价",
+  "back_to_cars": "返回车辆列表",
+  "create_title": "购车评价",
+  "view_title": "购车评价",
+  "seller": "卖家",
+  "buyer": "买家",
+  "no_results": "未找到评价",
+  "not_found": "未找到评价",
+  "filters": {
+    "date": "日期",
+    "status": "状态",
+    "event": "事件",
+    "vin": "VIN",
+    "brand": "汽车品牌",
+    "client": "客户"
+  },
+  "table": {
+    "date": "日期",
+    "car": "车辆",
+    "buyer": "买家",
+    "seller": "卖家",
+    "rating": "评分",
+    "status": "状态"
+  },
+  "form": {
+    "title": "请分享您对汽车、卖家及购买过程的意见",
+    "rating_label": "请为汽车与卖家评分",
+    "rating_good": "满意",
+    "rating_bad": "不满意",
+    "liked": "优点",
+    "disliked": "缺点",
+    "submit": "提交评价",
+    "disclaimer": "评价仅发送给我们的公司，不会显示在网站上。\n您的信息不会被公开。"
+  },
+  "review": {
+    "rating_label": "汽车与卖家的总体评分"
+  },
+  "status": {
+    "accepted": "已接受",
+    "rejected": "已拒绝",
+    "pending": "等待中"
+  },
+  "actions": {
+    "check": "查看",
+    "view": "查看评价",
+    "accept": "接受",
+    "reject": "拒绝",
+    "delete": "删除"
+  },
+  "modal": {
+    "delete_title": "删除评价",
+    "delete_confirm": "您确定要删除此评价吗？此操作不可撤销。",
+    "accept_title": "接受评价",
+    "accept_confirm": "您确定要接受此评价吗？",
+    "reject_title": "拒绝评价",
+    "reject_confirm": "您确定要拒绝此评价吗？"
+  }
+}

@@ -1,0 +1,4 @@
+backend/bin/
+backend/tmp/
+backend/uploads/
+*.exe

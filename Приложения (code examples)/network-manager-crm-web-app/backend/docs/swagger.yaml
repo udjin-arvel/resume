@@ -1,0 +1,1187 @@
+openapi: 3.0.3
+info:
+  title: Mini CRM API
+  description: REST API for Mini CRM Telegram Mini App
+  version: 1.0.0
+
+servers:
+  - url: http://localhost:8080/api/v1
+    description: Local development
+
+tags:
+  - name: auth
+  - name: clients
+  - name: estimates
+  - name: projects
+  - name: workers
+  - name: reports
+  - name: finance
+  - name: tools
+  - name: documents
+  - name: notifications
+  - name: dashboard
+  - name: system
+
+components:
+  securitySchemes:
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
+
+  schemas:
+    ErrorResponse:
+      type: object
+      properties:
+        error:
+          type: string
+        details:
+          type: object
+          additionalProperties:
+            type: string
+
+    IDResponse:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+
+    TelegramAuthRequest:
+      type: object
+      required: [initData]
+      properties:
+        initData:
+          type: string
+          description: Raw Telegram.WebApp.initData string
+
+    LoginRequest:
+      type: object
+      required: [email, password]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+
+    RegisterRequest:
+      type: object
+      required: [email, password, firstName, lastName]
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          format: password
+          minLength: 8
+        firstName:
+          type: string
+        lastName:
+          type: string
+        phone:
+          type: string
+        role:
+          type: string
+          enum: [worker, manager]
+          default: worker
+          description: Manager registration requires valid inviteCode when enabled
+        inviteCode:
+          type: string
+          description: Required for manager role when MANAGER_INVITE_SECRET is set
+
+    RefreshTokenRequest:
+      type: object
+      required: [refreshToken]
+      properties:
+        refreshToken:
+          type: string
+
+    AuthResponse:
+      type: object
+      properties:
+        token:
+          type: string
+          description: JWT access token
+        refreshToken:
+          type: string
+          description: Optional refresh token
+        user:
+          $ref: '#/components/schemas/UserResponse'
+
+    UserResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        telegramId: { type: integer, format: int64 }
+        role: { type: string, enum: [manager, worker, supervisor] }
+        status: { type: string, enum: [pending, active, blocked, rejected] }
+        firstName: { type: string }
+        lastName: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        position: { type: string }
+        specialization: { type: string }
+        hourlyRate: { type: string }
+        language: { type: string }
+
+    ClientResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        country: { type: string }
+        city: { type: string }
+        contactPerson: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        comment: { type: string }
+
+    ProjectResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        estimateId: { type: string, format: uuid }
+        supervisorId: { type: string, format: uuid }
+        name: { type: string }
+        location: { type: string }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        status: { type: string, enum: [active, done, archive] }
+        type: { type: string, enum: [estimate, outstaff] }
+        siteStatus: { type: string, enum: [ok, issue, downtime] }
+        downtimeHours: { type: string }
+        budget: { type: string }
+        spent: { type: string }
+        workers: { type: integer }
+        confirmed: { type: integer }
+        reportsOnReview: { type: integer }
+
+    ProjectContact:
+      type: object
+      properties:
+        role: { type: string, enum: [manager, supervisor] }
+        name: { type: string }
+        phone: { type: string }
+
+    MyProjectResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        location: { type: string }
+        clientName: { type: string }
+        status: { type: string, enum: [active, done, archive] }
+        siteStatus: { type: string, enum: [ok, issue, downtime] }
+        startDate: { type: string, format: date }
+        endDate: { type: string, format: date }
+        role: { type: string, enum: [worker, supervisor] }
+        confirmationStatus: { type: string, enum: [pending, confirmed, rejected] }
+        assignedAt: { type: string, format: date-time }
+        contacts:
+          type: array
+          items: { $ref: '#/components/schemas/ProjectContact' }
+        projectWorkers:
+          type: array
+          items: { $ref: '#/components/schemas/ProjectWorkerResponse' }
+
+    ProjectWorkerResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        userId: { type: string, format: uuid }
+        firstName: { type: string }
+        lastName: { type: string }
+        role: { type: string, enum: [worker, supervisor] }
+        confirmationStatus: { type: string, enum: [pending, confirmed, rejected] }
+
+    EstimateResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        clientId: { type: string, format: uuid }
+        name: { type: string }
+        companyName: { type: string }
+        contactPerson: { type: string }
+        phone: { type: string }
+        email: { type: string }
+        country: { type: string }
+        city: { type: string }
+        comment: { type: string }
+        status: { type: string, enum: [draft, sent, approved, rejected] }
+        totalAmount: { type: string }
+        createdAt: { type: string, format: date-time }
+        updatedAt: { type: string, format: date-time }
+
+    WorkerReportResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        projectName: { type: string }
+        workerId: { type: string, format: uuid }
+        workerName: { type: string }
+        weekStart: { type: string, format: date }
+        weekEnd: { type: string, format: date }
+        status: { type: string, enum: [draft, review, accepted, returned, overdue] }
+        totalHours: { type: string }
+        totalAmount: { type: string }
+        managerComment: { type: string }
+
+    RejectWorkerReportRequest:
+      type: object
+      properties:
+        comment: { type: string }
+
+    WorkerFinanceMineResponse:
+      type: object
+      properties:
+        totalHours: { type: string }
+        confirmedHours: { type: string }
+        paidAmount: { type: string }
+        remainingAmount: { type: string }
+        projects:
+          type: array
+          items: { $ref: '#/components/schemas/WorkerProjectFinanceResponse' }
+
+    WorkerProjectFinanceResponse:
+      type: object
+      properties:
+        projectId: { type: string, format: uuid }
+        projectName: { type: string }
+        totalHours: { type: string }
+        projectAmount: { type: string }
+        extraExpenses: { type: string }
+        paidAmount: { type: string }
+        remainingAmount: { type: string }
+
+    SupervisorReportResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        projectId: { type: string, format: uuid }
+        projectName: { type: string }
+        supervisorId: { type: string, format: uuid }
+        supervisorName: { type: string }
+        reportDate: { type: string, format: date }
+        siteStatus: { type: string, enum: [ok, issue, downtime] }
+        status: { type: string, enum: [review, accepted, attention] }
+
+    ToolResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        name: { type: string }
+        serialNumber: { type: string }
+        toolType: { type: string }
+        controlType: { type: string, enum: [calibration, usage_limit] }
+        status: { type: string, enum: [available, assigned, overdue, written_off] }
+
+    NotificationResponse:
+      type: object
+      properties:
+        id: { type: string, format: uuid }
+        title: { type: string }
+        body: { type: string }
+        notificationType: { type: string }
+        link: { type: string }
+        readAt: { type: string, format: date-time }
+        createdAt: { type: string, format: date-time }
+
+  responses:
+    Unauthorized:
+      description: Unauthorized
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    NotFound:
+      description: Not found
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+    Forbidden:
+      description: Forbidden (blocked user or insufficient role)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    ValidationError:
+      description: Validation error
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+    Conflict:
+      description: Conflict (e.g. email already registered)
+      content:
+        application/json:
+          schema: { $ref: '#/components/schemas/ErrorResponse' }
+
+paths:
+  /auth/telegram:
+    post:
+      tags: [auth]
+      summary: Authenticate via Telegram WebApp initData
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/TelegramAuthRequest' }
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/login:
+    post:
+      tags: [auth]
+      summary: Authenticate with email and password
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/LoginRequest' }
+      responses:
+        '200':
+          description: JWT token
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+        '403': { $ref: '#/components/responses/Forbidden' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /auth/register:
+    post:
+      tags: [auth]
+      summary: Register via form (worker creates pending application)
+      description: |
+        Worker self-registration when REGISTRATION_ENABLED=true.
+        Manager registration requires matching MANAGER_INVITE_SECRET in inviteCode.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RegisterRequest' }
+      responses:
+        '201':
+          description: Account created
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '403':
+          description: Registration disabled or invalid invite
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ErrorResponse' }
+        '409': { $ref: '#/components/responses/Conflict' }
+        '422': { $ref: '#/components/responses/ValidationError' }
+
+  /auth/me:
+    get:
+      tags: [auth]
+      security: [{ bearerAuth: [] }]
+      summary: Get current authenticated user
+      responses:
+        '200':
+          description: Current user profile
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/UserResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/refresh:
+    post:
+      tags: [auth]
+      summary: Refresh access token (optional)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RefreshTokenRequest' }
+      responses:
+        '200':
+          description: New tokens
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/AuthResponse' }
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /auth/logout:
+    post:
+      tags: [auth]
+      security: [{ bearerAuth: [] }]
+      summary: Invalidate refresh token (optional)
+      responses:
+        '204':
+          description: Logged out
+        '401': { $ref: '#/components/responses/Unauthorized' }
+
+  /clients:
+    get:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: List clients
+      parameters:
+        - { name: page, in: query, schema: { type: integer } }
+        - { name: pageSize, in: query, schema: { type: integer } }
+        - { name: search, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Client list }
+    put:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Reserved for batch operations
+
+  /clients/{id}:
+    get:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Get client card
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ClientResponse' }
+        '404': { $ref: '#/components/responses/NotFound' }
+    put:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Update client
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated client }
+
+  /clients/{id}/projects:
+    get:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Client projects
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Project list }
+
+  /clients/{id}/documents:
+    get:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Client documents
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Document list }
+
+  /clients/{id}/finance:
+    get:
+      tags: [clients]
+      security: [{ bearerAuth: [] }]
+      summary: Client finance summary
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Finance summary }
+
+  /estimates:
+    get:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: List estimates
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: page, in: query, schema: { type: integer } }
+      responses:
+        '200': { description: Estimate list }
+    post:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Create estimate
+      responses:
+        '201':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/IDResponse' }
+
+  /estimates/{id}:
+    get:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Get estimate
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/EstimateResponse' }
+    put:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Update estimate
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+    delete:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Delete estimate draft
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Deleted }
+
+  /estimates/{id}/status:
+    post:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Change estimate status
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Status updated }
+
+  /estimates/{id}/export/pdf:
+    get:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Export estimate as PDF
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: PDF file }
+
+  /estimates/{id}/export/excel:
+    get:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Export estimate as Excel
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Excel file }
+
+  /estimate-templates:
+    get:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: List estimate templates
+      responses:
+        '200': { description: Template list }
+    post:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Save estimate as template
+      responses:
+        '201': { description: Created }
+
+  /estimates/from-template:
+    post:
+      tags: [estimates]
+      security: [{ bearerAuth: [] }]
+      summary: Create estimate from template
+      responses:
+        '201': { description: Created }
+
+  /projects:
+    get:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: List projects
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: clientId, in: query, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Project list }
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Create project
+      responses:
+        '201': { description: Created }
+
+  /projects/mine:
+    get:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: List projects assigned to current worker/supervisor
+      parameters:
+        - { name: status, in: query, schema: { type: string, enum: [active, done, archive] } }
+        - { name: confirmationStatus, in: query, schema: { type: string, enum: [pending, confirmed] } }
+      responses:
+        '200':
+          description: Assigned projects
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/MyProjectResponse' }
+
+  /projects/{id}/confirm:
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Confirm project participation
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Confirmed
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [confirmed] }
+
+  /projects/{id}/decline:
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Decline project invitation
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Declined
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status: { type: string, enum: [rejected] }
+
+  /projects/{id}/crew:
+    get:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: List project crew (supervisor only)
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          description: Crew list
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/ProjectWorkerResponse' }
+        '403': { description: Forbidden for non-supervisor }
+
+  /projects/{id}:
+    get:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Get project card
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ProjectResponse' }
+    put:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Update project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+
+  /projects/{id}/workers:
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Assign worker to project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '201': { description: Assigned }
+
+  /projects/{id}/workers/{workerId}:
+    delete:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Remove worker from project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: workerId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Removed }
+
+  /projects/{id}/workers/{workerId}/role:
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Change worker role on project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+        - { name: workerId, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Role updated }
+
+  /projects/{id}/invite:
+    post:
+      tags: [projects]
+      security: [{ bearerAuth: [] }]
+      summary: Send project invitation
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Invitation sent }
+
+  /workers:
+    get:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: List workers
+      parameters:
+        - { name: status, in: query, schema: { type: string } }
+        - { name: specialization, in: query, schema: { type: string } }
+      responses:
+        '200': { description: Worker list }
+    post:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Register worker application
+      responses:
+        '201': { description: Created }
+
+  /workers/{id}:
+    get:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Get worker card
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Worker details }
+    put:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Update worker profile
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+
+  /workers/{id}/approve:
+    post:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Approve worker
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Approved }
+
+  /workers/{id}/reject:
+    post:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Reject worker
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Rejected }
+
+  /workers/{id}/block:
+    post:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Block worker
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Blocked }
+
+  /workers/resources:
+    get:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Specialization resource stats
+      responses:
+        '200': { description: Resource stats }
+
+  /workers/available:
+    get:
+      tags: [workers]
+      security: [{ bearerAuth: [] }]
+      summary: Available workers
+      responses:
+        '200': { description: Available workers }
+
+  /reports/worker:
+    get:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: List worker reports
+      responses:
+        '200': { description: Report list }
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Create worker report
+      responses:
+        '201': { description: Created }
+
+  /reports/worker/{id}:
+    get:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Get worker report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkerReportResponse' }
+    put:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Update worker report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+
+  /reports/worker/{id}/approve:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Approve worker report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Approved }
+
+  /reports/worker/{id}/reject:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Return worker report for correction
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      requestBody:
+        content:
+          application/json:
+            schema: { $ref: '#/components/schemas/RejectWorkerReportRequest' }
+      responses:
+        '200':
+          description: Returned
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/WorkerReportResponse' }
+
+  /reports/supervisor:
+    get:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: List supervisor reports
+      responses:
+        '200': { description: Report list }
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Create supervisor daily report
+      responses:
+        '201': { description: Created }
+
+  /reports/supervisor/{id}:
+    get:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Get supervisor report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/SupervisorReportResponse' }
+
+  /reports/supervisor/{id}/transcribe:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Transcribe voice report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Transcription started }
+
+  /reports/supervisor/{id}/approve:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Approve supervisor report
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Approved }
+
+  /reports/supervisor/{id}/attention:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Mark supervisor report as needs attention
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+
+  /reports/supervisor/{id}/comment:
+    post:
+      tags: [reports]
+      security: [{ bearerAuth: [] }]
+      summary: Add manager comment
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Comment added }
+
+  /finance/mine:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Worker finance summary (current user)
+      description: Aggregated hours and amounts from worker reports for the authenticated worker or supervisor.
+      responses:
+        '200':
+          description: Worker finance mine
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/WorkerFinanceMineResponse'
+        '403': { description: Forbidden }
+
+  /finance/overview:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Finance overview
+      responses:
+        '200': { description: Overview stats }
+
+  /finance/projects:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Finance by projects
+      responses:
+        '200': { description: Project finance list }
+
+  /finance/projects/{id}:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Project finance details
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Details }
+
+  /finance/workers:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Finance by workers
+      responses:
+        '200': { description: Worker finance list }
+
+  /finance/workers/{id}:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Worker finance details
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Details }
+
+  /finance/categories:
+    get:
+      tags: [finance]
+      security: [{ bearerAuth: [] }]
+      summary: Expense categories
+      responses:
+        '200': { description: Categories }
+
+  /tools:
+    get:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: List tools
+      responses:
+        '200': { description: Tool list }
+    post:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Create tool
+      responses:
+        '201': { description: Created }
+
+  /tools/{id}:
+    get:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Get tool card
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200':
+          content:
+            application/json:
+              schema: { $ref: '#/components/schemas/ToolResponse' }
+    put:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Update tool
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Updated }
+
+  /tools/{id}/assign:
+    post:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Assign tool to project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Assigned }
+
+  /tools/{id}/return:
+    post:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Return tool from project
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Returned }
+
+  /tools/{id}/calibrate:
+    post:
+      tags: [tools]
+      security: [{ bearerAuth: [] }]
+      summary: Record tool calibration
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Calibrated }
+
+  /documents:
+    get:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: List documents
+      responses:
+        '200': { description: Document list }
+    post:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: Upload document
+      responses:
+        '201': { description: Uploaded }
+
+  /documents/upload:
+    post:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: Upload document (alias)
+      responses:
+        '201': { description: Uploaded }
+
+  /documents/{id}:
+    get:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: Download document
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: File stream }
+    put:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: Replace document
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Replaced }
+    delete:
+      tags: [documents]
+      security: [{ bearerAuth: [] }]
+      summary: Delete document
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '204': { description: Deleted }
+
+  /notifications:
+    get:
+      tags: [notifications]
+      security: [{ bearerAuth: [] }]
+      summary: List notifications for current user
+      responses:
+        '200':
+          content:
+            application/json:
+              schema:
+                type: array
+                items: { $ref: '#/components/schemas/NotificationResponse' }
+
+  /notifications/{id}/read:
+    put:
+      tags: [notifications]
+      security: [{ bearerAuth: [] }]
+      summary: Mark notification as read
+      parameters:
+        - { name: id, in: path, required: true, schema: { type: string, format: uuid } }
+      responses:
+        '200': { description: Marked read }
+
+  /notifications/send:
+    post:
+      tags: [notifications]
+      security: [{ bearerAuth: [] }]
+      summary: Send notification manually (manager)
+      responses:
+        '200': { description: Sent }
+
+  /dashboard/urgent:
+    get:
+      tags: [dashboard]
+      security: [{ bearerAuth: [] }]
+      summary: Urgent actions for manager dashboard
+      responses:
+        '200': { description: Urgent action blocks }
+
+  /dashboard/problem-projects:
+    get:
+      tags: [dashboard]
+      security: [{ bearerAuth: [] }]
+      summary: Projects with problems
+      responses:
+        '200': { description: Problem projects }
+
+  /dashboard/activity:
+    get:
+      tags: [dashboard]
+      security: [{ bearerAuth: [] }]
+      summary: Recent activity feed
+      responses:
+        '200': { description: Activity items }

@@ -1,0 +1,106 @@
+/* select label render */
+.labelRender,
+.optionRender {
+    width: 100%;
+    display: flex;
+    gap: 8px;
+    align-items: stretch;
+}
+
+.labelRender__image {
+    width: 52px;
+    height: 52px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.labelRender__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scale(.9);
+}
+
+.optionRender__textBlock,
+.labelRender__textBlock {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.optionRender__title,
+.labelRender__title {
+    width: 100%;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    overflow: hidden;
+    max-width: 150px;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+.optionRender__price,
+.labelRender__price {
+    width: min-content;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 2px 4px;
+    border-radius: 6px;
+    background-color: #EEEAFF;
+    color: var(--color-text-lt-primary)
+}
+
+/* select option render */
+.optionRender {
+    padding: 4px;
+    border-radius: 12px;
+    border: 1px solid transparent;
+    transition: border .1s var(--ease-standard);
+}
+.optionRender:hover {
+    border: 1px solid var(--color-border-muted);
+}
+.optionRender__image {
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    overflow: hidden;
+    flex: 0 0 auto;
+}
+
+.optionRender__textBlock {
+gap: 2px;
+}
+
+.optionRender__image img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    transform: scale(.9);
+}
+
+.optionRender__header {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: space-between;
+}
+
+.optionRender__description {
+    color: var(--color-text-muted);
+}
+
+
+
+/* single select */
+.modelSelect__single {
+    width: 100%;
+    padding: 4px 12px 4px 4px;
+    border-radius: 12px;
+    background-color: var(--color-bg-alt);
+    border: 1px solid var(--color-border-muted);
+}

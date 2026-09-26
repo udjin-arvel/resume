@@ -1,0 +1,47 @@
+services:
+  postgres:
+    image: postgres:15
+    container_name: thebook-postgres
+    environment:
+      POSTGRES_DB: thebook
+      POSTGRES_USER: thebook_user
+      POSTGRES_PASSWORD: thebook_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_data:/var/lib/postgresql/data
+    networks:
+      - thebook-network
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U thebook_user -d thebook"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  server:
+    image: node:20-slim
+    container_name: thebook-server
+    working_dir: /app
+    environment:
+      NODE_ENV: development
+      PORT: 3001
+      DATABASE_URL: postgresql://thebook_user:thebook_password@postgres:5432/thebook
+      JWT_SECRET: dev-secret-key
+    ports:
+      - "3001:3001"
+    volumes:
+      - .:/app
+      - /app/node_modules
+    depends_on:
+      postgres:
+        condition: service_healthy
+    networks:
+      - thebook-network
+    command: sh -c "apt-get update && apt-get install -y openssl && npm install && npx prisma generate && npm run dev"
+
+volumes:
+  postgres_data:
+
+networks:
+  thebook-network:
+    driver: bridge

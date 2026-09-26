@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Примеры API — radar-art__client</title>
+  <style>
+    body { font-family: system-ui, sans-serif; margin: 2rem; line-height: 1.5; max-width: 40rem; }
+    a { color: #2563eb; }
+    .dark a { color: #60a5fa; }
+    html.dark { background: #111418; color: #e8eaef; }
+  </style>
+  <script>
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches))
+      document.documentElement.classList.add('dark');
+  </script>
+</head>
+<body>
+  <h1>Примеры / документация</h1>
+  <ul>
+    <li><a href="./content-factory-api.html">ContentFactory — GraphQL и WebSocket (песочница)</a></li>
+  </ul>
+</body>
+</html>

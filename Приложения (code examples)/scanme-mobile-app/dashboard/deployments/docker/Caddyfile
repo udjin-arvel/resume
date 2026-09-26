@@ -1,0 +1,9 @@
+{
+  root * /srv
+  encode gzip zstd
+  file_server
+  header {
+    X-Content-Type-Options nosniff
+    Referrer-Policy strict-origin-when-cross-origin
+  }
+}

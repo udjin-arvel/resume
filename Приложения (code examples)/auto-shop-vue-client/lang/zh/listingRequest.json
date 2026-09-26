@@ -1,0 +1,21 @@
+{
+  "types": {
+    "diagnostic": "已申请车辆检测",
+    "compensation": "已要求提供陈述。",
+    "video": "已申请车辆视频",
+    "booking": "已申请车辆预订",
+    "chat": "聊天消息",
+    "video_closed": "视频已上传",
+    "diagnostic_closed": "检测已上传",
+    "compensation_closed": "报表已上传",
+    "booking_confirmed": "预订已确认",
+    "booking_declined": "预订已被拒绝",
+    "video_again": "视频请求已重新开启",
+    "diagnostic_again": "检测请求已重新开启",
+    "compensation_again": "报表请求已重新开启",
+    "booking_again": "预约请求已重新开启",
+    "video_declined": "视频请求已被拒绝",
+    "diagnostic_declined": "诊断请求已被拒绝",
+    "compensation_declined": "报表请求已被拒绝"
+  }
+}

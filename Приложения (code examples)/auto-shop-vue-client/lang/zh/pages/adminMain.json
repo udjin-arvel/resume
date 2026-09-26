@@ -1,0 +1,168 @@
+{
+  "new_registration_subscription_title": "已订阅新注册通知",
+  "calc_title": "计算器数据",
+  "calc_delivery": "运费",
+  "china_expenses": "中国境内费用",
+  "auto_assign": {
+    "global_label": "启用中国客户经理自动分配",
+    "global_hint": "关闭后，添加车辆时需手动选择经理，无法自动分配。",
+    "managers_title": "中国客户经理",
+    "assign_column": "自动分配",
+    "saved": "更改已保存",
+    "empty": "未找到经理"
+  },
+  "source_checks": {
+    "title": "车源核对情况",
+    "hint": "每条带外部链接的车源每 {sla} 分钟复查一次，调度周期为 {tick} 分钟。",
+    "refresh": "刷新",
+    "window_24": "24 小时",
+    "window_168": "7 天",
+    "window_720": "30 天",
+    "disabled": "车源监控已关闭（SOURCE_WATCH_ENABLED），以下为历史数据。",
+    "degraded": "{source} 的返回结果异常：{share} 的检查因解析失败或被拦截而出错。检查已切换为少量探测，「已下架」事件暂停生成。",
+    "state_ok": "正常",
+    "state_degraded": "异常",
+    "queue_title": "检查队列",
+    "outcomes_title": "结果",
+    "failures_title": "失败原因",
+    "timeline_title": "最近动态",
+    "recent_title": "最近的失败",
+    "empty": "所选时间段内没有检查记录。",
+    "queue": {
+      "monitored": "监控中",
+      "due_now": "待检查",
+      "in_flight": "检查中",
+      "waiting_retry": "等待重试",
+      "over_sla": "已超时",
+      "failing": "连续失败 3 次以上",
+      "backlog": "队列 / 上限",
+      "pending_events": "待处理事件"
+    },
+    "source": {
+      "monitored": "车源数",
+      "checks": "检查次数",
+      "success_rate": "成功率",
+      "avg_duration": "平均耗时",
+      "health_window": "近 {minutes} 分钟异常占比",
+      "failing_listings": "持续失败的车源"
+    },
+    "outcome": {
+      "ok": "无变化",
+      "priceChanged": "价格变化",
+      "gone": "未找到（待确认）",
+      "unpublished": "已下架",
+      "suppressed": "下架未计入",
+      "failed": "失败"
+    },
+    "failure": {
+      "structure": "页面结构变化",
+      "blocked": "被拦截或验证码",
+      "network": "网络",
+      "unknown": "其他"
+    },
+    "table": {
+      "time": "时间",
+      "source": "来源",
+      "listing": "车源",
+      "kind": "原因",
+      "reason": "详情",
+      "fail_count": "连续失败次数"
+    },
+    "recent_hint": "日志只记录持续失败：同一车源连续 {count} 次检查未通过。成功的检查不写入数据库，只累计计数。",
+    "window_closed": "当前不在工作时段：检查在中国时间 {start} 至 {stop} 之间进行，中国现在是 {now}。早上会自动恢复。",
+    "window_hint": "检查按中国时间 {start} 至 {stop} 运行：第一轮在 {ready} 前完成，{stop} 之后不再检查。"
+  },
+  "notification_stats": {
+    "hint": "车源核对通知发送给谁，以及车源发布人多快作出响应。响应时间和逾期按工作时段 {from}–{to}（中国时间）计算，时段之外的时间不计入。超过 {sla} 分钟工作时间未处理的通知计为逾期。",
+    "refresh": "刷新",
+    "window_24": "24 小时",
+    "window_168": "7 天",
+    "window_720": "30 天",
+    "empty": "所选期间没有通知",
+    "undelivered_banner": "未送达通知：{count} 条。车源发布人已删除或被封禁，事件无人可见，需要把这些车源转交给在职员工。",
+    "totals_title": "合计",
+    "authors_title": "按车源发布人",
+    "bulk_suffix": "其中批量：{count}",
+    "unit_seconds": "秒",
+    "unit_minutes": "分钟",
+    "unit_hours": "小时",
+    "note_cohort": "统计窗口按通知发出的时间取样；响应无论何时发生都会计入，因此已过去时段的数字可能会追溯变化。",
+    "note_superseded": "「系统关闭」指价格已恢复或车源重新上架，与员工无关，不计入响应率。",
+    "note_bulk": "批量「全部标记已读」计为响应，但不计入中位数，并单独标注。",
+    "note_undelivered": "标记为「已删除」或「已封禁」的员工不再收到新通知——有多少事件无人接收，见「未送达」列。",
+    "totals": {
+      "events": "事件数",
+      "authors": "发布人数",
+      "delivered": "已送达",
+      "undelivered": "未送达",
+      "reacted": "已响应",
+      "reaction_rate": "响应率",
+      "median": "响应中位数",
+      "max": "最长耗时",
+      "pending": "处理中",
+      "overdue": "已逾期",
+      "superseded": "系统关闭",
+      "negative": "未计入中位数的响应"
+    },
+    "table": {
+      "name": "发布人",
+      "received": "收到",
+      "undelivered": "未送达",
+      "reacted": "已响应",
+      "reaction_rate": "响应率",
+      "resolved": "本人处理",
+      "read_only": "仅已读",
+      "still_pending": "仍待处理",
+      "auto_closed": "系统关闭",
+      "median": "中位数",
+      "max": "最大值",
+      "overdue": "已逾期"
+    },
+    "state": {
+      "active": "在职",
+      "blocked": "已封禁",
+      "deleted": "已删除",
+      "unknown": "无数据",
+      "pending": "待激活",
+      "rejected": "申请被拒"
+    },
+    "manager": {
+      "back": "← 返回发布人列表",
+      "hint": "可在此代替员工（休假或已离职）处理事件；此类处理在统计中不计为该员工的响应。",
+      "empty": "没有符合条件的事件"
+    },
+    "filters": {
+      "type": "事件类型",
+      "status": "状态",
+      "reaction": "响应",
+      "reacted": "已响应",
+      "ignored": "无响应"
+    },
+    "status": {
+      "pending": "处理中",
+      "confirmed": "已确认",
+      "declined": "已拒绝",
+      "superseded": "系统关闭"
+    },
+    "reaction": {
+      "resolved": "已处理",
+      "read": "已读",
+      "system": "系统",
+      "bulk": "批量"
+    },
+    "actions": {
+      "keep": "保留"
+    },
+    "events_table": {
+      "time": "通知时间",
+      "type": "事件",
+      "listing": "车源",
+      "price": "价格",
+      "status": "状态",
+      "reaction": "响应",
+      "resolved_by": "处理人",
+      "actions": "处理",
+      "undelivered": "未送达"
+    }
+  }
+}

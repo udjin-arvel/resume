@@ -1,0 +1,334 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id         Int      @id @default(autoincrement())
+  login      String   @unique
+  status     UserStatus @default(READER)
+  email      String   @unique
+  password   String
+  token      String?  @unique
+  info       String?
+  avatar     String?
+  level      Int      @default(1)
+  experience Int      @default(0)
+  tokens     Int      @default(0)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  compositions Composition[]
+  stories      Story[]
+  notions      Notion[]
+  loreItems    LoreItem[]
+  notes        Note[]
+  images       Image[]
+  audios       Audio[]
+  comments     Comment[]
+  corrections  Correction[]
+  achievements Achievement[]
+  completedTasks CompletedTask[]
+  reports      Report[]
+  mistakes     Mistake[]
+
+  @@map("users")
+}
+
+model Composition {
+  id          Int      @id @default(autoincrement())
+  title       String
+  userId      Int
+  parentId    Int?
+  description String?
+  type        CompositionType
+  poster      String?
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  parent      Composition? @relation("CompositionHierarchy", fields: [parentId], references: [id])
+  children    Composition[] @relation("CompositionHierarchy")
+  stories     Story[]
+
+  @@map("compositions")
+}
+
+model Story {
+  id            Int      @id @default(autoincrement())
+  title         String
+  userId        Int
+  compositionId Int?
+  type          StoryType
+  chapter       Int?
+  accessLevel   Int      @default(1)
+  epigraph      String?
+  isPublic      Boolean  @default(true)
+  notes         Json?    // Array of names/terms for reference
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  // Relations
+  user        User        @relation(fields: [userId], references: [id], onDelete: Cascade)
+  composition Composition? @relation(fields: [compositionId], references: [id])
+  fragments   Fragment[]
+
+  @@map("stories")
+}
+
+model Fragment {
+  id         Int      @id @default(autoincrement())
+  storyId    Int
+  order      Int
+  text       String
+  authorNote String?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  story     Story      @relation(fields: [storyId], references: [id], onDelete: Cascade)
+  images    Image[]    @relation("FragmentImages")
+  audios    Audio[]    @relation("FragmentAudios")
+
+  @@map("fragments")
+}
+
+model Notion {
+  id         Int      @id @default(autoincrement())
+  title      String
+  userId     Int
+  text       String
+  poster     String?
+  type       NotionType
+  accessLevel Int     @default(1)
+  isPublic   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images    Image[] @relation("NotionImages")
+
+  @@map("notions")
+}
+
+model LoreItem {
+  id         Int      @id @default(autoincrement())
+  title      String
+  userId     Int
+  text       String
+  poster     String?
+  accessLevel Int     @default(1)
+  isPublic   Boolean  @default(true)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images    Image[] @relation("LoreItemImages")
+
+  @@map("loreitems")
+}
+
+model Note {
+  id         Int      @id @default(autoincrement())
+  title      String
+  userId     Int
+  text       String
+  poster     String?
+  price      Int      @default(10)
+  importance Int      @default(5)
+  isContent  Boolean  @default(false)
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user       User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  images     Image[] @relation("NoteImages")
+
+  @@map("notes")
+}
+
+model Task {
+  id          Int      @id @default(autoincrement())
+  title       String
+  description String
+  tokens      Int
+  experience  Int
+  isPublic    Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  // Relations
+  completedTasks CompletedTask[]
+
+  @@map("tasks")
+}
+
+model Image {
+  id         Int      @id @default(autoincrement())
+  path       String
+  title      String?
+  userId     Int
+  fragmentId Int?
+  notionId   Int?
+  loreItemId Int?
+  noteId     Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user      User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fragment  Fragment? @relation("FragmentImages", fields: [fragmentId], references: [id])
+  notion    Notion?   @relation("NotionImages", fields: [notionId], references: [id])
+  loreItem  LoreItem? @relation("LoreItemImages", fields: [loreItemId], references: [id])
+  note      Note?     @relation("NoteImages", fields: [noteId], references: [id])
+
+  @@map("images")
+}
+
+model Audio {
+  id         Int      @id @default(autoincrement())
+  path       String
+  title      String?
+  userId     Int
+  fragmentId Int?
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
+
+  // Relations
+  user     User      @relation(fields: [userId], references: [id], onDelete: Cascade)
+  fragment Fragment? @relation("FragmentAudios", fields: [fragmentId], references: [id], onDelete: Cascade)
+
+  @@map("audios")
+}
+
+model Comment {
+  id          Int          @id @default(autoincrement())
+  text        String
+  userId      Int
+  contentId   Int?
+  contentType ContentType?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+
+  // Relations
+  user        User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("comments")
+}
+
+model Correction {
+  id        Int      @id @default(autoincrement())
+  text      String
+  userId    Int
+  contentId Int
+  contentType String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("corrections")
+}
+
+model Achievement {
+  id        Int      @id @default(autoincrement())
+  title     String
+  description String
+  userId    Int
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@map("achievements")
+}
+
+model CompletedTask {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  taskId    Int
+  completedAt DateTime @default(now())
+
+  // Relations
+  user      User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  task      Task    @relation(fields: [taskId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, taskId])
+  @@map("completed_tasks")
+}
+
+model Report {
+  id        Int      @id @default(autoincrement())
+  userId    Int?
+  subject   String
+  message   String
+  createdAt DateTime @default(now())
+
+  // Relations
+  user      User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("reports")
+}
+
+model Mistake {
+  id          Int      @id @default(autoincrement())
+  userId      Int?
+  currentText String
+  correctText String
+  url         String
+  createdAt   DateTime @default(now())
+
+  // Relations
+  user        User?    @relation(fields: [userId], references: [id], onDelete: SetNull)
+
+  @@map("mistakes")
+}
+
+// Enums
+enum UserStatus {
+  ADMIN
+  MODERATOR
+  WRITER
+  READER
+}
+
+enum CompositionType {
+  BOOK
+  CHAPTER_COLLECTION
+}
+
+enum StoryType {
+  STORY
+  ANNOUNCEMENT
+}
+
+enum NotionType {
+  DEFINITION
+  CHARACTER
+  PLACE
+  OBJECT
+  ENTITY
+  EVENT
+}
+
+enum ContentType {
+  STORY
+  NOTION
+  LORE
+  COMPOSITION
+}
+
+ 

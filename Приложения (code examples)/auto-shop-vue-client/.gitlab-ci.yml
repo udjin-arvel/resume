@@ -1,0 +1,192 @@
+stages:
+  - check
+  - deploy
+
+variables:
+  APP_DIR: /var/www/auto-shop-front
+  SSH_HOST: "127.0.0.1"
+  SSH_USER: root
+  DEPLOY_KEY: $SSH_PRIVATE_KEY
+  GIT_DEPTH: "1"
+  ENVIRONMENT_NAME: staging
+  NODE_VERSION: "22.16.0"
+  CI_SERVER_URL: "https://gitlab.example.com"
+  NUXT_TELEMETRY_DISABLED: "1"
+  npm_config_cache: "$CI_PROJECT_DIR/.npm"
+
+default:
+  tags:
+    - auto-shop
+  interruptible: true
+
+workflow:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == "main"
+    - if: $CI_COMMIT_BRANCH == "dev"
+    - when: never
+
+# lint/typecheck: auto on MR; optional (manual) on main/dev
+.rules_check: &rules_check
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == "main"
+    when: manual
+    allow_failure: true
+  - if: $CI_COMMIT_BRANCH == "dev"
+    when: manual
+    allow_failure: true
+  - when: never
+
+# build: auto on MR/main; optional (manual) on dev
+.rules_build: &rules_build
+  - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+  - if: $CI_COMMIT_BRANCH == "main"
+  - if: $CI_COMMIT_BRANCH == "dev"
+    when: manual
+    allow_failure: true
+  - when: never
+
+.node_base: &node_base
+  image: node:${NODE_VERSION}-bookworm
+  cache:
+    - key:
+        files:
+          - package-lock.json
+        prefix: deps
+      paths:
+        - .npm/
+        - node_modules/
+      policy: pull-push
+    - key: "nuxt-$CI_COMMIT_REF_SLUG-$ENVIRONMENT_NAME"
+      paths:
+        - .nuxt/
+        - node_modules/.cache/
+      policy: pull-push
+  before_script:
+    # npm ci always wipes node_modules (and Vite cache). Reuse cached install when lockfile matches.
+    - |
+      if [ -f node_modules/.package-lock.json ] && cmp -s package-lock.json node_modules/.package-lock.json; then
+        echo "node_modules cache hit — skip npm ci"
+      else
+        npm ci --prefer-offline --no-audit --no-fund
+      fi
+
+lint:
+  <<: *node_base
+  stage: check
+  rules: *rules_check
+  script:
+    - npm run lint
+  cache:
+    - key:
+        files:
+          - package-lock.json
+        prefix: deps
+      paths:
+        - .npm/
+        - node_modules/
+      policy: pull
+
+typecheck:
+  <<: *node_base
+  stage: check
+  rules: *rules_check
+  script:
+    - npm run typecheck
+  cache:
+    - key:
+        files:
+          - package-lock.json
+        prefix: deps
+      paths:
+        - .npm/
+        - node_modules/
+      policy: pull
+
+build:
+  <<: *node_base
+  stage: check
+  rules: *rules_build
+  script:
+    - npm run build:ci
+
+.deploy_base: &deploy_base
+  stage: deploy
+  image: alpine:3.21
+  before_script:
+    - apk add --no-cache openssh-client rsync
+    - mkdir -p ~/.ssh && chmod 700 ~/.ssh
+    - tr -d '\r' < "$DEPLOY_KEY" > ~/.ssh/id_deploy
+    - echo >> ~/.ssh/id_deploy
+    - chmod 600 ~/.ssh/id_deploy
+    - ssh-keygen -y -f ~/.ssh/id_deploy > /dev/null
+    - ssh-keyscan -H "$SSH_HOST" >> ~/.ssh/known_hosts
+    - export RSYNC_RSH="ssh -i ~/.ssh/id_deploy -o IdentitiesOnly=yes"
+  script:
+    - |
+      ssh -i ~/.ssh/id_deploy -o IdentitiesOnly=yes \
+        "${SSH_USER}@${SSH_HOST}" \
+        "command -v rsync >/dev/null || (apt-get update -qq && DEBIAN_FRONTEND=noninteractive apt-get install -y -qq rsync)"
+    - |
+      rsync -az --delete \
+        --exclude='.git/' \
+        --exclude='node_modules/' \
+        --exclude='.nuxt/' \
+        --exclude='.output/' \
+        --exclude='.cache/' \
+        --exclude='.env' \
+        ./ "${SSH_USER}@${SSH_HOST}:${APP_DIR}/"
+    - |
+      ssh -i ~/.ssh/id_deploy -o IdentitiesOnly=yes \
+        "${SSH_USER}@${SSH_HOST}" "set -e
+        cd ${APP_DIR}
+        export ENVIRONMENT_NAME=${ENVIRONMENT_NAME}
+        docker compose -f docker-compose.prod.yml build --build-arg ENVIRONMENT_NAME=${ENVIRONMENT_NAME}
+        docker compose -f docker-compose.prod.yml up -d
+      "
+  environment:
+    name: staging
+    url: http://127.0.0.1:3000
+  resource_group: efc-front-staging
+
+deploy:dev:
+  <<: *deploy_base
+  needs: []
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+      when: manual
+      allow_failure: false
+
+deploy:main:ru:
+  <<: *deploy_base
+  variables:
+    SSH_HOST: "45.144.220.156"
+    ENVIRONMENT_NAME: production
+    DEPLOY_KEY: $SSH_PRIVATE_KEY_PROD
+  environment:
+    name: production/ru
+    url: https://example.com
+  resource_group: efc-front-production-ru
+  needs:
+    - build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+      allow_failure: false
+
+deploy:main:cn:
+  <<: *deploy_base
+  variables:
+    SSH_HOST: "39.106.161.186"
+    ENVIRONMENT_NAME: cn
+    DEPLOY_KEY: $SSH_PRIVATE_KEY_PROD
+  environment:
+    name: production/cn
+    url: https://example.cn
+  resource_group: efc-front-production-cn
+  needs:
+    - build
+  rules:
+    - if: $CI_COMMIT_BRANCH == "main"
+      when: manual
+      allow_failure: false

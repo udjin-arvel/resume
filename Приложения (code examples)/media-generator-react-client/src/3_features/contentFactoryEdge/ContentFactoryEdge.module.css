@@ -1,0 +1,19 @@
+.deleteButton {
+    position: absolute;
+    min-width: 16px;
+    height: 16px;
+    border-radius: 50px;
+    padding: 4px;
+    background-color: var(--color-bg-page);
+    display: flex;
+    gap: 4px;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    color: var(--color-text-muted);
+    transition: opacity 0.15s ease, background-color 0.15s ease, color 0.15s ease;
+}
+
+:global(.react-flow__edgelabel-renderer) {
+    z-index: 1000;
+}

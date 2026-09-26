@@ -1,0 +1,62 @@
+{
+  "power_type": {
+    "hybrid": "油电混合",
+    "petrol": "汽油",
+    "all": "全部",
+    "diesel": "柴油",
+    "electric": "纯电动",
+    "gas": "燃气"
+  },
+  "scale_type": {
+    "sedan": "轿车",
+    "suv": "SUV",
+    "coupe": "跑车",
+    "hatchback": "两厢车",
+    "minivan": "MPV",
+    "pickup": "皮卡",
+    "wagon": "旅行车",
+    "cabriolet": "敞篷车",
+    "all": "全部"
+  },
+  "drive_type": {
+    "all": "全部",
+    "awd": "四驱",
+    "fwd": "前驱",
+    "rwd": "后驱"
+  },
+  "gearbox": {
+    "all": "全部",
+    "mt": "手动",
+    "at": "自动",
+    "dct": "双离合",
+    "cvt": "CVT 无级变速",
+    "am": "AMT 自动化手动",
+    "ecvt": "e-CVT 电子无级变速",
+    "single": "单速",
+    "dht": "DHT混动专用",
+    "other": "其他"
+  },
+  "condition": {
+    "new": "新车",
+    "used": "二手车",
+    "all": "全部"
+  },
+  "colors": {
+    "any": "任意",
+    "white": "白色",
+    "black": "黑色",
+    "gray": "灰色",
+    "silver": "银色",
+    "blue": "蓝色",
+    "red": "红色",
+    "green": "绿色",
+    "brown": "棕色",
+    "yellow": "黄色",
+    "beige": "米色"
+  },
+  "seaports": {
+    "suifenhe": "绥芬河（乌苏里斯克）",
+    "heihe": "黑河（布拉戈维申斯克）",
+    "qingdao": "青岛市（符拉迪沃斯托克）"
+  }
+}

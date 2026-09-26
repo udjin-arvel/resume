@@ -1,0 +1,26 @@
+.logo {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 0 0 auto;
+    width: min-content;
+}
+
+.logo__icon {
+    width: 28px;
+    height: 28px;
+    background-color: var(--color-secondary);
+    border-radius: 8px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    color: var(--color-text-dk-primary);
+}
+
+.logo__text {
+    font-weight: 500;
+    font-size: 20px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    white-space: nowrap;
+}

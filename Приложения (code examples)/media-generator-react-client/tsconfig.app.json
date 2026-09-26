@@ -1,0 +1,51 @@
+{
+  "compilerOptions": {
+    "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
+    "target": "ES2022",
+    "useDefineForClassFields": true,
+    "lib": [
+      "ES2022",
+      "DOM",
+      "DOM.Iterable"
+    ],
+    "module": "ESNext",
+    "types": [
+      "vite/client"
+    ],
+    "skipLibCheck": true,
+    /* Bundler mode */
+    "moduleResolution": "Bundler",
+    "allowImportingTsExtensions": true,
+    "verbatimModuleSyntax": true,
+    "moduleDetection": "force",
+    "noEmit": true,
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    /* Linting */
+    "strict": true,
+    "noUnusedLocals": true,
+    "noUnusedParameters": true,
+    "erasableSyntaxOnly": true,
+    "noFallthroughCasesInSwitch": true,
+    "noUncheckedSideEffectImports": true,
+    "baseUrl": "src",
+    "paths": {
+      "@/*": ["*"],
+      "@app": ["0_app/index.ts"],
+      "@app/*": ["0_app/*"],
+      "@entities/*": ["4_entities/*"],
+      "@entities": ["4_entities/index.ts"],
+      "@features/*": ["3_features/*"],
+      "@features": ["3_features/index.ts"],
+      "@shared": ["5_shared/index.ts"],
+      "@shared/*": ["5_shared/*"],
+      "@pages/*": ["1_pages/*"],
+      "@pages": ["1_pages/index.ts"],
+      "@widgets": ["2_widgets/index.ts"],
+      "@widgets/*": ["2_widgets/*"]
+    }
+  },
+  "include": [
+    "src"
+  ]
+}

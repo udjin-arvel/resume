@@ -1,0 +1,203 @@
+{
+  "title": {
+    "success": "成功！",
+    "error": "错误！",
+    "warning": "提示！",
+    "info": "提示！"
+  },
+  "response_status": {
+    "succeeded": "操作已完成。",
+    "auth_error": "认证失败：您尚未登录。",
+    "forbidden": "无权限：您没有执行此操作的权限。",
+    "bad_request": "请求错误：请求参数不正确。",
+    "validation_error": "数据校验失败：请检查表单填写内容。",
+    "csrf_error": "会话已过期：请刷新页面后重试。",
+    "refresh_token_expired": "会话已过期，请重新登录。",
+    "throttle_error": "请求过于频繁，请稍后再试。",
+    "server_error": "服务器错误，请稍后再试。",
+    "unknown_error": "未知错误：请联系管理员。",
+    "not_found": "页面未找到。"
+  },
+  "profile": {
+    "telegram_unbound": "Telegram 已解绑",
+    "updated": "用户信息已更新。",
+    "updated_password": "用户密码已更新。"
+  },
+  "user": {
+    "limit": "已达到当前订阅的用户数量上限。",
+    "added": "新用户已添加。",
+    "updated": "用户信息已更新。",
+    "updated_password": "用户密码已更新。",
+    "activated": "用户已激活。",
+    "rejected": "用户已拒绝。",
+    "blocked": "用户已被封禁。",
+    "unblocked": "用户已解除封禁。",
+    "pending": "用户已退回重新审核。",
+    "deleted": "用户已删除。"
+  },
+  "client": {
+    "activated": "客户已激活。",
+    "rejected": "客户已拒绝。",
+    "blocked": "客户已被封禁。",
+    "unblocked": "客户已解除封禁。",
+    "pending": "客户已退回重新审核。",
+    "deleted": "客户已删除。",
+    "added": "客户已添加。",
+    "updated": "客户信息已更新。",
+    "updated_password": "客户密码已更新。",
+    "not_found": "未找到对应的客户用户。"
+  },
+  "auth": {
+    "failed": "账号或密码错误。",
+    "email_verification_notification_send": "验证邮件已发送，请查收邮箱。",
+    "email_verified_before": "邮箱已验证。",
+    "email_verified": "邮箱验证成功。",
+    "client_inactive": "账号尚未激活。",
+    "code_sent": "验证码已发送。",
+    "too_frequent_request_code": "验证码请求过于频繁，请1分钟后再试。",
+    "invalid_code": "验证码错误。"
+  },
+  "filter": {
+    "saved": "筛选条件已保存。"
+  },
+  "listing_request": {
+    "marked_as_read": "事件已读",
+    "added": "请求已成功创建。",
+    "confirmed": "请求已确认。",
+    "declined": "请求已拒绝。",
+    "reopened": "请求已重新开启。",
+    "closed": "请求已关闭。",
+    "subscribed": "您已成功订阅该车辆。",
+    "diagnostic_doesnt_exist": "没有可展示的检测报告。",
+    "compensation_doesnt_exist": "没有可供显示的保险核实信息或经销商付款记录。",
+    "video_doesnt_exist": "该车辆暂无视频。"
+  },
+  "listing": {
+    "created": "车辆发布成功。",
+    "updated": "车辆信息已更新。",
+    "load_error": "加载失败。",
+    "deleted": "广告已删除。",
+    "favorited": "车辆已加入收藏。",
+    "unfavorited": "车辆已从收藏中移除。",
+    "withdrawn": "广告已下架。",
+    "returned_to_sale": "广告已重新上架出售。",
+    "restored": "广告已恢复。",
+    "vin_exists": "已存在该 VIN 的车辆",
+    "vin_available": "不存在该 VIN 的车辆"
+  },
+  "listings": {
+    "already_attached": "所有选定的车辆已附加到申请。",
+    "bound_to_request": "车辆已成功附加到申请。"
+  },
+  "logistic": {
+    "logist_assigned": "物流人员更新成功",
+    "invoice_saved": "发票已成功生成。",
+    "file_uploaded": "文件已上传。",
+    "buyer_form_saved": "购车人信息已保存。",
+    "payment_docs_saved": "付款凭证已保存。"
+  },
+  "booking": {
+    "confirmed": "预订已确认，信息已发送给买方。"
+  },
+  "search_request": {
+    "created": "需求申请已创建。",
+    "updated": "需求申请已更新。",
+    "duplicated": "需求申请已复制。",
+    "load_error": "加载失败。",
+    "changes_acknowledged": "变更已确认。",
+    "assign_executor": "已指派执行人。",
+    "status_updated": "申请状态已更新。",
+    "find_more_requested": "已请求更多车辆方案。",
+    "find_more_cancelled": "已取消更多车辆方案请求。",
+    "proposal_rejected": "方案已拒绝。",
+    "deleted": "需求申请已成功删除。"
+  },
+  "search_requests": {
+    "closed_count": "已关闭申请：{count}",
+    "close_error": "无法关闭申请"
+  },
+  "city": {
+    "created": "城市已创建。",
+    "updated": "城市信息已更新。",
+    "show": "城市已恢复显示。",
+    "hide": "城市已隐藏。"
+  },
+  "port": {
+    "created": "交付港口已创建。",
+    "updated": "交付港口已更新。",
+    "disabled": "交付港口已禁用。"
+  },
+  "calculator_option": {
+    "used_updated": "计算器选项已更新。",
+    "new_updated": "计算器选项已更新。",
+    "calculated": "车辆费用计算完成。"
+  },
+  "media": {
+    "deleted": "媒体文件已删除。",
+    "uploaded": "媒体文件已上传。"
+  },
+  "chat": {
+    "media_uploaded": "文件已上传",
+    "mark_as_unread": "聊天已标记为未读。",
+    "participant_is_absent": "对方当前不在线。"
+  },
+  "balance": {
+    "adjusted": "账户余额已调整。",
+    "file_uploaded": "文件已上传。"
+  },
+  "logistic_status": {
+    "created": "物流状态已创建。",
+    "updated": "物流状态已更新。",
+    "file_uploaded": "文件已上传。"
+  },
+  "permission_forbidden": "操作不可用",
+  "reviews": {
+    "deleted": "评价已成功删除。",
+    "listing_not_found": "未找到该订单的广告。"
+  },
+  "admin_car": {
+    "name_updated_successfully": "名称更新成功",
+    "name_update_error": "名称更新失败",
+    "no_id_provided": "未提供 ID",
+    "deactivated_successfully": "停用成功",
+    "activated_successfully": "启用成功"
+  },
+  "subscription": {
+    "successful": "通知设置已更新"
+  },
+  "feedback": {
+    "success": "申请创建成功"
+  },
+  "car_link": {
+    "appointment_successful": "指派成功",
+    "created": "请求创建成功",
+    "replay_attached": "回复已添加",
+    "interest_attached": "已收到回复",
+    "listing_attached": "车辆已绑定",
+    "canceled": "申请已取消",
+    "internal_note_saved": "内部备注已保存",
+    "reopened": "申请已重新打开",
+    "cannot_reply": "无法回复已关闭或已取消的链接",
+    "cannot_attach_listing": "无法将车辆绑定到已关闭或已取消的链接",
+    "reply_required_before_attach": "请先回复，然后再绑定车辆",
+    "cannot_set_interest": "仅在收到回复且尚未绑定车辆时可以表态",
+    "cannot_reopen": "只能重新打开已关闭的申请",
+    "cannot_assign": "无法为已关闭或已取消的链接指定执行人",
+    "cannot_cancel": "该申请已关闭或已取消"
+  },
+  "diagnostic_report": {
+    "saved": "诊断报告已保存，没有未关闭的检测请求",
+    "saved_requests_open": "报告已保存，但检测请求仍未关闭 — 请开启「在网站上展示」",
+    "link_copied": "链接已复制"
+  },
+  "compensation_report": {
+    "saved": "理赔核查报告已保存，没有未关闭的核查请求",
+    "saved_requests_open": "报告已保存，但理赔核查请求仍未关闭 — 请开启「在网站上展示」",
+    "link_copied": "链接已复制"
+  },
+  "listing_source_events": {
+    "confirmed": "已应用更改",
+    "declined": "已跳过该事件",
+    "marked_as_read": "事件已读"
+  }
+}

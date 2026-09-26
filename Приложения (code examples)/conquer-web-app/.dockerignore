@@ -1,0 +1,14 @@
+.git
+.lovable
+.project
+.env
+.venv
+venv
+__pycache__
+*.pyc
+.pytest_cache
+.mypy_cache
+.ruff_cache
+wheels
+*.md
+.cursor

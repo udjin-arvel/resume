@@ -1,0 +1,52 @@
+.authWidget {
+    width: 100%;
+    height: 100%;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+}
+
+.authWidget__logo {
+    position: absolute;
+    top: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    color: var(--color-text-dk-primary);
+}
+
+.authWidget__slider {
+    width: 100%;
+    overflow: hidden;
+}
+
+.authWidget__sliderTrack {
+    display: flex;
+    align-items: flex-start;
+    transition: transform 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+    /* width и transform задаются inline — зависят от числа слайдов */
+}
+
+.authWidget__sliderSlide {
+    flex-shrink: 0;
+    display: flex;
+    justify-content: center;
+    /* width задаётся inline */
+}
+
+.authWidget__links {
+    width: 100%;
+    max-width: 300px;
+    position: absolute;
+    bottom: 40px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.authWidget__link {
+    color: var(--color-text-dk-primary);
+}

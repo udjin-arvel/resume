@@ -1,0 +1,352 @@
+@import 'normalize.css';
+@import '@fontsource/manrope';
+@import '@fontsource/manrope/500.css';
+@import '@fontsource/manrope/600.css';
+@import '@fontsource/manrope/700.css';
+
+:root {
+  /* 
+  !IMPORTANT% If u change some colors here, wont forget to cange colors in RADAR_COLOR_SCHEME
+  It is used to define the same colors for the antd elements
+  */
+  /* --- LT/DK PALETTE */
+  --color-text-lt-primary: #1E1E1E;
+  --color-text-dk-primary: #FFF;
+  --color-bg-lt-page: #F3F3F3;
+  --color-bg-dk-page: #161616;
+  --color-bg-lt-alt: #FFF;
+  --color-bg-dk-alt: #151515;
+  --color-bg-lt-muted: #FFFFFF80;
+  --color-bg-dk-muted: #FFFFFF0D;
+  --color-bg-lt-solid-alt: #F3F3F3;
+  --color-bg-dk-solid-alt: #212121;
+  --color-border-lt-muted: #EEEEEE;
+  --color-border-dk-muted: #2C2C2C;
+  /* --- СOLOR VARIABLES */
+  /* --- primary */
+  --color-primary: #5329FF;
+  --color-primary-hover: #6641FF;
+  --color-secondary: #F0AD00;
+  --color-secondary-hover: #FAE7C8;
+  /* --- text */
+  --color-text-primary: var(--color-text-lt-primary);
+  --color-text-muted: #8C8C8C;
+  /* --- bgs & surfaces */
+  --color-bg-page: var(--color-bg-lt-page);
+  --color-bg-alt: var(--color-bg-lt-alt);
+  --color-bg-muted: var(--color-bg-lt-muted);
+  --color-bg-solid-alt: var(--color-bg-lt-solid-alt);
+  /* --- borders */
+  --color-border-muted: var(--color-border-lt-muted);
+  --color-border-primary: #E3E3E3;
+  /* --- system */
+  --color-success: #00B69B;
+  --color-error: #F93C65;
+  --color-warning: #F0AD00;
+  --color-info: #2A6BED;
+  --color-outline: color-mix(in srgb, var(--color-primary) 50%, transparent);
+  /* --- content factory colors */
+  --cf-color-main-blue: #294DFF;
+  --cf-color-blue-muted: #CAD1F5;
+  --cf-color-main-orange: #F08400;
+  --cf-color-orange-muted: #F2DCC2;
+  --cf-color-main-pink: #FF29BF;
+  --cf-color-pink-muted: #F5D5EC;
+  /* --- easings */
+  --ease-standard: cubic-bezier(0.4, 0, 0.2, 1);
+  --ease-spring: cubic-bezier(0.34, 1.56, 0.64, 1);
+  --ease-in: cubic-bezier(0.4, 0, 1, 1);
+  --ease-out: cubic-bezier(0, 0, 0.2, 1);
+  /* --- misc */
+  --layout-padding: 8px;
+  /* padding for main layout */
+  /* --- Feel free to add more design tokens */
+  /* --- ...... --- */
+  interpolate-size: allow-keywords;
+  /* font basics */
+  font-family: 'Manrope', 'Arial', system-ui, sans-serif;
+  line-height: 1.2;
+  font-weight: 500;
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  /* color scheme */
+  color-scheme: light dark;
+  /* styles */
+  color: var(--color-text-primary);
+  background-color: var(--color-bg-page);
+  --ant-color-primary: var(--color-primary);
+
+  @media (prefers-color-scheme: dark) {
+    --color-text-primary: var(--color-text-dk-primary);
+    --color-bg-page: var(--color-bg-dk-page);
+    --color-bg-alt: var(--color-bg-dk-alt);
+    --color-bg-muted: var(--color-bg-dk-muted);
+    --color-border-muted: var(--color-border-dk-muted);
+    --color-bg-solid-alt: var(--color-bg-dk-solid-alt);
+  }
+}
+
+:root.dark {
+  --color-text-primary: var(--color-text-dk-primary);
+  --color-bg-page: var(--color-bg-dk-page);
+  --color-bg-alt: var(--color-bg-dk-alt);
+  --color-bg-muted: var(--color-bg-dk-muted);
+  --color-border-muted: var(--color-border-dk-muted);
+  --color-bg-solid-alt: var(--color-bg-dk-solid-alt);
+}
+
+:root.light {
+  --color-text-primary: var(--color-text-lt-primary);
+  --color-bg-page: var(--color-bg-lt-page);
+  --color-bg-alt: var(--color-bg-lt-alt);
+  --color-bg-muted: var(--color-bg-lt-muted);
+  --color-border-muted: var(--color-border-lt-muted);
+  --color-bg-solid-alt: var(--color-bg-lt-solid-alt);
+}
+
+/* --- RESET */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+*:focus-visible {
+  outline: 3px solid var(--color-outline);
+  outline-offset: 1px;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6 {
+  font-size: inherit;
+  font-weight: inherit;
+  margin: 0;
+  padding: 0;
+}
+
+ul,
+ol {
+  list-style: none;
+}
+
+img,
+video {
+  display: block;
+  max-width: 100%;
+}
+
+button {
+  cursor: pointer;
+  background: none;
+  border: none;
+  font: inherit;
+  color: inherit;
+}
+
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+a:hover {
+  color: inherit;
+}
+
+button {
+  border: none;
+}
+
+
+/* --- autofill reset */
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active {
+    -webkit-box-shadow: 0 0 0 1000px transparent inset !important;
+    transition: background-color 9999s ease-in-out 0s;
+}
+
+/* --- GLOBAL STYLES */
+/* --- Scrollbar */
+*::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+  cursor: default;
+}
+
+*::-webkit-scrollbar-track {
+  background: transparent;
+  border-radius: 4px;
+  cursor: default
+}
+
+*::-webkit-scrollbar-thumb {
+  background: var(--color-border-muted);
+  border-radius: 4px;
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  cursor: default
+}
+
+*::-webkit-scrollbar-thumb:hover {
+  background: #D3D3D3;
+  background-clip: padding-box;
+  cursor: default
+}
+
+/* --- Typography */
+/* ---titles */
+.title_primary {
+  font-weight: 700;
+  font-size: 44px;
+  letter-spacing: 0%;
+  line-height: 110%;
+}
+
+.title_secondary {
+  font-weight: 700;
+  font-size: 18px;
+  line-height: 100%;
+  letter-spacing: 0%;
+}
+
+/* ---texts */
+.text_primary {
+  font-weight: 500;
+  font-size: 14px;
+  line-height: 160%;
+  letter-spacing: 0%;
+}
+
+.text_secondary {
+  font-weight: 500;
+  font-size: 12px;
+  line-height: 120%;
+  letter-spacing: 0%;
+}
+
+.text_tertiary {
+  font-weight: 500;
+  font-size: 10px;
+  line-height: 160%;
+  letter-spacing: 0%;
+}
+
+/* --- ANTD STYLES */
+/* --- arrow rotate animation for select */
+.ant-select .ant-select-arrow {
+  transform: rotate(0deg);
+  transition: transform 0.3s ease;
+}
+
+.ant-select-open .ant-select-arrow {
+  transform: rotate(180deg);
+}
+
+
+/* --- checkerboard background class - use this to make "opacity" effect on background */
+.checkerboard-bg {
+  background-image: 
+    linear-gradient(45deg, #808080 25%, transparent 25%),
+    linear-gradient(-45deg, #808080 25%, transparent 25%),
+    linear-gradient(45deg, transparent 75%, #808080 75%),
+    linear-gradient(-45deg, transparent 75%, #808080 75%);
+  background-size: 20px 20px;
+  background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+  background-color: #b0b0b0;
+}
+
+
+/* --- VIEW TRANSITIONS */
+
+
+@supports (view-transition-name: none) {
+  ::view-transition-group(app-sidebar),
+  ::view-transition-old(app-sidebar),
+  ::view-transition-new(app-sidebar) {
+    animation-duration: 0s;
+  }
+
+  ::view-transition-old(app-main-column),
+  ::view-transition-new(app-main-column) {
+    animation-duration: 0.32s;
+    animation-timing-function: var(--ease-standard);
+    animation-fill-mode: both;
+  }
+
+  ::view-transition-old(app-main-column) {
+    animation-name: vt-main-out;
+  }
+
+  ::view-transition-new(app-main-column) {
+    animation-name: vt-main-in;
+  }
+
+  @keyframes vt-main-out {
+    from {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    to {
+      opacity: 0;
+      transform: translateY(-6px);
+    }
+  }
+
+  @keyframes vt-main-in {
+    from {
+      opacity: 0;
+      transform: translateY(8px);
+    }
+
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+}
+
+
+@supports (view-transition-name: none) {
+  ::view-transition-old(root) {
+    animation: theme-fade-out 0.35s var(--ease-standard) both;
+  }
+
+  ::view-transition-new(root) {
+    animation: theme-fade-in 0.35s var(--ease-standard) both;
+  }
+
+  @keyframes theme-fade-out {
+    from {
+      opacity: 1;
+      scale: 1;
+    }
+
+    to {
+      opacity: 0;
+      scale: 1;
+    }
+  }
+
+  @keyframes theme-fade-in {
+    from {
+      opacity: 0;
+      scale: 1;
+    }
+
+    to {
+      opacity: 1;
+      scale: 1;
+    }
+  }
+}
+

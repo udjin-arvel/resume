@@ -1,0 +1,27 @@
+# OS / editors
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Go
+backend/bin/
+backend/tmp/
+
+# Flutter
+app/.dart_tool/
+app/.flutter-plugins
+app/.flutter-plugins-dependencies
+app/build/
+
+# Node
+dashboard/node_modules/
+dashboard/dist/
+
+# Logs
+*.log

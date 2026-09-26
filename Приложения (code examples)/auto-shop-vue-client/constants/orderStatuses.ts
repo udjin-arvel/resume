@@ -1,0 +1,18 @@
+export const LogisticOrderStatuses = {
+  AwaitingBuyerData: "awaiting_buyer_data",
+  AddedBuyerData: "added_buyer_data",
+  InvoiceIssued: "invoice_issued",
+  PaymentDocsUploaded: "payment_docs_uploaded",
+  PaymentReceived: "payment_received",
+  CarPurchased: "car_purchased",
+  CarDocsReceived: "car_docs_received",
+  ExportDocsPrepared: "export_docs_prepared",
+  SentToChinaHub: "sent_to_china_hub",
+  PhotoFromTransit: "photo_from_transit",
+  PreparedForRuDispatch: "prepared_for_ru_dispatch",
+  AttachDispatchData: "attach_dispatch_data",
+  ShippedToRussia: "shipped_to_russia",
+  ArrivedInRussia: "arrived_in_russia",
+  SentToCfs: "sent_to_cfs",
+  Incident: "incident",
+} as const

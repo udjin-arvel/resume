@@ -1,0 +1,740 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>ContentFactory — GraphQL и WebSocket (песочница)</title>
+  <style>
+    :root {
+      --bg: #f6f7f9;
+      --card: #fff;
+      --border: #d8dee8;
+      --text: #1a1d23;
+      --muted: #5c6575;
+      --accent: #2563eb;
+      --accent-hover: #1d4ed8;
+      --error: #b91c1c;
+      --ok: #15803d;
+      --mono: ui-monospace, "Cascadia Code", "Source Code Pro", Menlo, Consolas, monospace;
+    }
+    html.dark {
+      --bg: #111418;
+      --card: #1a1e24;
+      --border: #2d3440;
+      --text: #e8eaef;
+      --muted: #9aa3b2;
+      --accent: #60a5fa;
+      --accent-hover: #93c5fd;
+      --error: #f87171;
+      --ok: #4ade80;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+      font-size: 15px;
+    }
+    header {
+      padding: 1.25rem 1.5rem;
+      border-bottom: 1px solid var(--border);
+      background: var(--card);
+    }
+    header h1 { margin: 0 0 0.35rem; font-size: 1.35rem; }
+    header p { margin: 0; color: var(--muted); max-width: 70rem; }
+    main { max-width: 56rem; margin: 0 auto; padding: 1.5rem; }
+    section {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 1.25rem 1.35rem;
+      margin-bottom: 1.25rem;
+    }
+    section h2 { margin: 0 0 0.75rem; font-size: 1.1rem; }
+    section h3 { margin: 1.25rem 0 0.5rem; font-size: 1rem; color: var(--muted); }
+    label { display: block; font-weight: 600; margin: 0.5rem 0 0.25rem; font-size: 0.88rem; }
+    input[type="text"], input[type="url"], textarea {
+      width: 100%;
+      padding: 0.5rem 0.65rem;
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.85rem;
+    }
+    textarea { min-height: 120px; resize: vertical; }
+    .row { display: flex; flex-wrap: wrap; gap: 0.5rem; align-items: center; margin-top: 0.35rem; }
+    button {
+      cursor: pointer;
+      background: var(--accent);
+      color: #fff;
+      border: none;
+      border-radius: 6px;
+      padding: 0.45rem 0.9rem;
+      font-size: 0.9rem;
+      font-weight: 600;
+    }
+    button:hover { background: var(--accent-hover); }
+    button.secondary { background: var(--border); color: var(--text); }
+    button.secondary:hover { opacity: 0.9; }
+    pre {
+      margin: 0.65rem 0;
+      padding: 0.85rem 1rem;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      overflow-x: auto;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.45;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .callout {
+      border-left: 4px solid var(--accent);
+      padding: 0.65rem 0.9rem;
+      margin: 0.75rem 0;
+      background: var(--bg);
+      border-radius: 0 8px 8px 0;
+      font-size: 0.92rem;
+    }
+    .callout.warn { border-left-color: #d97706; }
+    .callout.error { border-left-color: var(--error); }
+    table { width: 100%; border-collapse: collapse; font-size: 0.88rem; margin: 0.5rem 0; }
+    th, td { border: 1px solid var(--border); padding: 0.45rem 0.6rem; text-align: left; }
+    th { background: var(--bg); }
+    #httpOut, #wsOut { min-height: 4rem; }
+    .ok { color: var(--ok); }
+    .err { color: var(--error); }
+    ul.compact { margin: 0.35rem 0; padding-left: 1.25rem; }
+    footer { padding: 1rem 1.5rem 2rem; color: var(--muted); font-size: 0.85rem; text-align: center; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>ContentFactory API — справочник и песочница</h1>
+    <p>
+      Основное приложение <strong>radar-art__client</strong> ходит в бэкенд по <strong>REST</strong> (RTK Query).
+      ContentFactory (проекты, ноды, рёбра графа, генерация, события) доступен по <strong>GraphQL</strong> на маршруте
+      <code>/graphql</code> в FastAPI. Эта страница — статический справочник с копируемыми примерами и простыми запросами из браузера.
+    </p>
+  </header>
+
+  <main>
+    <section>
+      <h2>1. Связь с текущим React-клиентом</h2>
+      <p>
+        В коде клиента токен берётся из cookie <code>radar</code> и в REST передаётся как заголовок
+        <code>Authorization: JWT &lt;токен&gt;</code> (<code>prepareHeaders</code> в <code>rtk-api.ts</code>).
+        Для GraphQL используйте <strong>тот же</strong> JWT в том же формате. Альтернатива для части сценариев бэкенда: <code>Authorization: Bearer &lt;token&gt;</code> (см. <code>app/graphql/auth.py</code>).
+      </p>
+      <p>
+        Контекст авторизации в SPA: <code>AuthContext</code> читает cookie <code>radar</code> через <code>useCookie('radar')</code>.
+        Для ручных тестов ниже вставьте сырое значение токена (без префикса <code>JWT</code>).
+      </p>
+    </section>
+
+    <section>
+      <h2>2. Настройки запросов</h2>
+      <label for="gqlUrl">URL GraphQL (HTTP POST и база для WebSocket)</label>
+      <input id="gqlUrl" type="url" placeholder="http://app.test-server-pro.ru/api/graphql или http://localhost:8000/graphql" autocomplete="off" />
+
+      <p class="callout warn">
+        <strong>Прокси.</strong> REST в клиенте по умолчанию с суффиксом <code>/api</code> (<code>VITE_API_URL</code>),
+        а роутер GraphQL в приложении смонтирован как <code>/graphql</code> от корня FastAPI. В проде путь снаружи может быть
+        <code>https://хост/graphql</code> или <code>https://хост/api/graphql</code> — уточните по своему nginx / ingress.
+      </p>
+
+      <label for="jwt">JWT (только payload, без «JWT »)</label>
+      <input id="jwt" type="text" spellcheck="false" autocomplete="off" placeholder="eyJhbGciOi..." />
+
+      <div class="row">
+        <button type="button" id="btnCookie" class="secondary">Подставить из document.cookie (имя «radar»)</button>
+        <button type="button" id="btnGuessUrl" class="secondary">Эвристика URL из host страницы</button>
+      </div>
+
+      <p class="callout">
+        <strong>CORS.</strong> Если эта страница открыта с другого origin, чем API, браузер может блокировать <code>fetch</code> и WebSocket.
+        Держите фронт и API на одном сайте или настройте прокси dev-сервера.
+      </p>
+    </section>
+
+    <section>
+      <h2>3. HTTP: операции из браузера</h2>
+      <p>Тело: JSON с полями <code>query</code> и при необходимости <code>variables</code>. Заголовки: <code>Content-Type: application/json</code>, <code>Authorization: JWT …</code>.</p>
+
+      <label for="httpBody">Тело запроса (JSON)</label>
+      <textarea id="httpBody" spellcheck="false"></textarea>
+      <div class="row">
+        <button type="button" id="btnRunHttp">Выполнить POST</button>
+        <button type="button" id="fillHealth" class="secondary">Пример: health + проекты</button>
+        <button type="button" id="fillGraph" class="secondary">Пример: граф по projectId</button>
+        <button type="button" id="fillDuplicate" class="secondary">Пример: дублировать ноду</button>
+        <button type="button" id="fillUpdatePrompt" class="secondary">Пример: update prompt</button>
+        <button type="button" id="fillAspect" class="secondary">Пример: update aspectRatio</button>
+      </div>
+      <h3>Ответ</h3>
+      <pre id="httpOut"></pre>
+    </section>
+
+    <section>
+      <h2>4. GraphQL: справочник операций (camelCase)</h2>
+      <p>Имена в JSON-ответах и в запросах к API — в <strong>camelCase</strong> (Strawberry). Ниже — краткие таблицы; полные примеры см. в репозитории бэкенда <code>ContentFactory_documentation.md</code>.</p>
+
+      <h3>Query</h3>
+      <table>
+        <thead><tr><th>Поле</th><th>Аргументы</th></tr></thead>
+        <tbody>
+          <tr><td><code>contentFactoryHealth</code></td><td>—</td></tr>
+          <tr><td><code>contentFactoryMetrics</code></td><td>—</td></tr>
+          <tr><td><code>contentFactoryProject</code></td><td><code>projectId: ID!</code> — полный проект (<code>isPublic</code>, <code>publicId</code>, …); для публичного проекта без auth — только <code>publicId</code>; владелец — также числовой id</td></tr>
+          <tr><td><code>contentFactoryProjects</code></td><td>— список <strong>ContentFactoryProjectListItem</strong>: <code>id</code>, <code>name</code>, <code>isPublic</code>, <code>publicId</code>, <code>updatedAt</code>, <code>previewUrl</code>, …; только <strong>свои</strong> проекты</td></tr>
+          <tr><td><code>contentFactoryTemplates</code></td><td>— системные шаблоны: <code>id</code>, <code>name</code>, <code>previewUrl</code>, <code>previewThumbnailUrl</code></td></tr>
+          <tr><td><code>contentFactoryNode</code></td><td><code>nodeId: ID!</code> — одиночная нода; для публичного проекта auth не обязателен</td></tr>
+          <tr><td><code>contentFactoryNodes</code></td><td><code>projectId: ID!</code> — для публичного проекта без auth только <code>publicId</code></td></tr>
+          <tr><td><code>contentFactoryEdges</code></td><td><code>projectId: ID!</code> — для публичного проекта auth не обязателен</td></tr>
+          <tr><td><code>contentFactoryNodeRuns</code></td><td><code>projectId: ID!</code>, <code>nodeId</code> опц.; для публичного проекта auth не обязателен</td></tr>
+        </tbody>
+      </table>
+
+      <h3>Mutation</h3>
+      <table>
+        <thead><tr><th>Мутация</th><th>Назначение</th></tr></thead>
+        <tbody>
+          <tr><td><code>createContentFactoryProject</code></td><td><code>input { name, canvasMetadata? }</code> — пустой проект</td></tr>
+          <tr><td><code>createContentFactoryProjectFromTemplate</code></td><td><code>templateId: ID!</code>, <code>name: String!</code> — проект с нодами/рёбрами из шаблона</td></tr>
+          <tr><td><code>duplicateContentFactoryProject</code></td><td><code>projectId: ID!</code> — копия в <strong>свой</strong> аккаунт; свой проект или чужой публичный (<code>publicId</code>); имя <code>{исходное} (1)</code>, …; JWT обязателен</td></tr>
+          <tr><td><code>updateContentFactoryProjectName</code></td><td><code>projectId</code>, <code>name</code></td></tr>
+          <tr><td><code>updateContentFactoryProjectCanvasMetadata</code></td><td><code>projectId</code>, <code>canvasMetadata</code></td></tr>
+          <tr><td><code>updateContentFactoryProjectPreview</code></td><td><code>projectId</code>, <code>previewPath?</code>, <code>previewThumbnailPath?</code> — пути в storage (owner)</td></tr>
+          <tr><td><code>deleteContentFactoryProject</code></td><td><code>projectId</code> → <code>Boolean</code>; <strong>soft delete</strong> (<code>deleted_at</code>), граф не удаляется</td></tr>
+          <tr><td><code>createContentFactoryNode</code></td><td><code>input { projectId, pinType, contentType, positionX, positionY, zIndex, prompt?, aiModel?, aspectRatio?, data? }</code> — для <code>GENERATED_CONTENT</code> без <code>aiModel</code> бэкенд подставляет дефолт; <code>aspectRatio</code> может подставиться из конфига модели. Не задавайте промпт / модель / ratio только через JSON <code>data</code>.</td></tr>
+          <tr><td><code>duplicateContentFactoryNode</code></td><td><code>nodeId</code>, <code>positionX?</code>, <code>positionY?</code> — копия ноды в том же проекте; позиция по умолчанию +40/+40 от исходной</td></tr>
+          <tr><td><code>deleteContentFactoryNode</code></td><td><code>nodeId</code></td></tr>
+          <tr><td><code>updateContentFactoryNodePosition</code></td><td><code>nodeId</code>, <code>x</code>, <code>y</code></td></tr>
+          <tr><td><code>updateContentFactoryNodeZIndex</code></td><td><code>nodeId</code>, <code>zIndex</code></td></tr>
+          <tr><td><code>updateContentFactoryNodePinKind</code></td><td><code>nodeId</code>, <code>pinType</code>, <code>contentType</code></td></tr>
+          <tr><td><code>updateContentFactoryNodePrompt</code></td><td><code>nodeId</code>, <code>prompt?</code></td></tr>
+          <tr><td><code>updateContentFactoryNodeAiModel</code></td><td><code>nodeId</code>, <code>aiModel?</code> — модель для генерации (колонка ноды, как у <code>Task.aiModel</code>); при необходимости нормализует <code>aspectRatio</code> под опции модели</td></tr>
+          <tr><td><code>updateContentFactoryNodeAspectRatio</code></td><td><code>nodeId</code>, <code>aspectRatio?</code> — колонка ноды; событие <code>node_aspect_ratio_updated</code></td></tr>
+          <tr><td><code>updateContentFactoryNodeData</code></td><td><code>nodeId</code>, <code>data</code> — прочее в JSON; <strong>не</strong> замена мутаций для <code>prompt</code>, <code>aiModel</code>, <code>aspectRatio</code></td></tr>
+          <tr><td><code>createContentFactoryEdge</code></td><td><code>input { projectId, sourceNodeId, targetNodeId, sourceHandle?, targetHandle? }</code></td></tr>
+          <tr><td><code>updateContentFactoryEdge</code></td><td><code>input { edgeId, ... }</code></td></tr>
+          <tr><td><code>deleteContentFactoryEdge</code></td><td><code>edgeId</code></td></tr>
+          <tr><td><code>setContentFactoryEdgeStatus</code></td><td><code>edgeId</code>, <code>status</code></td></tr>
+          <tr><td><code>generateContentFactoryNode</code></td><td><code>nodeId</code>, <code>force?</code>, <code>idempotencyKey?</code></td></tr>
+          <tr><td><code>publishContentFactoryProject</code></td><td><code>projectId</code> (<strong>только владелец</strong>) — сделать проект публичным (<code>isPublic: true</code>)</td></tr>
+          <tr><td><code>unpublishContentFactoryProject</code></td><td><code>projectId</code> (<strong>только владелец</strong>) — снять с публикации</td></tr>
+        </tbody>
+      </table>
+
+      <div class="callout">
+        <strong>Колонки <code>prompt</code>, <code>aiModel</code>, <code>aspectRatio</code>.</strong>
+        Эти три значения живут отдельно от произвольного JSON <code>data</code>. Устаревшие ключи с тем же смыслом внутри <code>data</code> после миграций не являются источником истины —
+        изменяйте их через мутации выше или поля в <code>createContentFactoryNode</code>.
+      </div>
+
+      <h3>Вложенный объект <code>generation</code> на ноде</h3>
+      <p>
+        Для узла с заданным <code>lastTaskId</code> поле <code>generation</code> отражает последнюю связанную запись генерации (id, статус, агрегированный промпт прогона, ссылки на reference/result и превью, тайминги).
+        Пустое <code>null</code>, если задачи не было или нет подходящей генерации в БД — это отдельно от поля «чернового» промпта ноды <code>ContentFactoryNode.prompt</code>.
+      </p>
+
+      <h3>Копируемые примеры тел POST</h3>
+      <p class="muted" style="color: var(--muted); font-size: 0.9rem;">Подставьте реальные <code>id</code> после создания сущностей.</p>
+
+      <div class="callout">
+        <strong>Публичная ссылка (readonly viewer).</strong>
+        Владелец вызывает <code>publishContentFactoryProject</code>; ссылка для зрителей: <code>/canvas/{publicId}</code> (числовой id в URL — только для владельца).
+        Любой пользователь (в т.ч. без авторизации) может <strong>читать</strong> проект, ноды, рёбра, runs и подписаться на <code>contentFactoryEvents</code>, пока <code>isPublic</code> = true.
+        <strong>Все мутации</strong> изменения канваса и <code>generateContentFactoryNode</code> доступны только владельцу.
+        Upload по REST (<code>/content-factory/nodes/…</code>, <code>/content-factory/projects/{id}/preview</code>) — только владелец.
+      </div>
+
+      <h3>Список проектов + health</h3>
+      <pre id="ex1"></pre>
+
+      <h3>Шаблоны проектов</h3>
+      <pre id="exTemplates"></pre>
+
+      <h3>Создать проект из шаблона</h3>
+      <pre id="exFromTemplate"></pre>
+
+      <h3>Дублировать проект</h3>
+      <pre id="exDupProject"></pre>
+
+      <h3>Проект, ноды и рёбра</h3>
+      <pre id="ex2"></pre>
+
+      <h3>Опубликовать проект (только владелец)</h3>
+      <pre id="exShare1"></pre>
+
+      <h3>Снять проект с публикации</h3>
+      <pre id="exShare2"></pre>
+
+      <h3>Создать проект</h3>
+      <pre id="ex3"></pre>
+
+      <h3>Создать ноду (дефолтная <code>aiModel</code> на бэкенде)</h3>
+      <pre id="ex4"></pre>
+
+      <h3>Создать ноду с явной <code>aiModel</code></h3>
+      <pre id="ex4b"></pre>
+
+      <h3>Создать ребро</h3>
+      <pre id="ex5"></pre>
+
+      <h3>Дублировать ноду</h3>
+      <pre id="ex8"></pre>
+
+      <h3>Запустить генерацию ноды</h3>
+      <p style="margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem;">
+        В ответе мутации <code>responsePayload.generation_id</code> совпадает с <code>generation_id</code> в WebSocket (<code>node.status_changed</code>, затем <code>node.result_ready</code>).
+      </p>
+      <pre id="ex6"></pre>
+
+      <h3>Обновить AI-модель ноды (<code>aiModel</code>)</h3>
+      <p style="margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem;">
+        Идентификатор модели хранится в колонке БД ноды и при <code>generateContentFactoryNode</code> попадает в <code>Task</code> и Kafka.
+        Поле <code>aiModel</code> в JSON <code>data</code> для выбора модели <strong>не используется</strong> — задавайте модель через create/update ниже.
+      </p>
+      <pre id="ex7"></pre>
+
+      <h3>Обновить промпт ноды (<code>updateContentFactoryNodePrompt</code>)</h3>
+      <p style="margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem;">
+        Текст — колонка <code>ContentFactoryNode.prompt</code>; после мутации <code>status</code> сбрасывается в <code>idle</code>. Поле <code>prompt</code> внутри только JSON <code>data</code> не используйте как источник истины.</p>
+      <pre id="ex9"></pre>
+
+      <h3>Обновить <code>aspectRatio</code> ноды (<code>updateContentFactoryNodeAspectRatio</code>)</h3>
+      <p style="margin: 0 0 0.5rem; color: var(--muted); font-size: 0.9rem;">
+        Колонка <code>aspect_ratio</code> задаёт формат для следующей генерации (в т.ч. в Kafka-<code>options</code>). Допустимые строки зависят от выбранной <code>aiModel</code>.</p>
+      <pre id="ex10"></pre>
+
+      <div class="callout">
+        <strong>Дефолтные модели (<code>aiModel</code>).</strong> Для нод <code>GENERATED_CONTENT</code> при создании/генерации, если <code>aiModel</code> не задан, бэкенд выбирает модель по <code>taskType</code> в <code>data</code> или по <code>contentType</code> (IMAGE → <code>edit_image</code>, VIDEO → <code>video_preview</code>).
+        Кодовые дефолты: image — <code>google/nano-banana-2/edit</code>, video preview — <code>google/veo3.1/image-to-video</code>; переопределение через env <code>CONTENT_FACTORY_MODEL_EDIT_IMAGE</code>, <code>CONTENT_FACTORY_MODEL_VIDEO_PREVIEW</code> и др. (см. <code>backend/.env.example</code>).
+        Поле <code>aiModel</code> в JSON <code>data</code> <strong>не используется</strong> — только колонка ноды (create / <code>updateContentFactoryNodeAiModel</code>). Аналогично <code>prompt</code> и <code>aspectRatio</code> задаются топ-полями и мутациями выше, а не дублем внутри <code>data</code>.
+      </div>
+
+      <div class="callout warn">
+        <strong>Stale-рёбра.</strong> После <strong>успешной</strong> генерации ноды <code>N</code> (<code>node.result_ready</code>, Kafka или cache hit):
+        исходящие <code>N → *</code> → <code>stale</code>; входящие <code>* → N</code>, которые уже были <code>stale</code>, → <code>active</code> (перегенерация downstream на актуальных входах).
+        Не срабатывает при правке prompt/data/upload без успешного run. В payload <code>node.result_ready</code>: <code>edges_staled</code>, <code>edges_reactivated</code> (массивы <code>{ edge_id, source_node_id, target_node_id }</code>).
+        Пока нода не отгенерилась с новым контекстом, downstream остаётся <code>active</code>.
+        Для ноды <code>GENERATED_CONTENT</code> при <code>generateContentFactoryNode</code> промпт и референсы собираются с входящих <code>USER_CONTENT</code>.
+        Загрузка референса: multipart <code>POST .../content-factory/nodes/{id}/image</code> или <code>.../video</code>, поле <code>file</code>.
+        Превью проекта (скриншот канваса): multipart <code>POST .../content-factory/projects/{projectId}/preview</code>, поле <code>file</code> — обновляет <code>previewPath</code> / <code>previewThumbnailPath</code> проекта.
+      </div>
+    </section>
+
+    <section>
+      <h2>5. WebSocket: подписка <code>contentFactoryEvents</code></h2>
+      <p>
+        Протокол — <strong>graphql-ws</strong> (поддерживается Strawberry вместе с legacy). Удобная библиотека клиента —
+        <a href="https://github.com/enisdenjo/graphql-ws" target="_blank" rel="noopener">graphql-ws</a>.
+        URL WebSocket тот же путь, что и HTTP GraphQL, со схемой <code>ws:</code> / <code>wss:</code>.
+      </p>
+
+      <p class="callout">
+        <strong>Авторизация из браузера.</strong> Произвольные HTTP-заголовки при открытии WebSocket задать нельзя; токен передаётся в
+        <code>connectionParams</code> (graphql-ws). Бэкенд подставляет пользователя из
+        <code>Authorization</code> в этих параметрах при выполнении подписок.
+      </p>
+
+      <p class="callout">
+        Анонимный или авторизованный viewer публичного проекта может подписаться на <code>contentFactoryEvents</code> без токена (для приватного проекта нужен владелец или публикация).
+      </p>
+
+      <p class="callout">
+        <strong>Payload событий.</strong> В <code>payload</code> подписки для операций с нодами приходит <strong>полный снимок</strong> (ключи в <code>snake_case</code>):
+        <code>node_id</code>, <code>project_id</code>, <code>type</code>, <code>pin_type</code>, <code>content_type</code>, <code>prompt</code>, <code>path</code>, <code>path_thumbnail</code>,
+        <code>position_x</code>, <code>position_y</code>, <code>z_index</code>, <code>data</code>, <code>status</code>, <code>result_url</code>, <code>result_url_thumbnail</code>,
+        <code>cache_key</code>, <code>ai_model</code>, <code>aspect_ratio</code> (соотношение сторон, колонка), <code>last_task_id</code>, <code>updated_at</code>,
+        опционально вложенный объект <code>generation</code> (то же содержание, что в GraphQL-подполях генерации — в snake_case: <code>id</code>, <code>status</code>, <code>prompt</code>, <code>reference</code>, <code>reference_thumbnails</code>, <code>result</code>, <code>result_thumbnail</code>, <code>created_at</code>, <code>completed_at</code>, <code>generation_timings</code>),
+        плюс <code>action</code> (<code>node_created</code>, <code>node_duplicated</code>, <code>node_prompt_updated</code>, <code>node_aspect_ratio_updated</code>, …).
+        <code>result_url_thumbnail</code> — превью результата генерации (для IMAGE); путь вида <code>/storage/{userId}/thumbnails/…</code>, для VIDEO и внешних URL — <code>null</code>.
+        Для прогона генерации дополнительно: <code>node_run_id</code>, <code>node_run_status</code>, <code>task_id</code>, <code>generation_id</code>, <code>cached</code>, <code>error</code>.
+        <code>generation_id</code> — id записи <code>Generation</code> в БД: в <code>node.status_changed</code> и <code>node.failed</code> (при ошибке enqueue),
+        в <code>node.result_ready</code> после Kafka (или из <code>response_payload</code> прогона). При cache hit (<code>cached: true</code>) поля нет — реальная генерация не создавалась.
+        При успешной генерации в <code>node.result_ready</code> также: <code>edges_staled</code>, <code>edges_reactivated</code>.
+        При дублировании: <code>source_node_id</code>. Исключение: <code>node_deleted</code> — только <code>project_id</code>, <code>action</code>, <code>node_id</code>.
+        Первое сообщение подписки: <code>eventType: "connected"</code>.
+      </p>
+
+      <label for="wsProjectId"><code>projectId</code> для подписки</label>
+      <input id="wsProjectId" type="text" placeholder="1" autocomplete="off" />
+
+      <div class="row">
+        <button type="button" id="btnWsStart">Подписаться</button>
+        <button type="button" id="btnWsStop" class="secondary">Остановить</button>
+      </div>
+      <h3>События (лог)</h3>
+      <pre id="wsOut"></pre>
+
+      <h3>Пример payload (<code>project.updated</code>, <code>node_created</code>)</h3>
+      <pre id="exPayload"></pre>
+
+      <h3>Пример payload (<code>node.result_ready</code> после Kafka)</h3>
+      <pre id="exPayloadResultReady"></pre>
+
+      <h3>Пример подписки (текст)</h3>
+      <pre id="exSub"></pre>
+    </section>
+
+    <section>
+      <h2>6. Пример curl (HTTP)</h2>
+      <pre id="exCurl"></pre>
+    </section>
+  </main>
+
+  <footer>
+    Файл: <code>public/examples/content-factory-api.html</code> — после <code>npm run dev</code> доступен по адресу
+    <code>/examples/content-factory-api.html</code>. Источник контракта: <code>radar-art__backend/app/graphql/schema.py</code>.
+  </footer>
+
+  <script type="module">
+    function getCookie(name) {
+      const esc = name.replace(/([.*+?^${}()|[\]\\])/g, '\\$1');
+      const m = document.cookie.match(new RegExp('(?:^|; )' + esc + '=([^;]*)'));
+      return m ? decodeURIComponent(m[1]) : '';
+    }
+
+    const SUBSCRIPTION = `subscription ($projectId: ID!) {
+  contentFactoryEvents(projectId: $projectId) {
+    projectId
+    eventType
+    message
+    payload
+  }
+}`;
+
+    const examples = {
+      health: {
+        query:
+          'query { contentFactoryHealth { module status } contentFactoryProjects { id name isPublic publicId updatedAt previewUrl previewThumbnailUrl } contentFactoryTemplates { id name previewUrl previewThumbnailUrl } }',
+      },
+      templates: {
+        query:
+          'query { contentFactoryTemplates { id name previewUrl previewThumbnailUrl } }',
+      },
+      createFromTemplate: {
+        query:
+          'mutation ($templateId: ID!, $name: String!) { createContentFactoryProjectFromTemplate(templateId: $templateId, name: $name) { id name userId createdAt updatedAt previewUrl previewThumbnailUrl } }',
+        variables: { templateId: '1', name: 'Проект из шаблона' },
+      },
+      duplicateProject: {
+        query:
+          'mutation ($projectId: ID!) { duplicateContentFactoryProject(projectId: $projectId) { id name userId createdAt updatedAt previewUrl previewThumbnailUrl } }',
+        variables: { projectId: '1' },
+      },
+      graph: {
+        query:
+          'query ($id: ID!) { contentFactoryProject(projectId: $id) { id name canvasMetadata createdAt updatedAt previewUrl previewThumbnailUrl } contentFactoryNodes(projectId: $id) { id type pinType contentType prompt path pathThumbnail positionX positionY zIndex data status resultUrl resultUrlThumbnail cacheKey aiModel aspectRatio lastTaskId updatedAt generation { id status prompt result resultThumbnail reference referenceThumbnails createdAt completedAt generationTimings } } contentFactoryEdges(projectId: $id) { id sourceNodeId targetNodeId sourceHandle targetHandle status staleSince createdAt updatedAt } }',
+        variables: { id: '1' },
+      },
+      createProject: {
+        query:
+          'mutation { createContentFactoryProject(input: { name: "Demo из песочницы" }) { id name userId canvasMetadata createdAt } }',
+      },
+      createNode: {
+        query:
+          'mutation { createContentFactoryNode(input: { projectId: "1" pinType: "GENERATED_CONTENT" contentType: "IMAGE" positionX: 0 positionY: 0 zIndex: 0 prompt: "make it artistic" data: { taskType: "edit_image" } }) { id projectId type pinType contentType prompt aiModel aspectRatio status positionX positionY zIndex data resultUrl resultUrlThumbnail generation { id status } } }',
+      },
+      createNodeWithModel: {
+        query:
+          'mutation { createContentFactoryNode(input: { projectId: "1" pinType: "GENERATED_CONTENT" contentType: "IMAGE" positionX: 0 positionY: 0 zIndex: 0 prompt: "explicit model" aiModel: "google/nano-banana-2/edit" aspectRatio: "16:9" data: { taskType: "edit_image" } }) { id aiModel aspectRatio status prompt generation { id status } } }',
+      },
+      duplicateNode: {
+        query:
+          'mutation { duplicateContentFactoryNode(nodeId: "5") { id projectId type pinType contentType prompt aiModel aspectRatio status positionX positionY zIndex data resultUrl resultUrlThumbnail generation { id status } } }',
+      },
+      duplicateNodeAtPosition: {
+        query:
+          'mutation { duplicateContentFactoryNode(nodeId: "5", positionX: 200, positionY: 120) { id positionX positionY status aiModel } }',
+      },
+      updateAiModel: {
+        query:
+          'mutation { updateContentFactoryNodeAiModel(nodeId: "5", aiModel: "google/nano-banana-2/edit") { id aiModel aspectRatio prompt status generation { id status } } }',
+      },
+      createEdge: {
+        query:
+          'mutation { createContentFactoryEdge(input: { projectId: "1" sourceNodeId: "1" targetNodeId: "2" }) { id projectId sourceNodeId targetNodeId status } }',
+      },
+      generate: {
+        query:
+          'mutation { generateContentFactoryNode(nodeId: "5", force: false, idempotencyKey: "client-uuid-1") { id status taskId errorMessage responsePayload projectId nodeId } }',
+      },
+      publishProject: {
+        query:
+          'mutation ($projectId: ID!) { publishContentFactoryProject(projectId: $projectId) { id publicId isPublic name } }',
+        variables: { projectId: '1' },
+      },
+      unpublishProject: {
+        query:
+          'mutation ($projectId: ID!) { unpublishContentFactoryProject(projectId: $projectId) { id publicId isPublic name } }',
+        variables: { projectId: '1' },
+      },
+      updatePrompt: {
+        query:
+          'mutation { updateContentFactoryNodePrompt(nodeId: "5", prompt: "Обновлённый текст промпта") { id prompt aiModel aspectRatio status generation { id status prompt } } }',
+      },
+      updateAspectRatio: {
+        query:
+          'mutation { updateContentFactoryNodeAspectRatio(nodeId: "5", aspectRatio: "9:16") { id aspectRatio aiModel prompt status generation { id } } }',
+      },
+    };
+
+    document.getElementById('ex1').textContent = JSON.stringify(examples.health, null, 2);
+    document.getElementById('exTemplates').textContent = JSON.stringify(examples.templates, null, 2);
+    document.getElementById('exFromTemplate').textContent = JSON.stringify(examples.createFromTemplate, null, 2);
+    document.getElementById('exDupProject').textContent = JSON.stringify(examples.duplicateProject, null, 2);
+    document.getElementById('ex2').textContent = JSON.stringify(examples.graph, null, 2);
+    document.getElementById('exShare1').textContent = JSON.stringify(examples.publishProject, null, 2);
+    document.getElementById('exShare2').textContent = JSON.stringify(examples.unpublishProject, null, 2);
+    document.getElementById('ex3').textContent = JSON.stringify(examples.createProject, null, 2);
+    document.getElementById('ex4').textContent = JSON.stringify(examples.createNode, null, 2);
+    document.getElementById('ex4b').textContent = JSON.stringify(examples.createNodeWithModel, null, 2);
+    document.getElementById('ex5').textContent = JSON.stringify(examples.createEdge, null, 2);
+    document.getElementById('ex6').textContent = JSON.stringify(examples.generate, null, 2);
+    document.getElementById('ex7').textContent = JSON.stringify(examples.updateAiModel, null, 2);
+    document.getElementById('ex9').textContent = JSON.stringify(examples.updatePrompt, null, 2);
+    document.getElementById('ex10').textContent = JSON.stringify(examples.updateAspectRatio, null, 2);
+    document.getElementById('ex8').textContent = JSON.stringify(examples.duplicateNode, null, 2);
+    document.getElementById('exSub').textContent = SUBSCRIPTION.trim();
+    const PAYLOAD_EXAMPLE = {
+      eventType: 'project.updated',
+      message: 'event:project.updated',
+      payload: {
+        action: 'node_created',
+        node_id: 5,
+        project_id: 1,
+        type: 'GENERATED_CONTENT:IMAGE',
+        pin_type: 'GENERATED_CONTENT',
+        content_type: 'IMAGE',
+        prompt: 'make it artistic',
+        path: null,
+        path_thumbnail: null,
+        position_x: 0,
+        position_y: 0,
+        z_index: 0,
+        data: { task_type: 'edit_image' },
+        status: 'idle',
+        result_url: null,
+        result_url_thumbnail: null,
+        cache_key: null,
+        ai_model: 'google/nano-banana-2/edit',
+        aspect_ratio: '16:9',
+        last_task_id: null,
+        updated_at: '2026-05-21T12:00:00+00:00',
+      },
+    };
+
+    document.getElementById('exPayload').textContent = JSON.stringify(PAYLOAD_EXAMPLE, null, 2);
+
+    const PAYLOAD_RESULT_READY = {
+      eventType: 'node.result_ready',
+      message: 'event:node.result_ready',
+      payload: {
+        node_id: 5,
+        project_id: 1,
+        type: 'GENERATED_CONTENT:IMAGE',
+        pin_type: 'GENERATED_CONTENT',
+        content_type: 'IMAGE',
+        prompt: 'make it artistic',
+        path: null,
+        path_thumbnail: null,
+        position_x: 0,
+        position_y: 0,
+        z_index: 0,
+        data: { task_type: 'edit_image' },
+        status: 'completed',
+        result_url: '/storage/2/results/a1b2c3d4.png',
+        result_url_thumbnail: '/storage/2/thumbnails/results/a1b2c3d4.png',
+        cache_key: null,
+        ai_model: 'google/nano-banana-2/edit',
+        aspect_ratio: '16:9',
+        last_task_id: 11,
+        updated_at: '2026-05-22T13:40:00+00:00',
+        node_run_id: 7,
+        node_run_status: 'completed',
+        task_id: 11,
+        generation_id: 555,
+        generation: {
+          id: 555,
+          status: 'completed',
+          prompt: 'make it artistic',
+          reference: [],
+          reference_thumbnails: [],
+          result: '/storage/2/results/a1b2c3d4.png',
+          result_thumbnail: '/storage/2/thumbnails/results/a1b2c3d4.png',
+          created_at: '2026-05-22T13:30:00+00:00',
+          completed_at: '2026-05-22T13:39:59+00:00',
+          generation_timings: null,
+        },
+        cached: false,
+        edges_staled: [{ edge_id: 3, source_node_id: 5, target_node_id: 6 }],
+        edges_reactivated: [],
+      },
+    };
+
+    document.getElementById('exPayloadResultReady').textContent = JSON.stringify(PAYLOAD_RESULT_READY, null, 2);
+    document.getElementById('exCurl').textContent = [
+      'curl -sS -X POST "https://ВАШ-ХОСТ/graphql" \\',
+      '  -H "Content-Type: application/json" \\',
+      '  -H "Authorization: JWT ВАШ_ТОКЕН" \\',
+      '  -d \'{"query":"query { contentFactoryHealth { module status } }"}\'',
+    ].join('\n');
+
+    const gqlUrlEl = document.getElementById('gqlUrl');
+    const jwtEl = document.getElementById('jwt');
+    const httpBodyEl = document.getElementById('httpBody');
+    const httpOutEl = document.getElementById('httpOut');
+    const wsOutEl = document.getElementById('wsOut');
+    const wsProjectIdEl = document.getElementById('wsProjectId');
+
+    if (localStorage.getItem('theme') === 'dark' || (!localStorage.getItem('theme') && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+      document.documentElement.classList.add('dark');
+    }
+
+    function wsUrlFromHttp(httpUrl) {
+      const u = new URL(httpUrl);
+      u.protocol = u.protocol === 'https:' ? 'wss:' : 'ws:';
+      return u.toString();
+    }
+
+    gqlUrlEl.value = localStorage.getItem('contentFactoryGqlUrl') || '';
+    jwtEl.value = localStorage.getItem('contentFactoryJwt') || '';
+    httpBodyEl.value = localStorage.getItem('contentFactoryHttpBody') || JSON.stringify(examples.health, null, 2);
+
+    gqlUrlEl.addEventListener('change', () => localStorage.setItem('contentFactoryGqlUrl', gqlUrlEl.value));
+    jwtEl.addEventListener('change', () => localStorage.setItem('contentFactoryJwt', jwtEl.value));
+    httpBodyEl.addEventListener('change', () => localStorage.setItem('contentFactoryHttpBody', httpBodyEl.value));
+
+    document.getElementById('btnCookie').onclick = () => {
+      const v = getCookie('radar');
+      if (v) jwtEl.value = v;
+      else alert('Cookie «radar» на этом origin не найдена. Вставьте JWT вручную (например из DevTools → Application).');
+    };
+
+    document.getElementById('btnGuessUrl').onclick = () => {
+      const { protocol, host } = window.location;
+      const base = protocol + '//' + host;
+      gqlUrlEl.value = base.replace(/\/$/, '') + '/graphql';
+    };
+
+    document.getElementById('fillHealth').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.health, null, 2);
+    };
+    document.getElementById('fillGraph').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.graph, null, 2);
+    };
+
+    document.getElementById('fillDuplicate').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.duplicateNode, null, 2);
+    };
+    document.getElementById('fillShare').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.publishProject, null, 2);
+    };
+
+    document.getElementById('fillAspect').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.updateAspectRatio, null, 2);
+    };
+    document.getElementById('fillUpdatePrompt').onclick = () => {
+      httpBodyEl.value = JSON.stringify(examples.updatePrompt, null, 2);
+    };
+
+    document.getElementById('btnRunHttp').onclick = async () => {
+      httpOutEl.textContent = '';
+      const url = gqlUrlEl.value.trim();
+      const raw = jwtEl.value.trim();
+      if (!url) {
+        httpOutEl.innerHTML = '<span class="err">Укажите URL GraphQL</span>';
+        return;
+      }
+      let body;
+      try {
+        body = JSON.parse(httpBodyEl.value || '{}');
+      } catch (e) {
+        httpOutEl.innerHTML = '<span class="err">Некорректный JSON тела: ' + (e && e.message) + '</span>';
+        return;
+      }
+      try {
+        const res = await fetch(url, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            ...(raw ? { Authorization: 'JWT ' + raw } : {}),
+          },
+          body: JSON.stringify(body),
+        });
+        const text = await res.text();
+        try {
+          const json = JSON.parse(text);
+          httpOutEl.textContent = JSON.stringify(json, null, 2);
+        } catch {
+          httpOutEl.textContent = text;
+        }
+      } catch (e) {
+        httpOutEl.innerHTML = '<span class="err">' + (e && e.message ? e.message : String(e)) + '</span>';
+      }
+    };
+
+    let wsClient = null;
+    let wsDispose = null;
+
+    document.getElementById('btnWsStop').onclick = () => {
+      if (wsDispose) {
+        wsDispose();
+        wsDispose = null;
+      }
+      wsClient = null;
+      wsOutEl.textContent += '\n[остановлено]\n';
+    };
+
+    document.getElementById('btnWsStart').onclick = async () => {
+      if (wsDispose) wsDispose();
+      wsOutEl.textContent = '';
+
+      const httpUrl = gqlUrlEl.value.trim();
+      const raw = jwtEl.value.trim();
+      const projectId = wsProjectIdEl.value.trim() || '1';
+      if (!httpUrl) {
+        wsOutEl.innerHTML = '<span class="err">Укажите URL GraphQL</span>';
+        return;
+      }
+      if (!raw) {
+        wsOutEl.innerHTML = '<span class="err">Укажите JWT</span>';
+        return;
+      }
+
+      const { createClient } = await import('https://esm.sh/graphql-ws@5.16.2');
+      const url = wsUrlFromHttp(httpUrl);
+
+      wsClient = createClient({
+        url,
+        connectionParams: () => ({
+          Authorization: 'JWT ' + raw,
+        }),
+      });
+
+      wsDispose = wsClient.subscribe(
+        { query: SUBSCRIPTION, variables: { projectId } },
+        {
+          next: (data) => {
+            wsOutEl.textContent += JSON.stringify(data, null, 2) + '\n';
+          },
+          error: (err) => {
+            wsOutEl.textContent += '[error] ' + (err && err.message ? err.message : String(err)) + '\n';
+          },
+          complete: () => {
+            wsOutEl.textContent += '[complete]\n';
+          },
+        }
+      );
+    };
+  </script>
+</body>
+</html>

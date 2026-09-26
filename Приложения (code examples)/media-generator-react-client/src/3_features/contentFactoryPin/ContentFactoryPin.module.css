@@ -1,0 +1,337 @@
+.pin {
+    width: auto;
+    min-width: 208px;
+    background-color: var(--color-bg-alt);
+    border-radius: 12px;
+    padding: 4px;
+    position: relative;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    border: 1px solid var(--color-border-muted);
+}
+
+.pin__title {
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    color: var(--color-text-muted);
+    margin: 0;
+    padding: 0;
+    position: absolute;
+    left: 0;
+    top: -18px;
+}
+
+.pin__lockedIcon {
+    position: absolute;
+    right: 0;
+    top: -21px;
+    color: var(--color-text-muted);
+}
+
+.pin__label {
+    font-size: 10px;
+    color: var(--color-text-muted);
+}
+
+.pin__note {
+    padding: 4px;
+    user-select: text;
+    pointer-events: auto !important;
+}
+
+.pin__noteWrapper {
+    display: grid;
+    grid-template-columns: auto minmax(0, 200px);
+    column-gap: 10px;
+    align-items: start;
+    /* padding: 10px; */
+    border-radius: 8px;
+    background-color: var(--cf-color-orange-muted);
+}
+
+.pin__noteText {
+    color: var(--color-text-lt-primary);
+    font-size: 12px;
+    z-index: 2;
+    min-height: 60px;
+    outline: none;
+    display: block;
+    word-break: break-word;
+    overflow-wrap: break-word;
+    white-space: pre-wrap;
+    cursor: text;
+    min-width: 0;
+    width: 100%;
+    max-width: 200px;
+}
+
+.pin__noteText:empty::before {
+    content: attr(data-placeholder);
+    color: var(--color-text-lt-primary);
+    opacity: 0.5;
+    pointer-events: none;
+}
+
+.pin__mediaWrapper {
+    width: auto;
+    height: 200px;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    overflow: hidden;
+    position: relative;
+}
+
+/* .pin__mediaWrapper_userContent {
+    max-height: 400px;
+    max-width: 400px;
+} */
+
+.pin__mediaWrapper:hover .pin__modalButton {
+    display: flex;
+}
+
+.pin__modalButton {
+    display: none;
+    width: 20px;
+    height: 20px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-muted);
+    border-radius: 4px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    z-index: 1;
+    cursor: pointer;
+    border: none;
+}
+
+.pin__mediaSpinner {
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-solid-alt);
+}
+
+.pin__mediaWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}
+
+.pin__mediaWrapper video {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    cursor: pointer;
+}
+
+.pin__videoPlayButton {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(0, 0, 0, 0.15);
+    border: none;
+    cursor: pointer;
+    transition: opacity 0.15s ease;
+    z-index: 1;
+}
+
+.pin__videoPlayButton_hidden {
+    opacity: 0;
+    pointer-events: none;
+}
+
+.pin__mediaPlaceholder {
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    align-items: center;
+    justify-content: center;
+    background-color: var(--color-bg-solid-alt);
+    border-radius: 8px;
+    font-size: 24px;
+    color: var(--color-text-muted);
+    font-weight: 500;
+    font-size: 10px;
+    line-height: 140%;
+    letter-spacing: 0%;
+    text-align: center;
+
+}
+
+.pinControlPanel {
+    position: absolute;
+    background-color: var(--color-bg-alt);
+    border-radius: 12px;
+    border: 1px solid var(--color-border-muted);
+    padding: 4px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 4px;
+}
+
+.pinControlPanel__bottom {
+    top: calc(100% + 4px);
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.pinControlPanel__right {
+    top: 0;
+    left: calc(100% + 4px);
+}
+
+.pinControlPanel__button {
+    width: auto;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 8px;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-standard);
+    transform: scale(1);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+}
+
+.pinControlPanel__button:hover {
+    background-color: var(--color-bg-muted);
+}
+
+.pinControlPanel__button:active {
+    background-color: var(--color-bg-solid-alt);
+    transform: scale(0.98);
+}
+
+.pinControlPanel__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+}
+
+.customHandle__wrapper {
+    position: absolute;
+    pointer-events: all;
+}
+
+.customHandle__wrapper_tt:before {
+    content: attr(data-tooltip);
+    position: absolute;
+    top: -100%;
+    left: 50%;
+    width: max-content;
+    transform: translateX(-50%);
+    background-color: var(--color-bg-alt);
+    border-radius: 6px;
+    padding: 2px 4px;
+    z-index: -1;
+}
+
+
+.customHandle {
+    width: 28px;
+    height: 28px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    pointer-events: none;
+    position: absolute;
+}
+
+.pinDropdownMenu {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 140px;
+}
+
+.pinDropdownMenu__item {
+    padding: 4px 10px 4px 4px;
+    line-height: 100%;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border .1s var(--ease-standard);
+    font-size: 12px;
+    height: min-content;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.pinDropdownMenu__item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+}
+
+.pinDropdownMenu__item:hover {
+    border: 1px solid var(--color-border-muted);
+}
+
+.pinDropdownMenu__itemIcon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+}
+
+.dimensionsSelect__option {
+    padding: 4px 10px 4px 4px;
+    line-height: 100%;
+    border-radius: 8px;
+    border: 1px solid transparent;
+    transition: border .1s var(--ease-standard);
+    font-size: 12px;
+    height: min-content;
+}
+
+.dimensionsSelect__option:hover {
+    border: 1px solid var(--color-border-muted);
+}
+
+.dimensionsSelect:hover {
+    background-color: var(--color-bg-muted);
+}
+
+.pin__references {
+    display: flex;
+    gap: 4px;
+    border-radius: 6px;
+}
+
+.pin__references_disabled {
+    position: relative;
+    cursor: not-allowed;
+}
+
+.pin__referenceWrapper {
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    overflow: hidden;
+}
+
+.pin__referenceWrapper img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+}

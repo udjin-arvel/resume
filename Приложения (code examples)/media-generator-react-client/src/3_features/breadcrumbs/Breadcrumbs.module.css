@@ -1,0 +1,19 @@
+.breadcrumbs {
+    width: auto;
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 6px;
+}
+
+.breadcrumbs__link {
+    color: var(--color-text-muted);
+    display: flex;
+    justify-content: flex-start;
+    align-items: center;
+    gap: 6px;
+}
+
+.breadcrumbs__endOfTheLine {
+    color: var(--color-text-primary);
+}

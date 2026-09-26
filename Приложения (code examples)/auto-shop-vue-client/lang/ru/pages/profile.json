@@ -1,0 +1,17 @@
+{
+    "info": "Изменение личных данных",
+    "password": "Изменение пароля",
+    "current_password": "Текущий пароль",
+    "block_personal_data": "Личные данные",
+    "block_photo": "Фото",
+    "block_password": "Изменение пароля",
+    "must_change_password_warning": "Для продолжения работы Вам нужно сменить пароль",
+    "block_telegram": "Уведомления Telegram",
+    "telegram_unbound_desc": "Привяжите свой аккаунт Telegram, чтобы получать системные уведомления.",
+    "telegram_bound_success": "Ваш аккаунт Telegram успешно привязан.",
+    "bind_telegram": "Привязать Telegram",
+    "telegram_bind_link_ready": "Откройте Telegram и нажмите «Запустить» для завершения привязки",
+    "telegram_open_bot": "Открыть бота в Telegram",
+    "unbind_telegram": "Отвязать",
+    "telegram_events_toggle": "Получать уведомления о событиях в Telegram"
+}

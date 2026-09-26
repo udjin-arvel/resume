@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+
+{% block title %}Статус анализа — Conquer{% endblock %}
+
+{% block page_class %}page--wide{% endblock %}
+
+{% block content %}
+  <section
+    class="status-panel surface-card"
+    id="status-panel"
+    data-request-id="{{ analysis_request.id }}"
+    data-status="{{ analysis_request.status.value }}"
+  >
+    <div class="status-panel__head">
+      <p class="brand">Conquer</p>
+      <h1>Анализ в процессе</h1>
+      <p class="mono url-line">{{ analysis_request.url }}</p>
+    </div>
+
+    <ol class="stages" id="stages">
+      {% for stage in stages %}
+        <li class="stage stage--{{ stage.state }}" data-stage="{{ stage.key }}">
+          <span class="stage__marker" aria-hidden="true"></span>
+          <span class="stage__body">
+            <span class="stage__label">{{ stage.label }}</span>
+            <span class="stage__detail">{{ stage.detail }}</span>
+          </span>
+        </li>
+      {% endfor %}
+    </ol>
+
+    <p class="status-message" id="status-message" hidden></p>
+    <p class="status-hint" id="status-hint">Обновляем статус каждые 2 секунды…</p>
+  </section>
+{% endblock %}
+
+{% block scripts %}
+  <script src="/static/js/status.js" defer></script>
+{% endblock %}

@@ -1,0 +1,25 @@
+{
+  "confirm": {
+    "title": "确认购车预定",
+    "seller_contacts_china": "中国卖家联系方式",
+    "wechat_seller": "中国卖家微信",
+    "phone_seller": "中国卖家联系电话",
+    "phone_example": "示例: +37 000 000-00-00",
+    "address_china": "中国详细地址",
+    "address_helper": "请使用拉丁字母填写。示例: Room 10, no. 100, Avenue avenue, District district, City city, Province province, China",
+    "additional_info": "补充信息（非必填）",
+    "shipping_data": "车辆发运信息",
+    "departure_city": "发车城市",
+    "verify": "请确认",
+    "city_not_specified": "未指定城市",
+    "insurance": "车辆保险",
+    "insurance_expiry_date": "车辆保险到期日期",
+    "insurance_date_placeholder": " DD.MM.YYYY",
+    "warning_text": "提交以上信息即表示您已确认该车辆的购买预订",
+    "submit_button": "确认预定并提交信息",
+    "error_wechat_required": "请填写卖家微信",
+    "error_phone_required": "请填写卖家联系电话",
+    "error_address_required": "请填写中国详细地址",
+    "error_insurance_required": "请填写保险到期日期"
+  }
+}

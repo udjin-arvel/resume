@@ -1,0 +1,928 @@
+openapi: 3.1.0
+info:
+  title: ScanMe API
+  version: 0.1.0
+servers:
+  - url: http://localhost:8080
+paths:
+  /healthz:
+    get:
+      summary: Liveness probe
+      responses:
+        "200":
+          description: Server is alive
+  /readyz:
+    get:
+      summary: Readiness probe
+      responses:
+        "200":
+          description: Dependencies are ready
+        "503":
+          description: A dependency is unavailable
+  /v1/ping:
+    get:
+      summary: API smoke test
+      responses:
+        "200":
+          description: Pong response
+  /v1/auth/device:
+    post:
+      summary: Register or login anonymous device user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [deviceId]
+              properties:
+                deviceId:
+                  type: string
+      responses:
+        "200":
+          description: Access and refresh token pair
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+  /v1/auth/refresh:
+    post:
+      summary: Rotate refresh token and issue a new token pair
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [refreshToken]
+              properties:
+                refreshToken:
+                  type: string
+      responses:
+        "200":
+          description: New token pair
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/TokenPair"
+  /v1/products/{barcode}:
+    get:
+      summary: Get product by barcode
+      parameters:
+        - name: barcode
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Product fetched from cache or Open Food Facts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Product"
+        "404":
+          description: Product was not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /v1/substances:
+    get:
+      summary: List substance dictionary delta
+      parameters:
+        - name: since
+          in: query
+          schema:
+            type: integer
+            format: int64
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 100
+      responses:
+        "200":
+          description: Substance delta
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubstanceListResponse"
+  /v1/substances/search:
+    get:
+      summary: Search active substances
+      parameters:
+        - name: q
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Search result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubstanceListResponse"
+  /v1/admin/auth/login:
+    post:
+      summary: Login dashboard admin
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                  format: email
+                password:
+                  type: string
+      responses:
+        "200":
+          description: Admin access token
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [accessToken, expiresAt, role]
+                properties:
+                  accessToken:
+                    type: string
+                  expiresAt:
+                    type: string
+                    format: date-time
+                  role:
+                    type: string
+  /v1/admin/substances:
+    get:
+      summary: List substances for dashboard
+      responses:
+        "200":
+          description: Substance list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/SubstanceListResponse"
+    post:
+      summary: Create substance
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubstancePayload"
+      responses:
+        "201":
+          description: Created substance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Substance"
+  /v1/admin/substances/import:
+    post:
+      summary: Import substances from JSON
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: "#/components/schemas/SubstancePayload"
+      responses:
+        "201":
+          description: Imported substances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Substance"
+  /v1/admin/substances/export:
+    get:
+      summary: Export substances as JSON
+      responses:
+        "200":
+          description: Exported substances
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: "#/components/schemas/Substance"
+  /v1/admin/substances/{id}:
+    patch:
+      summary: Update substance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/SubstancePayload"
+      responses:
+        "200":
+          description: Updated substance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Substance"
+    delete:
+      summary: Soft-delete substance
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      responses:
+        "204":
+          description: Deleted
+  /v1/admin/substances/{id}/audit-history:
+    get:
+      summary: Version snapshots recorded for a substance (rollback targets)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+      responses:
+        "200":
+          description: Audit rows newest-first
+          content:
+            application/json:
+              schema:
+                type: object
+                required: [items]
+                properties:
+                  items:
+                    type: array
+                    items:
+                      $ref: "#/components/schemas/SubstanceAuditHistoryRow"
+  /v1/admin/substances/{id}/rollback:
+    post:
+      summary: Restore substance rows from an admin_audit snapshot (bumps version)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [auditId]
+              properties:
+                auditId:
+                  type: string
+                  format: uuid
+      responses:
+        "200":
+          description: Substance after rollback
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Substance"
+  /v1/admin/moderation/queue:
+    get:
+      summary: DeepSeek substance candidate moderation queue
+      parameters:
+        - name: status
+          in: query
+          schema:
+            type: string
+            enum: ["", pending, approved, rejected]
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: suggestions
+          in: query
+          description: When true, include mergeSuggestion substance preview when duplicate detected
+          schema:
+            type: boolean
+            default: false
+      responses:
+        "200":
+          description: Queue slice with counts
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ModerationQueueResponse"
+  /v1/admin/moderation/{id}/approve:
+    post:
+      summary: Approve candidate (creates or updates substance)
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/ModerationApproveOverrides"
+      responses:
+        "200":
+          description: Resulting substance
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Substance"
+  /v1/admin/moderation/{id}/reject:
+    post:
+      summary: Reject candidate
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reason:
+                  type: string
+      responses:
+        "204":
+          description: Rejected
+  /v1/events:
+    post:
+      summary: Batch ingest analytics events (authenticated user)
+      parameters:
+        - name: Idempotency-Key
+          in: header
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AnalyticsBatchRequest"
+      responses:
+        "200":
+          description: Accepted batch summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsBatchResponse"
+        "400":
+          description: Invalid payload
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /v1/admin/stats/overview:
+    get:
+      summary: Admin dashboard KPI overview
+      responses:
+        "200":
+          description: Overview aggregates
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminStatsOverview"
+  /v1/admin/users:
+    get:
+      summary: List mobile users (paginated)
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 30
+        - name: premium
+          in: query
+          schema:
+            type: string
+            enum: [all, premium, free]
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: User list page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUsersPage"
+  /v1/admin/users/{id}:
+    patch:
+      summary: Update mobile user premium expiry
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: string
+            format: uuid
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                isPremiumUntil:
+                  type: string
+                  format: date-time
+                  nullable: true
+      responses:
+        "200":
+          description: Updated user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminUser"
+        "404":
+          description: User not found
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/ErrorResponse"
+  /v1/admin/audit:
+    get:
+      summary: Admin audit log
+      parameters:
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 50
+        - name: adminUserId
+          in: query
+          schema:
+            type: string
+            format: uuid
+        - name: entityType
+          in: query
+          schema:
+            type: string
+        - name: entityId
+          in: query
+          schema:
+            type: string
+        - name: from
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: to
+          in: query
+          schema:
+            type: string
+            format: date-time
+        - name: cursor
+          in: query
+          schema:
+            type: string
+      responses:
+        "200":
+          description: Audit page
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AdminAuditPage"
+components:
+  schemas:
+    TokenPair:
+      type: object
+      required: [accessToken, refreshToken, expiresAt]
+      properties:
+        accessToken:
+          type: string
+        refreshToken:
+          type: string
+        expiresAt:
+          type: string
+          format: date-time
+    Product:
+      type: object
+      required: [barcode, name, ingredients, source, fetchedAt, cachedUntil]
+      properties:
+        barcode:
+          type: string
+        name:
+          type: string
+        brands:
+          type: string
+        imageUrl:
+          type: string
+        ingredients:
+          type: array
+          items:
+            $ref: "#/components/schemas/ProductIngredient"
+        source:
+          type: string
+          enum: [open_food_facts, cache]
+        fetchedAt:
+          type: string
+          format: date-time
+        cachedUntil:
+          type: string
+          format: date-time
+        analysis:
+          $ref: "#/components/schemas/ProductAnalysis"
+        aiInsight:
+          $ref: "#/components/schemas/ProductAiInsight"
+        analysisSource:
+          type: string
+          description: Present when analysis was produced or loaded from DeepSeek enrichment (optionally merged with the dictionary).
+          enum: [deepseek, mixed]
+    ProductAiInsight:
+      type: object
+      properties:
+        productSummary:
+          type: string
+        compositionOverview:
+          type: string
+        disclaimer:
+          type: string
+        locale:
+          type: string
+    ProductIngredient:
+      type: object
+      required: [text]
+      properties:
+        id:
+          type: string
+        text:
+          type: string
+        percent:
+          type: string
+        rank:
+          type: integer
+        vegan:
+          type: string
+        vegetarian:
+          type: string
+    ProductAnalysis:
+      type: object
+      required: [overallDanger, matches]
+      properties:
+        overallDanger:
+          type: string
+          enum: [safe, controversial, dangerous]
+        matches:
+          type: array
+          items:
+            $ref: "#/components/schemas/IngredientMatch"
+    IngredientMatch:
+      type: object
+      required: [ingredientText, substances]
+      properties:
+        ingredientText:
+          type: string
+        substances:
+          type: array
+          items:
+            $ref: "#/components/schemas/MatchedSubstance"
+    MatchedSubstance:
+      type: object
+      required: [name, dangerLevel]
+      properties:
+        id:
+          type: string
+          description: UUID from the ScanMe dictionary when known; may be empty when only suggested by the model.
+        code:
+          type: string
+        name:
+          type: string
+        dangerLevel:
+          type: string
+          enum: [safe, controversial, dangerous]
+        description:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+    SubstanceListResponse:
+      type: object
+      required: [items, nextVersion]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/Substance"
+        nextVersion:
+          type: integer
+          format: int64
+    Substance:
+      allOf:
+        - $ref: "#/components/schemas/SubstancePayload"
+        - type: object
+          required: [id, version, createdAt, updatedAt]
+          properties:
+            id:
+              type: string
+              format: uuid
+            version:
+              type: integer
+              format: int64
+            createdAt:
+              type: string
+              format: date-time
+            updatedAt:
+              type: string
+              format: date-time
+    SubstancePayload:
+      type: object
+      required: [name, aliases, category, dangerLevel, description, sources, isActive]
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+        dangerLevel:
+          type: string
+          enum: [safe, controversial, dangerous]
+        description:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+    AnalyticsBatchRequest:
+      type: object
+      required: [events]
+      properties:
+        events:
+          type: array
+          maxItems: 100
+          items:
+            type: object
+            required: [name]
+            properties:
+              name:
+                type: string
+              props:
+                type: object
+                additionalProperties: true
+              ts:
+                type: string
+                format: date-time
+              id:
+                type: string
+    AnalyticsBatchResponse:
+      type: object
+      required: [accepted, idempotent]
+      properties:
+        accepted:
+          type: integer
+          format: int64
+        idempotent:
+          type: boolean
+    AdminStatsOverview:
+      type: object
+      properties:
+        dau:
+          type: integer
+          format: int64
+        wau:
+          type: integer
+          format: int64
+        mau:
+          type: integer
+          format: int64
+        totalUsers:
+          type: integer
+          format: int64
+        premiumUsers:
+          type: integer
+          format: int64
+        premiumConversionRate:
+          type: number
+          format: double
+        productCacheHitRate:
+          type: number
+          format: double
+        paywallShownLast30d:
+          type: integer
+          format: int64
+        purchaseSuccessLast30d:
+          type: integer
+          format: int64
+        purchaseConversionRate:
+          type: number
+          format: double
+        scansLast14Days:
+          type: array
+          items:
+            type: object
+            properties:
+              day:
+                type: string
+              count:
+                type: integer
+                format: int64
+    AdminUser:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        deviceId:
+          type: string
+        email:
+          type: string
+          nullable: true
+        isPremiumUntil:
+          type: string
+          format: date-time
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    AdminUsersPage:
+      type: object
+      required: [items, nextCursor]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminUser"
+        nextCursor:
+          type: string
+    AdminAuditEntry:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        adminEmail:
+          type: string
+          nullable: true
+        action:
+          type: string
+        entityType:
+          type: string
+          nullable: true
+        entityId:
+          type: string
+          nullable: true
+        diff:
+          nullable: true
+        ip:
+          type: string
+          nullable: true
+        userAgent:
+          type: string
+          nullable: true
+        createdAt:
+          type: string
+          format: date-time
+    SubstanceAuditHistoryRow:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        action:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        diff:
+          nullable: true
+    ModerationStatusCounts:
+      type: object
+      properties:
+        pending:
+          type: integer
+          format: int64
+        approved:
+          type: integer
+          format: int64
+        rejected:
+          type: integer
+          format: int64
+    ModerationQueueItem:
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+        source:
+          type: string
+        barcode:
+          type: string
+        candidate:
+          type: object
+          additionalProperties: true
+        normalizedKey:
+          type: string
+        status:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+        reviewedBy:
+          type: string
+          nullable: true
+        reviewedAt:
+          type: string
+          format: date-time
+          nullable: true
+        rejectReason:
+          type: string
+          nullable: true
+        resolvedSubstanceId:
+          type: string
+          nullable: true
+        mergeSuggestion:
+          nullable: true
+    ModerationQueueResponse:
+      type: object
+      required: [counts, items]
+      properties:
+        counts:
+          $ref: "#/components/schemas/ModerationStatusCounts"
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/ModerationQueueItem"
+    ModerationApproveOverrides:
+      type: object
+      properties:
+        code:
+          type: string
+        name:
+          type: string
+        aliases:
+          type: array
+          items:
+            type: string
+        category:
+          type: string
+        dangerLevel:
+          type: string
+          enum: [safe, controversial, dangerous]
+        description:
+          type: string
+        sources:
+          type: array
+          items:
+            type: string
+        isActive:
+          type: boolean
+    AdminAuditPage:
+      type: object
+      required: [items, nextCursor]
+      properties:
+        items:
+          type: array
+          items:
+            $ref: "#/components/schemas/AdminAuditEntry"
+        nextCursor:
+          type: string
+    ErrorResponse:
+      type: object
+      required: [error]
+      properties:
+        error:
+          type: object
+          required: [code, message]
+          properties:
+            code:
+              type: string
+            message:
+              type: string

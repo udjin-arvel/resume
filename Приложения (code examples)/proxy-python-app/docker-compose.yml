@@ -1,0 +1,44 @@
+# RadarArt-Proxy Docker Compose конфигурация
+#
+# Использование:
+#   docker compose up -d          # Запуск в фоне
+#   docker compose logs -f        # Просмотр логов
+#   docker compose down           # Остановка
+
+services:
+  radar-art-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: radar-art-proxy
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8090
+      - DEBUG=True
+      - KAFKA_BOOTSTRAP_SERVERS=kafka:29092
+      - KAFKA_CONSUMER_GROUP_ID=radar_backend_proxy_dev
+      - KAFKA_TOPIC_REQUESTS=requests-dev
+      - KAFKA_TOPIC_RESULTS=results-dev
+      - KAFKA_TOPIC_DIALOGS=dialogs-dev
+      - KAFKA_TOPIC_PROMPT_JOBS=prompt_jobs-dev
+    volumes:
+      - .:/app
+      - ./.env:/app/.env:ro
+    networks:
+      - kafka-network
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  kafka-network:
+    external: true
+    name: kafka-network

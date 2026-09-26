@@ -1,0 +1,48 @@
+{
+  "title": "所有通知",
+  "popover_title": "通知",
+  "empty": "暂无新通知",
+  "show_more": "显示更多",
+  "loading_more": "加载中…",
+  "mark_all": "全部标记为已读",
+  "all_read": "所有通知均已标记为已读",
+  "new_available": "有新通知 — 查看",
+  "new_count": "新通知：{count} — 查看",
+  "view_all": "查看全部",
+  "go_to": "前往",
+  "open": "打开",
+  "team_events": "我的团队事件",
+  "is_read": "读",
+  "is_not_read": "未读",
+  "initiators": {
+    "you": "您",
+    "service_team": "AutoShop",
+    "system": "系统"
+  },
+  "table": {
+    "date": "日期",
+    "initiator": "发起者",
+    "event": "事件",
+    "section": "板块",
+    "details": "细节",
+    "client": "客户"
+  },
+  "events": {
+    "diagnostic": {
+      "closed": "诊断资料已上传：",
+      "declined": "诊断请求已被拒绝：",
+      "new": "收到新的诊断请求：",
+      "again": "诊断请求已重新开启："
+    },
+    "video": {
+      "closed": "视频已上传：",
+      "declined": "视频请求已被拒绝：",
+      "new": "收到新的视频请求：",
+      "again": "视频请求已重新开启："
+    },
+    "booking": {
+      "confirmed": "预订已确认：",
+      "declined": "预订已被拒绝："
+    }
+  }
+}
