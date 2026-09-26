@@ -1,0 +1,21 @@
+{
+  "types": {
+    "diagnostic": "Запрошена диагностика",
+    "compensation": "Запрошены выписки",
+    "video": "Запрошено видео",
+    "booking": "Запрошено бронирование",
+    "chat": "Сообщение в чате",
+    "video_closed": "Загружено видео",
+    "diagnostic_closed": "Диагностика загружена",
+    "compensation_closed": "Выписки загружены",
+    "booking_confirmed": "Бронирование подтверждено",
+    "booking_declined": "Бронирование отклонено",
+    "video_again": "Запрос на видео переоткрыт",
+    "diagnostic_again": "Запрос на диагностику переоткрыт",
+    "compensation_again": "Запрос на выписки переоткрыт",
+    "booking_again": "Запрос на бронирование переоткрыт",
+    "video_declined": "Запрос на видео отклонен",
+    "diagnostic_declined": "Запрос на диагностику отклонен",
+    "compensation_declined": "Запрос на выписки отклонен"
+  }
+}

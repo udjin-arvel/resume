@@ -1,0 +1,4 @@
+ALTER TABLE users
+    ADD COLUMN IF NOT EXISTS block_reason TEXT NOT NULL DEFAULT '',
+    ADD COLUMN IF NOT EXISTS blocked_at TIMESTAMPTZ,
+    ADD COLUMN IF NOT EXISTS block_project_id UUID REFERENCES projects(id);

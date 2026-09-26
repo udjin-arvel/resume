@@ -1,0 +1,35 @@
+{
+  "list": {
+    "change_name_action": "修改名称",
+    "export": "导出",
+    "select": "选择",
+    "selected": "已选择...",
+    "hide_action": "隐藏",
+    "show_action": "显示",
+    "search_placeholder": "搜索品牌与车型",
+    "filter_all": "显示与隐藏",
+    "filter_hidden": "仅隐藏",
+    "filter_visible": "仅显示",
+    "collapse": "收起",
+    "expand": "展开",
+    "column_model": "品牌／车型",
+    "column_visible": "在网站显示"
+  },
+  "completion": {
+    "show_on_site": "在网站显示",
+    "label_brand": "品牌",
+    "label_model": "车型",
+    "label_year": "出厂年份",
+    "label_trim": "配置",
+    "label_color": "颜色",
+    "label_engine": "发动机",
+    "label_power": "功率",
+    "label_drive": "驱动",
+    "label_scale": "车身类型",
+    "brand_select_label": "品牌",
+    "brand_select_placeholder": "请选择品牌",
+    "model_select_label": "车型",
+    "model_select_placeholder": "请选择车型",
+    "search_placeholder": "搜索配置"
+  }
+}

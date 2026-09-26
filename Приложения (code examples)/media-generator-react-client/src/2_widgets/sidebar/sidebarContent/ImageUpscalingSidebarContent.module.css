@@ -1,0 +1,106 @@
+.content {
+    display: flex;
+    flex-direction: column;
+    gap: 40px;
+}
+
+.content__backToMenuButton {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px;
+    border-radius: 8px;
+    background-color: var(--color-bg-alt);
+    color: var(--color-text-muted);
+    font-weight: 600;
+}
+
+.content__settings {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.content__title {
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.content__settingsItem {
+    width: 100%;
+    border-radius: 12px;
+    padding: 12px;
+    background-color: var(--color-bg-alt);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+
+}
+
+.content__settingsOptions {
+    width: 100%;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 8px;
+}
+
+.content__settingsOption {
+    width: 100%;
+    aspect-ratio: 1 / 1;
+    border-radius: 8px;
+    border: 1px solid var(--color-border-muted);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    transition: all .1s var(--ease-standard);
+    color: var(--color-text-muted);
+    padding: 4px;
+    gap: 12px
+}
+
+.content__settingsOption_selected {
+    border: 1px solid var(--color-text-primary);
+    color: var(--color-text-primary);
+}
+
+.content__settingsOption_selected .content__priceBadge {
+    color: var(--color-text-lt-primary);
+    background-color: #EEEAFF;
+}
+
+.content__settingsOption_selected .content__priceBadge > svg {
+    color: var(--color-primary);
+}
+
+.content__optionHeader {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.content__priceBadge {
+    display: flex;
+    align-items: center;
+    gap: 2px;
+    border-radius: 6px;
+    padding: 2px 4px;
+    background-color: var(--color-bg-solid-alt);
+    transition: all .1s var(--ease-standard);
+}
+
+.content__settingsOption:hover {
+    color: var(--color-text-primary);
+    border: 1px solid var(--color-text-primary);
+}
+
+.content__settingsOption:hover .content__priceBadge {
+    color: var(--color-text-lt-primary);
+    background-color: #EEEAFF;
+}
+
+.content__settingsOption:hover .content__priceBadge > svg {
+    color: var(--color-primary);
+}

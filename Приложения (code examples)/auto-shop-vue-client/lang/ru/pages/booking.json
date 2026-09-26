@@ -1,0 +1,25 @@
+{
+  "confirm": {
+    "title": "Подтверждение бронирования автомобиля для покупки",
+    "seller_contacts_china": "Контакты продавца в Китае",
+    "wechat_seller": "Wechat продавца в Китае",
+    "phone_seller": "Номер телефона продавца в Китае",
+    "phone_example": "Пример: +37 000 000-00-00",
+    "address_china": "Полный адрес в Китае",
+    "address_helper": "Заполнить латиницей. Пример: Room 10, no. 100, Avenue avenue, District district, City city, Province province, China",
+    "additional_info": "Дополнительные сведения (не обязательно)",
+    "shipping_data": "Данные для отправки автомобиля",
+    "departure_city": "Город отправления",
+    "verify": "Проверьте",
+    "city_not_specified": "Город не указан",
+    "insurance": "Страховка автомобиля",
+    "insurance_expiry_date": "Дата окончания действия страховки автомобиля",
+    "insurance_date_placeholder": "ДД.ММ.ГГГГ",
+    "warning_text": "Отправляя эти данные вы подтверждаете бронирование автомобиля для покупки",
+    "submit_button": "Подтвердить бронирование и отправить данные",
+    "error_wechat_required": "Укажите Wechat продавца",
+    "error_phone_required": "Укажите номер телефона продавца",
+    "error_address_required": "Укажите полный адрес в Китае",
+    "error_insurance_required": "Укажите дату окончания страховки"
+  }
+}

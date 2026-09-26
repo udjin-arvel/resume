@@ -1,0 +1,23 @@
+services:
+  front:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        ENVIRONMENT_NAME: ${ENVIRONMENT_NAME:-staging}
+    image: auto-shop-front:latest
+    container_name: auto-shop-front
+    restart: unless-stopped
+    ports:
+      - "${FRONT_PORT:-3000}:3000"
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3000
+      NODE_ENV: production
+      NUXT_PUBLIC_SENTRY_DSN: ${NUXT_PUBLIC_SENTRY_DSN:-}
+    networks:
+      - auto-shop
+
+networks:
+  auto-shop:
+    driver: bridge

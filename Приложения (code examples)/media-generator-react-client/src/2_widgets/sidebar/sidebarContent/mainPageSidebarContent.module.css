@@ -1,0 +1,50 @@
+.sidebar__navigationList {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    gap: 2px;
+}
+
+.sidebar__navigationItem {
+    width: 100%;
+}
+
+.sidebar__navigationLink {
+    width: 100%;
+    border-radius: 8px;
+    padding: 8px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background-color: transparent;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-standard);
+}
+
+.sidebar__navigationLink:hover {
+    background-color: var(--color-bg-alt);
+}
+
+.sidebar__navigationLink_active {
+    background-color: var(--color-bg-alt);
+}
+
+/* React Router adds global `.transitioning` on NavLink during view transition */
+.sidebar__navigationLink:global(.transitioning) {
+    opacity: 0.88;
+}
+
+.sidebar__navigationItemIcon {
+    color: var(--color-text-muted);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.sidebar__navigationItemText {
+    font-weight: 600;
+    font-size: 12px;
+    letter-spacing: 0%;
+    white-space: nowrap;
+}

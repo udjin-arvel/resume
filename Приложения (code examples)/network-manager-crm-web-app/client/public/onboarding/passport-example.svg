@@ -1,0 +1,11 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 300" role="img" aria-label="Passport photo example">
+  <rect width="400" height="300" fill="#f1f5f9"/>
+  <rect x="40" y="40" width="320" height="220" rx="12" fill="#fff" stroke="#cbd5e1" stroke-width="2"/>
+  <rect x="60" y="70" width="90" height="110" rx="6" fill="#e2e8f0"/>
+  <circle cx="105" cy="115" r="28" fill="#94a3b8"/>
+  <rect x="170" y="80" width="160" height="12" rx="4" fill="#e2e8f0"/>
+  <rect x="170" y="105" width="130" height="10" rx="4" fill="#e2e8f0"/>
+  <rect x="170" y="130" width="145" height="10" rx="4" fill="#e2e8f0"/>
+  <rect x="170" y="155" width="120" height="10" rx="4" fill="#e2e8f0"/>
+  <text x="200" y="220" text-anchor="middle" fill="#64748b" font-family="system-ui,sans-serif" font-size="14">Passport example placeholder</text>
+</svg>

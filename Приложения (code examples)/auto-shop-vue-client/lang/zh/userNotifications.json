@@ -1,0 +1,59 @@
+{
+  "entity_types": {
+    "ListingRequest": "车辆",
+    "CarLinkAction": "链接",
+    "SearchRequestEvent": "申请",
+    "ListingSourceEvent": "来源"
+  },
+  "types": {
+    "listing_request_video_requested": "已请求视频",
+    "listing_request_video_declined": "视频请求已被拒绝",
+    "listing_request_video_closed": "视频已上传",
+    "listing_request_video_again": "视频请求已重新开启",
+
+    "listing_request_diagnostic_requested": "已请求车辆检测",
+    "listing_request_diagnostic_declined": "检测请求已被拒绝",
+    "listing_request_diagnostic_closed": "检测报告已上传",
+    "listing_request_diagnostic_again": "检测请求已重新开启",
+
+    "listing_request_compensation_requested": "已请求报表",
+    "listing_request_compensation_declined": "报表请求已被拒绝",
+    "listing_request_compensation_closed": "报表已上传",
+    "listing_request_compensation_again": "报表请求已重新开启",
+
+    "listing_request_booking_requested": "已请求预订",
+    "listing_request_booking_declined_by_client": "客户已拒绝预订",
+    "listing_request_booking_declined_by_staff": "预订已被拒绝",
+    "listing_request_booking_expired": "预订已自动取消：24小时内未确认",
+    "listing_request_booking_closed": "预订已确认",
+    "listing_request_booking_returned_to_sale": "您预订的车辆已重新上架出售",
+
+
+    "car_link_action_created": "新链接",
+    "car_link_action_canceled_by_client": "买家已取消链接",
+    "car_link_action_canceled_by_staff": "链接已取消",
+    "car_link_action_taken_in_work": "已接手处理",
+    "car_link_action_assignee_changed": "您已被指定为负责人",
+    "car_link_action_replied": "已提供回复",
+    "car_link_action_interested": "客户感兴趣",
+    "car_link_action_not_interested": "客户对此方案不感兴趣",
+    "car_link_action_listing_attached": "车辆已添加",
+
+
+    "search_request_event_new": "新需求申请",
+    "search_request_event_canceled_by_client": "买家已取消需求申请",
+    "search_request_event_canceled_by_staff": "需求申请已关闭",
+    "search_request_event_completed_by_client": "需求申请已完成",
+    "search_request_event_completed_by_staff": "需求申请已完成",
+    "search_request_event_updated_by_client": "需求申请信息已更改",
+    "search_request_event_changes_accepted_by_staff": "需求申请的更改已接受",
+    "search_request_event_taken_in_work": "需求申请已接手处理",
+    "search_request_event_listing_added": "已向需求申请添加车辆",
+    "search_request_event_listing_rejected_by_client": "车辆不合适",
+    "search_request_event_listing_request_more_by_client": "客户请求了更多车辆方案",
+    "search_request_event_listing_replacement_required": "需求申请中的车辆方案需要更换",
+
+    "listing_source_event_price_changed": "来源价格已变更",
+    "listing_source_event_unpublished": "来源已下架"
+  }
+}

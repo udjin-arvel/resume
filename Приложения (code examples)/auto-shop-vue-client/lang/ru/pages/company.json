@@ -1,0 +1,13 @@
+{
+  "title": "Компания",
+  "title_new": "Новая компания",
+  "balance": "Баланс",
+  "change_balance": "Изменить баланс",
+  "china_expenses_title": "Расходы по Китаю",
+  "china_expenses_default": "Расходы платформы (по умолчанию) для всех портов",
+  "china_expenses_below_base": "ниже расчёта платформы!",
+  "change_password": "Смена пароля",
+  "change_password_second": "Сменить пароль",
+  "password_hint": "Пароль должен состоять из латинских букв, цифр, знаков и символов препинания и пунктуации.",
+  "password_min_length": "Не менее 8 символов"
+}

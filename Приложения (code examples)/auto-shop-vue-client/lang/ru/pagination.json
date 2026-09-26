@@ -1,0 +1,8 @@
+{
+  "backward": "Предыдущая",
+  "forward": "Следующая",
+  "dots": "...",
+  "range_total": "Записей {start} — {end} из {items}",
+  "range_infinity": "{start}-{end}",
+  "page_sizes": "На странице:"
+}

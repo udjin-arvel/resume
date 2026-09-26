@@ -1,0 +1,82 @@
+.underDev {
+    width: 100%;
+    min-height: min(60vh, 520px);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 24px;
+    padding: 32px 16px;
+    text-align: center;
+}
+
+.underDev__iconBlock {
+    position: relative;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.underDev__accent {
+    position: absolute;
+    width: clamp(120px, 28vw, 200px);
+    height: clamp(120px, 28vw, 200px);
+    border-radius: 50%;
+    background: radial-gradient(
+        circle at 35% 35%,
+        color-mix(in srgb, var(--color-secondary) 40%, transparent),
+        transparent 70%
+    );
+    pointer-events: none;
+    filter: blur(50px);
+}
+
+.underDev__icon {
+    position: relative;
+    width: clamp(72px, 18vw, 120px);
+    height: clamp(72px, 18vw, 120px);
+    color: var(--color-secondary);
+}
+
+.underDev__title {
+    max-width: 420px;
+    margin: 0;
+}
+
+.underDev__description {
+    max-width: 360px;
+    margin: 0;
+    color: var(--color-text-muted);
+}
+
+.underDev__actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
+    justify-content: center;
+    margin-top: 8px;
+}
+
+.underDev__outlineBtn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-height: 46px;
+    padding: 0 20px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 14px;
+    font-family: inherit;
+    color: var(--color-primary);
+    background: var(--color-bg-alt);
+    border: 1px solid var(--color-border-muted);
+    cursor: pointer;
+    transition:
+        background 0.2s var(--ease-standard),
+        border-color 0.2s var(--ease-standard);
+}
+
+.underDev__outlineBtn:hover {
+    border-color: color-mix(in srgb, var(--color-primary) 35%, var(--color-border-muted));
+    background: color-mix(in srgb, var(--color-primary) 6%, var(--color-bg-alt));
+}

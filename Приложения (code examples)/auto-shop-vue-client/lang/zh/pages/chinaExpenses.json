@@ -1,0 +1,26 @@
+{
+  "settings": {
+    "title": "中国费用",
+    "description": "按港口设置贵公司经理在车辆详情页、分享链接和发票中看到的“中国费用”显示方式。未设置的港口将显示平台的计算结果。",
+    "mode_base": "平台费用",
+    "mode_markup": "加价",
+    "mode_fixed": "替换",
+    "mode_own": "自定金额",
+    "base_fixed": "平台计算：{amount}",
+    "base_per_city": "平台计算：{amount} + 从车辆所在城市的运费",
+    "amount_label_markup": "加价金额（元）",
+    "amount_label_fixed": "您的金额（元）",
+    "amount_placeholder": "0",
+    "amount_invalid": "请输入大于零的金额",
+    "below_base_warning": "您的金额低于平台的计算结果——经理将看到低于成本的价格",
+    "save": "保存",
+    "saved": "港口“{port}”的设置已保存"
+  },
+  "admin": {
+    "select_label": "公司",
+    "select_placeholder": "请选择公司",
+    "pick_company": "请选择公司以查看其中国费用设置。",
+    "no_ports": "该公司暂无已配置的港口。",
+    "mode_label": "模式"
+  }
+}

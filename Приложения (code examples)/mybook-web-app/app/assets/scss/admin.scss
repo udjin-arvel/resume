@@ -1,0 +1,169 @@
+// Admin panel — dark theme aligned with main site (main.scss / tailwind.config.js)
+
+.admin-app {
+  .v-application {
+    background-color: #212121 !important;
+    background-image:
+      radial-gradient(ellipse 80% 60% at 10% 20%, rgba(221, 176, 137, 0.07) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 50% at 90% 80%, rgba(231, 140, 61, 0.06) 0%, transparent 55%),
+      radial-gradient(ellipse 50% 40% at 50% 50%, rgba(221, 176, 137, 0.03) 0%, transparent 70%);
+    color: #fff;
+  }
+
+  .v-navigation-drawer {
+    background: rgba(18, 18, 18, 0.92) !important;
+    backdrop-filter: blur(12px);
+    border-right: 1px solid rgba(221, 176, 137, 0.2) !important;
+  }
+
+  .v-navigation-drawer .v-list-item-title {
+    color: rgba(255, 255, 255, 0.9);
+  }
+
+  .v-navigation-drawer .v-list-item-subtitle {
+    color: #a8a8a8 !important;
+  }
+
+  .v-navigation-drawer .v-list-item--active > .v-list-item__overlay {
+    opacity: 0.08;
+  }
+
+  .v-navigation-drawer .v-list-item--active {
+    color: #ddb089 !important;
+    border-left: 2px solid #ddb089;
+    background: rgba(221, 176, 137, 0.08) !important;
+  }
+
+  .v-app-bar {
+    background: rgba(26, 26, 26, 0.95) !important;
+    backdrop-filter: blur(8px);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+  }
+
+  .v-app-bar-title {
+    color: #e78c3d;
+    font-weight: 600;
+  }
+
+  .v-card {
+    background: #242424 !important;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    border-radius: 16px !important;
+    color: #fff;
+  }
+
+  .v-card-title {
+    color: #ddb089;
+  }
+
+  .v-card-subtitle {
+    color: #a8a8a8 !important;
+  }
+
+  .v-data-table {
+    background: transparent !important;
+    color: #fff;
+  }
+
+  .v-data-table-header th {
+    color: #a8a8a8 !important;
+    background: #1a1a1a !important;
+  }
+
+  .v-data-table__tr:hover {
+    background: rgba(255, 255, 255, 0.03) !important;
+  }
+
+  .v-table > .v-table__wrapper > table > tbody > tr:not(:last-child) > td,
+  .v-table > .v-table__wrapper > table > tbody > tr:not(:last-child) > th {
+    border-bottom-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .v-divider {
+    border-color: rgba(255, 255, 255, 0.06) !important;
+  }
+
+  .v-field {
+    --v-field-border-opacity: 0.12;
+  }
+
+  .v-field--variant-outlined .v-field__outline {
+    --v-field-border-opacity: 0.15;
+  }
+
+  .v-field--focused .v-field__outline {
+    color: #ddb089 !important;
+  }
+
+  .v-label,
+  .v-field__input {
+    color: #fff;
+  }
+
+  .v-input__details {
+    color: #a8a8a8;
+  }
+
+  .v-btn--variant-tonal {
+    background: rgba(221, 176, 137, 0.12) !important;
+    color: #ddb089 !important;
+  }
+
+  .v-btn--variant-text {
+    color: #ddb089 !important;
+  }
+
+  .v-chip {
+    border: 1px solid rgba(255, 255, 255, 0.08);
+  }
+
+  .v-stepper {
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+
+  .v-stepper-header {
+    background: #1a1a1a;
+    border-radius: 12px;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .v-stepper-item__title {
+    color: #a8a8a8;
+  }
+
+  .v-stepper-item--selected .v-stepper-item__title {
+    color: #ddb089 !important;
+  }
+
+  .v-alert {
+    background: #2c2c2c !important;
+    border: 1px solid rgba(255, 255, 255, 0.06);
+  }
+
+  .v-expansion-panel {
+    background: #1a1a1a !important;
+    color: #fff;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+  }
+
+  .v-expansion-panel-title {
+    color: #ddb089;
+  }
+
+  .v-dialog > .v-overlay__content > .v-card {
+    border: 1px solid rgba(221, 176, 137, 0.25);
+  }
+
+  .v-snackbar__wrapper {
+    border-radius: 12px !important;
+  }
+
+  .v-snackbar__content {
+    color: #fff;
+  }
+
+  .admin-stat-card {
+    transition: border-color 0.2s ease;
+  }
+}

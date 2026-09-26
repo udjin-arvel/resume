@@ -1,0 +1,36 @@
+{
+  "list": {
+    "add_new": "添加员工",
+    "roles": "角色：",
+    "not_found": "未找到用户",
+    "add_new_company": "添加公司",
+    "add_new_employee": "添加员工",
+    "status_filter": "用户状态",
+    "role_filter": "用户角色",
+    "delete_confirm": "确定要删除{type}：{name}吗？"
+  },
+  "detail": {
+    "block_personal_data": "个人资料",
+    "block_password_data": "修改密码",
+    "block_new_personal_data": "新增员工",
+    "permissions_title": "用户权限",
+    "permissions_cars_title": "车辆",
+    "permissions_cars_view_assigned": "查看分配的车辆",
+    "permissions_cars_reassign": "重新分配车辆",
+    "permissions_cars_confirm_video": "确认视频和诊断请求",
+    "permissions_cars_confirm_booking": "确认车辆预订",
+    "permissions_cars_view_events": "查看车辆事件",
+    "permissions_orders_title": "申请",
+    "permissions_orders_view_list": "查看申请",
+    "permissions_orders_take_work": "受理申请",
+    "permissions_orders_change_status": "更改申请状态",
+    "permissions_orders_add_cars": "向申请添加车辆",
+    "permissions_orders_finish_selection": "完成申请中的筛选",
+    "permissions_chats_title": "聊天",
+    "permissions_chats_view_chats": "查看车辆聊天",
+    "permissions_chats_manage_roles": "管理角色",
+    "permissions_chats_tracking_view": "追踪访问权限：仅查看",
+    "permissions_chats_tracking_full": "追踪访问权限：完全"
+  }
+}
+

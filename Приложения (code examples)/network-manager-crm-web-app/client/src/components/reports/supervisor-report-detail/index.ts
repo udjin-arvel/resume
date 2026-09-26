@@ -1,0 +1,13 @@
+export { WorkerReportDetailSection as SupervisorReportDetailSection } from "../worker-report-detail/WorkerReportDetailSection";
+export { SupervisorReportDetailHeader } from "./SupervisorReportDetailHeader";
+export { SupervisorReportGeneralSection } from "./SupervisorReportGeneralSection";
+export { SupervisorReportVoiceSection } from "./SupervisorReportVoiceSection";
+export { SupervisorReportDescriptionSection } from "./SupervisorReportDescriptionSection";
+export { SupervisorReportPhotosSection } from "./SupervisorReportPhotosSection";
+export { SupervisorReportCompletedWorksSection } from "./SupervisorReportCompletedWorksSection";
+export { SupervisorReportCrewSection } from "./SupervisorReportCrewSection";
+export { SupervisorReportIssueSection } from "./SupervisorReportIssueSection";
+export { SupervisorReportDowntimeSection } from "./SupervisorReportDowntimeSection";
+export { SupervisorReportRelatedIssueSection } from "./SupervisorReportRelatedIssueSection";
+export { SupervisorReportManagerCommentSection } from "./SupervisorReportManagerCommentSection";
+export { SupervisorReportReviewActions } from "./SupervisorReportReviewActions";

@@ -1,0 +1,49 @@
+{
+  "index": {
+    "cars_title": "车辆",
+    "cars_desc_buyer": "可购买的现车",
+    "cars_desc_seller": "可出售的现车",
+    "links_title": "车辆链接",
+    "links_desc_buyer": "发送互联网车辆页面链接进行检查",
+    "links_desc_seller": "互联网车辆页面链接检查",
+    "needs_title": "搜索申请",
+    "needs_desc_buyer": "根据需求挑选车辆，可查看并创建新请求",
+    "needs_desc_seller": "根据买家需求进行车辆筛选",
+    "chats_title": "聊天",
+    "chats_desc_buyer": "与卖家沟通车辆购买和运输",
+    "chats_desc_seller": "与买家沟通车辆购买和运输",
+    "logistic_title": "物流与追踪",
+    "logistic_desc": "已购车辆的运输流程",
+    "calc_title": "计算器",
+    "calc_desc": "计算费用和运输成本",
+    "subscriptions_title": "新注册通知订阅",
+    "subscriptions_desc": "设置哪些用户接收新客户注册通知"
+  },
+  "menu": {
+    "main": "首页",
+    "cars": "车辆",
+    "cars_desc_buyer": "购买车辆",
+    "cars_desc_seller": "出售车辆",
+    "history_buyer": "购买历史",
+    "history_seller": "销售历史",
+    "chats": "聊天",
+    "needs": "搜索申请",
+    "links": "链接",
+    "history": "购买历史",
+    "calc": "计算器",
+    "logistic": "物流与追踪",
+    "china_expenses": "中国费用",
+    "admin_china_expenses": "各公司中国费用",
+    "reviews": "评价",
+    "listing_requests": "车辆请求",
+    "balances": "余额",
+    "companies": "公司",
+    "users": "用户",
+    "brands": "品牌和车型管理",
+    "subscriptions": "通知订阅",
+    "auto_assign": "经理自动分配"
+  },
+  "widget": {
+    "go_to_section": "进入栏目"
+  }
+}

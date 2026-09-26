@@ -1,0 +1,35 @@
+{
+  "list": {
+    "add_new": "Добавить сотрудника",
+    "roles": "Роль:",
+    "not_found": "Пользователи не найдены",
+    "add_new_company": "Добавить компанию",
+    "add_new_employee": "Добавить сотрудника",
+    "status_filter": "Статус пользователя",
+    "role_filter": "Роль пользователя",
+    "delete_confirm": "Вы уверены, что хотите удалить {type}: {name}?"
+  },
+  "detail": {
+    "block_personal_data": "Личные данные",
+    "block_password_data": "Смена пароля",
+    "block_new_personal_data": "Новый сотрудник",
+    "permissions_title": "Права пользователя",
+    "permissions_cars_title": "Автомобили",
+    "permissions_cars_view_assigned": "Видеть назначенные автомобили",
+    "permissions_cars_reassign": "Переназначать автомобили",
+    "permissions_cars_confirm_video": "Подтверждать запросы на видео и диагностику",
+    "permissions_cars_confirm_booking": "Подтверждать бронирование автомобиля",
+    "permissions_cars_view_events": "Видеть события с автомобилями",
+    "permissions_orders_title": "Заявки",
+    "permissions_orders_view_list": "Видеть заявки",
+    "permissions_orders_take_work": "Брать заявки в работу",
+    "permissions_orders_change_status": "Менять статус заявки",
+    "permissions_orders_add_cars": "Добавлять автомобили в заявку",
+    "permissions_orders_finish_selection": "Завершать подбор в заявке",
+    "permissions_chats_title": "Чаты",
+    "permissions_chats_view_chats": "Видеть чаты автомобилей",
+    "permissions_chats_manage_roles": "Управлять ролями",
+    "permissions_chats_tracking_view": "Доступ к трекингу: только просмотр",
+    "permissions_chats_tracking_full": "Доступ к трекингу: полный"
+  }
+}

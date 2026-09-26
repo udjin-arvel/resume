@@ -1,0 +1,28 @@
+.DS_Store
+Thumbs.db
+*.sql
+logs
+tmp/*
+
+.env
+
+npm-debug.log
+yarn-error.log
+/.fleet
+/.idea
+/.vscode
+
+
+# Nuxt dev/build outputs
+/.output
+/.data
+/.nuxt
+/.nitro
+/.cache
+/dist
+/missing_translations
+
+# Node dependencies
+/node_modules
+
+robots.txt

@@ -1,0 +1,35 @@
+{
+  "list": {
+    "select": "Выбрать",
+    "selected": "Выбранные...",
+    "hide_action": "Скрыть",
+    "show_action": "Показать",
+    "search_placeholder": "Поиск марок и моделей",
+    "filter_all": "Показанные и скрытые",
+    "filter_hidden": "Скрытые",
+    "filter_visible": "Показанные",
+    "collapse": "Свернуть",
+    "expand": "Развернуть",
+    "column_model": "Марка, Модель",
+    "column_visible": "Показать на сайте",
+    "change_name_action": "Изменить название",
+    "export": "Экспорт"
+  },
+  "completion": {
+    "show_on_site": "Показать на сайте",
+    "label_brand": "Марка",
+    "label_model": "Модель",
+    "label_year": "Дата выпуска",
+    "label_trim": "Комплектация",
+    "label_color": "Цвет",
+    "label_engine": "Двигатель",
+    "label_power": "Мощность",
+    "label_drive": "Привод",
+    "label_scale": "Тип кузова",
+    "brand_select_label": "Марка",
+    "brand_select_placeholder": "Выберите марку",
+    "model_select_label": "Модель",
+    "model_select_placeholder": "Выберите модель",
+    "search_placeholder": "Поиск комплектаций"
+  }
+}

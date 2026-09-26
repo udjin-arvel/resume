@@ -1,0 +1,108 @@
+.featureCard {
+    width: 100%;
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border-muted);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    container: featureCard / inline-size;
+    animation: featureCardEnter 0.5s var(--ease-spring) both;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+    transform: translateY(0);
+    transition: transform 0.3s var(--ease-standard);
+}
+
+
+@keyframes featureCardEnter {
+    from {
+        opacity: 0;
+        translate: 0 24px;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+.featureCard:hover {
+    transform: translateY(-3px);
+}
+
+.featureCard__wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+   
+    @container featureCard (width < 480px) {
+       display: flex;
+       flex-direction: column-reverse;
+       justify-content: space-between;
+    }
+}
+
+.featureCard__content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 8px 0 8px 8px;
+
+    @container featureCard (width < 480px) {
+       height: 100%;
+    }
+}
+
+.featureCard__txtContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+}
+
+.featureCard__photo {
+    width: 100%;
+    height: 35cqw;
+    max-height: 220px;
+    border-radius: 8px;
+    overflow: hidden;
+    align-self: stretch;
+
+    @container featureCard (width < 550px) {
+        max-height: none;
+        height: 100%;
+    }
+    @container featureCard (width < 480px) {
+        height: 50cqw;
+        flex: 0 0 auto;
+    }
+}
+
+.featureCard__photo img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    object-position: left top;
+    transform: scale(1.05);
+}
+
+.featureCard__tagsBlock {
+    width: 100%;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.featureCard__tag {
+    padding: 0 6px;
+    border-radius: 6px;
+    height: 20px;
+    white-space: nowrap;
+    background-color: var(--color-bg-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

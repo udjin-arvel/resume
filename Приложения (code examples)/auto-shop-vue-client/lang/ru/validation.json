@@ -1,0 +1,16 @@
+{
+    "required": "Поле обязательно для заполнения",
+    "min_length": "Минимум {0} символов",
+
+    "role_required": "Роль обязательна",
+    "company_required": "Компания обязательна",
+    "name_required": "Имя обязательно",
+
+    "email": "Неверный формат email",
+    "email_required": "Email обязателен",
+
+    "password_required": "Пароль обязателен",
+    "passwords_mismatch": "Пароли не совпадают",
+
+    "sum_too_low": "Сумма не может быть меньше {min}"
+}

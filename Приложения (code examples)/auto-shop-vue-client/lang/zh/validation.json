@@ -1,0 +1,12 @@
+{
+  "sum_too_low": "金额不能低于 {min}",
+  "required": "此字段为必填项",
+  "min_length": "最少 {0} 个字符",
+  "role_required": "角色为必填项",
+  "company_required": "公司为必填项",
+  "name_required": "姓名为必填项",
+  "email": "邮箱格式不正确",
+  "email_required": "邮箱为必填项",
+  "password_required": "密码为必填项",
+  "passwords_mismatch": "两次输入的密码不一致"
+}

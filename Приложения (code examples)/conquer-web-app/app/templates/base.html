@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="ru">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <title>{% block title %}{{ title }}{% endblock %}</title>
+    <link rel="stylesheet" href="/static/css/style.css" />
+    {% block head %}{% endblock %}
+  </head>
+  <body>
+    <header class="site-header">
+      <a class="logo" href="/">
+        <span class="logo-mark">◆</span>
+        <span class="logo-text">Conquer</span>
+        <span class="logo-badge">MVP</span>
+      </a>
+    </header>
+    <main class="page {% block page_class %}{% endblock %}">
+      {% if error %}
+        <p class="flash flash-error" role="alert">{{ error }}</p>
+      {% endif %}
+      {% block content %}{% endblock %}
+    </main>
+    {% block scripts %}{% endblock %}
+  </body>
+</html>

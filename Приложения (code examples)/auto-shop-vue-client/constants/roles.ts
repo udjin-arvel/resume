@@ -1,0 +1,8 @@
+export const RoleAdmin = "admin"
+export const RoleCompany = "company"
+export const RoleDirector = "director"
+export const RoleEmployee = "employee"
+export const RoleLogistic = "logistic"
+export const RoleSellerContent = "seller_content"
+export const RoleSellerSearch = "seller_search"
+export const RoleSellerClient = "seller_client"

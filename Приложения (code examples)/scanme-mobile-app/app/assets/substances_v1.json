@@ -1,0 +1,50 @@
+[
+  {
+    "id": "seed-e102",
+    "code": "E102",
+    "name": "Tartrazine",
+    "aliases": ["тартразин", "tartrazine", "yellow 5"],
+    "category": "colorant",
+    "dangerLevel": "controversial",
+    "description": "Synthetic yellow food colorant that may cause sensitivity reactions in some people.",
+    "sources": ["https://world.openfoodfacts.org/additive/e102-tartrazine"],
+    "isActive": true,
+    "version": 0
+  },
+  {
+    "id": "seed-e250",
+    "code": "E250",
+    "name": "Sodium nitrite",
+    "aliases": ["нитрит натрия", "sodium nitrite"],
+    "category": "preservative",
+    "dangerLevel": "dangerous",
+    "description": "Curing preservative associated with nitrosamine formation risks when misused.",
+    "sources": ["https://world.openfoodfacts.org/additive/e250-sodium-nitrite"],
+    "isActive": true,
+    "version": 0
+  },
+  {
+    "id": "seed-e621",
+    "code": "E621",
+    "name": "Monosodium glutamate",
+    "aliases": ["msg", "глутамат натрия", "monosodium glutamate"],
+    "category": "flavour_enhancer",
+    "dangerLevel": "controversial",
+    "description": "Flavour enhancer that some users prefer to limit.",
+    "sources": ["https://world.openfoodfacts.org/additive/e621-monosodium-glutamate"],
+    "isActive": true,
+    "version": 0
+  },
+  {
+    "id": "seed-trans-fat",
+    "code": "TRANS_FAT",
+    "name": "Trans fats",
+    "aliases": ["трансжиры", "partially hydrogenated oil", "hydrogenated fat"],
+    "category": "fat",
+    "dangerLevel": "dangerous",
+    "description": "Industrial trans fats are associated with increased cardiovascular risk.",
+    "sources": ["https://www.who.int/news-room/fact-sheets/detail/healthy-diet"],
+    "isActive": true,
+    "version": 0
+  }
+]
