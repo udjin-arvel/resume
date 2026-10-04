@@ -1,11 +1,7 @@
-bin/
-tmp/
-uploads/
-*.exe
 .git
 .env
 .env.*
 !.env.example
 *.pem
 id_rsa
-
+*.log

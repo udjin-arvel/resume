@@ -59,6 +59,13 @@ byteplus_color_results/*
 .gitignore
 .gitattributes
 
+# Secrets
+.env
+.env.*
+!.env.example
+*.pem
+id_rsa
+
 # Docker
 Dockerfile
 docker-compose.yml
