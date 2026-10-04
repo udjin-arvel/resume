@@ -1,0 +1,18 @@
+FROM node:18
+
+WORKDIR /app
+
+# сначала только package‑файлы — кеш npm остаётся валидным
+COPY package*.json ./
+
+# production‑режим, ставим только runtime‑зависимости
+ENV NODE_ENV=production
+RUN npm ci --only=production
+
+# дальше уже весь исходник
+COPY . .
+
+# слушаем ровно тот порт, который отдаём nginx‑proxy
+EXPOSE 5555
+
+CMD ["npm", "run", "start"]

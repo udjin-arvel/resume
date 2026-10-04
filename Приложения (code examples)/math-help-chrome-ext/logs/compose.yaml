@@ -1,0 +1,131 @@
+services:
+  # Прокси-сервер Nginx
+  proxy:
+    container_name: math-help-proxy
+    image: nginx:1.24-alpine-slim
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    depends_on:
+      math-help-api:
+        condition: service_started
+    ports:
+      - "8080:80"
+    networks:
+      - math-help-net
+
+  # Основное приложение API
+  math-help-api:
+    container_name: math-help-api
+    image: math-help-api
+    build:
+      context: .
+    networks:
+      - math-help-net
+    ports:
+      - "5555:5555"
+    environment:
+      NODE_ENV: dev
+    volumes:
+      - ./logs:/usr/src/app/logs  # Монтирование директории логов
+    depends_on:
+      math-help-api-pg:
+        condition: service_healthy
+
+  # Сервис базы данных PostgreSQL
+  math-help-api-pg:
+    container_name: math-help-api-pg
+    image: postgres:14
+    networks:
+      - math-help-net
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: postgres
+      POSTGRES_DB: math-help-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  # Сервис для автоматического резервного копирования базы данных
+  db_backup:
+    container_name: math-help-db-backup
+    image: postgres:14
+    networks:
+      - math-help-net
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: postgres
+      POSTGRES_DB: math-help-db
+      PGPASSWORD: pass  # Необходимо для pg_dump без запроса пароля
+    volumes:
+      - ./db_backups:/backups  # Монтирование директории для хранения бэкапов
+    entrypoint: >
+      sh -c "
+        while true; do
+          pg_dump -h math-help-api-pg -U postgres math-help-db > /backups/backup_$(date +\%Y-\%m-\%d).sql;
+          echo 'Backup taken at $(date)';
+          find /backups -type f -name 'backup_*.sql' -mtime +14 -exec rm {} \\;    # Удаление бэкапов старше 14 дней
+          sleep 1800;  # Ожидание 24 часа
+        done
+      "
+    depends_on:
+      math-help-api-pg:
+        condition: service_healthy
+
+  # Сервис Loki для хранения логов
+  loki:
+    image: grafana/loki:2.7.1
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml  # Конфигурация Loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - math-help-net
+
+  # Сервис Promtail для сбора логов и отправки их в Loki
+  promtail:
+    image: grafana/promtail:2.7.1
+    container_name: promtail
+    volumes:
+      - ./logs:/var/log/app  # Монтирование директории с логами приложения
+      - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml  # Конфигурация Promtail
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    networks:
+      - math-help-net
+    depends_on:
+      - math-help-api
+      - loki
+
+  # Сервис Grafana для визуализации логов
+  grafana:
+    image: grafana/grafana:9.3.2
+    container_name: grafana
+    ports:  
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=3oacub  # Задайте надёжный пароль
+    volumes:
+      - grafana_data:/var/lib/grafana  # Постоянное хранилище данных Grafana
+    networks:
+      - math-help-net
+    depends_on:
+      - loki
+      - promtail
+
+networks:
+  math-help-net:
+    driver: bridge
+
+volumes:
+  grafana_data:
+    driver: local
+  db_backups:
+    driver: loca

@@ -1,0 +1,2407 @@
+﻿```
+Проанализируй следующий проект на Node.js. Выполни детальное code review. Обрати внимание на возможные ошибки, антипаттерны, потенциальные проблемы производительности и предложи улучшения.
+
+/* === BEGIN PROJECT STRUCTURE LISTING === */
+/* Project Root: D:\_d3_js\mathai_ref\back\src */
+/* Included extensions: js, ts, tsx, css, sql, json, env */
+/* Excluded patterns: node_modules, .git, dist, build, .next, .vercel, coverage, tmp, out, logs, .turbo, .cache, package-lock.json, yarn.lock, pnpm-lock.yaml, .idea, .trash, backups, man */
+
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: .env **/
+/** FILE CONTENT START **/
+GOOGLE_CLIENT_ID=000000000000-demo.apps.googleusercontent.com
+GOOGLE_CLIENT_SECRET=GOCSPX-demo
+GOOGLE_EXT_ID=bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb
+
+DB_USERNAME=postgres
+DB_PASSWORD=pass
+DB_NAME=postgres
+DB_HOST=localhost
+DB_PORT=5432
+OPENAI_API_KEY=sk-demo
+
+STRIPE_API_KEY=sk_test_demo
+STRIPE_WEBHOOK_SECRET=whsec_demo
+STRIPE_WEBHOOK_LOCAL_SECRET=whsec_demo
+STRIPE_SECRET_KEY=sk_test_demo
+STRIPE_YEARLY_ID=price_demo
+STRIPE_MONTHLY_ID=price_demo
+STRIPE_WEEKLY_ID=price_demo
+STRIPE_WEBHOOK=whsec_demo
+STRIPE_WEBHOOK_URL=https://127.0.0.1:5775/webhoo
+
+STRIPE_WEBHOOK_BACKURL=https://localhost:5444
+STRIPE_API_VERSION=""
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: app.module.ts **/
+/** FILE CONTENT START **/
+import * as dotenv from "dotenv";
+dotenv.config();
+import { StripeModule } from "@golevelup/nestjs-stripe";
+import {
+  MiddlewareConsumer,
+  Module,
+  NestModule,
+  RawBody,
+  RequestMethod,
+} from "@nestjs/common";
+import { ConfigModule } from "@nestjs/config";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { AuthModule } from "./auth/auth.module";
+import { UsersModule } from "./users/users.module";
+import { ImageModule } from "./common/utils/image/image.module";
+import { MetricsModule } from "./metrics/metrics.module";
+import { OrdersModule } from "./orders/orders.module"; // Import MetricsModule
+import { RequestLoggerMiddleware } from "./middlewares/request-logger.middleware";
+import { WinstonModule } from "nest-winston";
+import { LoggerConfig } from "./logger";
+import { DiscoveryModule } from "@golevelup/nestjs-discovery";
+import { WebhooksModule, applyRawBodyOnlyTo } from "@golevelup/nestjs-webhooks"; // 👈
+import { SubscriptionsModule } from './subscriptions/subscriptions.module';  // ← добавили
+
+import * as cfg from "./cfg";
+import { PaymentsModule } from "./payments/payments.module";
+import { ThrottlerModule } from '@nestjs/throttler';
+import {SharedStripeModule} from "./shared/stripe/stripe.module";
+
+@Module({
+  imports: [
+    ThrottlerModule.forRoot([{ "ttl": 60, limit: 10 }]),
+    WinstonModule.forRoot(LoggerConfig),
+    ConfigModule.forRoot({ isGlobal: true, envFilePath: ".env" }),
+    /** 1️⃣  StripeModule — в самом верху, до любого модуля,
+     *  который просто `import { StripeModule }`             */
+    // StripeModule.forRoot({
+    //   apiKey: process.env.STRIPE_SECRET_KEY,
+    //   webhookConfig: {
+    //     stripeSecrets: {
+    //       accountTest:process.env.STRIPE_WEBHOOK_SECRET,
+    //     },
+    //   },
+    // }),
+    SharedStripeModule,
+    TypeOrmModule.forRoot({
+      type: "postgres",
+      host: process.env.DB_HOST,
+      port: parseInt(process.env.DB_PORT),
+      username: process.env.DB_USERNAME,
+      password: process.env.DB_PASSWORD,
+      database: process.env.DB_NAME,
+      autoLoadEntities: true,
+      synchronize: true,
+      entities: [
+        __dirname + "/entities/*.entity{.ts,.js}",
+        __dirname + "/orderss/*.entity{.ts,.js}",
+      ],
+      logging: true,
+    }),
+    OrdersModule,
+    AuthModule,
+    UsersModule,
+    ImageModule,
+    DiscoveryModule,
+    WebhooksModule.forRoot({ requestRawBodyProperty: "rawBody" }),
+    MetricsModule,
+    PaymentsModule,SubscriptionsModule
+  ],
+})
+export class AppModule implements NestModule {
+  configure(consumer: MiddlewareConsumer) {
+    applyRawBodyOnlyTo(consumer, {
+      method: RequestMethod.ALL,
+      path: "stripe/webhook",
+    });
+    consumer.apply(RequestLoggerMiddleware).forRoutes("*");
+
+    // raw‑body нужен только Stripe‑вебхуку
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: cfg.ts **/
+/** FILE CONTENT START **/
+export const GOOGLE_CLIENT_ID =
+  "000000000000-demo.apps.googleusercontent.com";
+export const GOOGLE_CLIENT_SECRET = "GOCSPX-demo";
+export const GOOGLE_EXT_ID = "bbbbbbbbbbbbbbbbbbbbbbbbbbbbbbbb";
+
+
+export const FRONTEND_URL="https://localhost:5555/";
+
+export const DB_USERNAME = "postgres";
+export const DB_PASSWORD = "pass";
+export const DB_NAME = "postgres";
+export const DB_HOST = "localhost";
+export const DB_PORT = 5432;
+export const OPENAI_API_KEY =
+  "sk-demo";
+
+export const STRIPE_API_KEY =
+  "sk_test_demo";
+export const STRIPE_WEBHOOK_SECRET =
+  "whsec_demo";
+export const STRIPE_SECRET_KEY =
+  "sk_test_demo";
+export const STRIPE_YEARLY_ID = "price_demo";
+export const STRIPE_MONTHLY_ID = "price_demo";
+export const STRIPE_WEEKLY_ID = "price_demo";
+export const STRIPE_WEBHOOK = "whsec_demo";
+export const STRIPE_WEBHOOK_URL = "https://127.0.0.1:5775/webhoo";
+
+export const STRIPE_WEBHOOK_BACKURL = "https://127.0.0.1:5444/";
+export const STRIPE_API_VERSION = "";
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: logger.ts **/
+/** FILE CONTENT START **/
+import { utilities as nestWinstonModuleUtilities } from "nest-winston";
+import * as winston from "winston";
+import "winston-daily-rotate-file";
+
+export const LoggerConfig = {
+  format: winston.format.combine(
+    winston.format.timestamp(),
+    winston.format.json(),
+  ),
+  transports: [
+    new winston.transports.Console({
+      format: winston.format.combine(
+        winston.format.timestamp(),
+        winston.format.colorize(),
+        nestWinstonModuleUtilities.format.nestLike(), // NestJS-style logs
+      ),
+    }),
+    new winston.transports.DailyRotateFile({
+      dirname: "./logs",
+      filename: "application-%DATE%.log",
+      datePattern: "YYYY-MM-DD",
+      maxSize: "20m",
+      maxFiles: "14d",
+      level: "debug", // Log all levels to the file
+      handleExceptions: true, // Handle uncaught exceptions
+      handleRejections: true, // Handle unhandled promise rejections
+    }),
+  ],
+};
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: main.ts **/
+/** FILE CONTENT START **/
+import { NestFactory } from "@nestjs/core";
+import { AppModule } from "./app.module";
+import { NestExpressApplication } from '@nestjs/platform-express';
+import { join } from 'path';
+import { WinstonLogger, WinstonModule } from "nest-winston";
+import { LoggerConfig } from "./logger";
+import * as bodyParser from "body-parser";
+
+import { loggers } from "winston";
+import * as fs from "fs";
+import winston from "winston/lib/winston/config";
+//import * as dotenv from "dotenv";
+//dotenv.config();
+
+
+async function bootstrap() {
+  /*  const httpsOptions = {
+    key: fs.readFileSync('key.pem'),
+    cert: fs.readFileSync('cert.pem'),
+  };*/
+  const app = await NestFactory.create<NestExpressApplication>(AppModule, {
+    rawBody: true,
+    logger: WinstonModule.createLogger(LoggerConfig), // Use Winston logger
+  });
+  app.enableCors({ origin: ['https://example.com'] });
+  // Only this route gets the raw parser:
+  app.use(
+    "/stripe/webhook",
+    // ⬇️ parse as raw so we get a Buffer in req.body
+    bodyParser.raw({ type: "application/json", limit: "2mb" }),
+    // ⬇️ immediately inspect it
+    // (req, res, next) => {
+    //   // req.body is the raw Buffer
+    //   console.log('stripe-signature header:', req.headers['stripe-signature']);
+    //   console.log('req.body is Buffer?', Buffer.isBuffer(req.body));
+    //   if (Buffer.isBuffer(req.body)) {
+    //     // you can even peek at the first 200 bytes of the payload
+    //     console.log(req.body.toString('utf8', 0, 200));
+    //   }
+  );
+  //     next();
+  //   },
+  // );
+
+  // All your other routes still get normal JSON
+  app.use(bodyParser.json({ limit: "10mb" }));
+  app.use(bodyParser.urlencoded({ extended: true, limit: "10mb" }));
+  // 1) подключаем статику (если нужно)
+  app.useStaticAssets(join(__dirname, './', 'public'));
+
+  // 2) указываем, где лежат .ejs
+  app.setBaseViewsDir(join(__dirname, './', 'views'));
+
+  // 3) регистрируем EJS как движок
+  app.setViewEngine('ejs');
+  /** 2️⃣  Your “normal” parsers for every other route */
+  //  app.use(bodyParser.json({ limit: '10mb' }));
+  //
+
+  // Handle shutdown signals to flush logs
+  process.on("SIGTERM", async () => {
+    this.logger.log(
+      "SIGTERM signal received. Shutting down gracefully...",
+      "Bootstrap",
+    );
+    await app.close();
+    process.exit(0);
+  });
+
+  process.on("SIGINT", async () => {
+    this.logger.log(
+      "SIGINT signal received. Shutting down gracefully...",
+      "Bootstrap",
+    );
+    await app.close();
+    process.exit(0);
+  });
+
+  await app.listen(5555);
+}
+bootstrap();
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\auth.controller.spec.ts **/
+/** FILE CONTENT START **/
+import { Test, TestingModule } from "@nestjs/testing";
+import { AuthController } from "./auth.controller";
+import { AuthService } from "./auth.service";
+import { JwtService } from "@nestjs/jwt";
+import { HttpService } from "@nestjs/axios";
+import { UsersService } from "../users/users.service";
+
+describe("AuthController", () => {
+  let authController: AuthController;
+
+  const mockAuthService = {
+    validateGoogleToken: jest.fn(),
+  };
+
+  const mockUsersService = {
+    findOrCreate: jest.fn(),
+  };
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [AuthController],
+      providers: [
+        { provide: AuthService, useValue: mockAuthService },
+        { provide: UsersService, useValue: mockUsersService },
+        JwtService,
+        HttpService,
+      ],
+    }).compile();
+
+    authController = module.get<AuthController>(AuthController);
+  });
+
+  it("should be defined", () => {
+    expect(authController).toBeDefined();
+  });
+
+  it("should handle Google token exchange", async () => {
+    const mockBody = { code: "test-code"  };
+    mockAuthService.validateGoogleToken.mockResolvedValue({
+      email: "test@test.com",
+    });
+    mockUsersService.findOrCreate.mockResolvedValue({
+      id: 1,
+      email: "test@test.com",
+    });
+
+    const result = await authController.getToken({redirectUri: "", code:"test-code"});
+    expect(result).toHaveProperty("user");
+    expect(result).toHaveProperty("token");
+  });
+});
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\auth.controller.ts **/
+/** FILE CONTENT START **/
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Headers,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET } from "../cfg";
+import { HttpService } from "@nestjs/axios";
+import { lastValueFrom } from "rxjs";
+import { JwtService } from "@nestjs/jwt";
+import { UsersService } from "src/users/users.service";
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import { use } from "passport";
+import { decode } from "node:punycode";
+@Controller("auth")
+export class AuthController {
+  private readonly logger = new Logger(AuthController.name);
+
+  constructor(
+    private readonly httpService: HttpService,
+    private readonly jwtService: JwtService,
+    private readonly usersService: UsersService,
+  ) {}
+
+  // Validate and decode a JWT
+  @Get("verify")
+  async verifyToken(@Headers("authorization") authHeader: string) {
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      this.logger.warn("Token not found");
+      throw new UnauthorizedException("Token not found");
+    }
+
+    const token = authHeader.split(" ")[1];
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: "demo-jwt-secret",
+      });
+      return { isValid: true, user: decoded };
+    } catch (e) {
+      this.logger.warn(`Invalid or expired token ${token}`);
+      throw new UnauthorizedException("Invalid or expired token");
+    }
+  }
+
+  // Exchange authorization code for token and return app's JWT
+  @Post("google/token")
+  async getToken(@Body() body: { code: string; redirectUri: string }) {
+    const { code, redirectUri } = body;
+
+    try {
+      // Exchange code for Google access token
+      const tokenResponse = await lastValueFrom(
+        this.httpService.post("https://oauth2.googleapis.com/token", {
+          code,
+          client_id: GOOGLE_CLIENT_ID,
+          client_secret: GOOGLE_CLIENT_SECRET,
+          redirect_uri: redirectUri,
+          grant_type: "authorization_code",
+        }),
+      );
+
+      const accessToken = tokenResponse.data.access_token;
+
+      // Fetch user info using access token
+      const userInfoResponse = await lastValueFrom(
+        this.httpService.get("https://www.googleapis.com/oauth2/v3/userinfo", {
+          headers: { Authorization: `Bearer ${accessToken}` },
+        }),
+      );
+
+      const userData = userInfoResponse.data;
+
+      // Create or update user in your database
+      const user = await this.usersService.findOrCreate({
+        email: userData.email,
+        googleId: userData.sub,
+        firstName: userData.given_name,
+        lastName: userData.family_name,
+      });
+
+      // Generate JWT for your application
+      const jwtToken = this.jwtService.sign(
+        { user },
+        { expiresIn: "33d" },
+      );
+
+      return { user, token: jwtToken };
+    } catch (error) {
+      console.error("Error exchanging Google token:", error.message);
+      this.logger.error("Error exchanging Google token:", error.message);
+      throw new UnauthorizedException("Failed to exchange authorization code");
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\auth.module.ts **/
+/** FILE CONTENT START **/
+import { Module } from "@nestjs/common";
+import { PassportModule } from "@nestjs/passport";
+import { AuthController } from "./auth.controller";
+import { GoogleStrategy } from "./google.strategy";
+import { ConfigModule } from "@nestjs/config";
+import { UsersModule } from "src/users/users.module";
+import { JwtModule } from "@nestjs/jwt";
+import { HttpModule } from "@nestjs/axios";
+import { AuthService } from "./auth.service";
+
+@Module({
+  imports: [
+    PassportModule.register({ session: false }),
+    ConfigModule,
+    UsersModule,
+    HttpModule,
+    JwtModule.register({
+      secret: "demo-jwt-secret",
+      signOptions: {
+        expiresIn: "3d",
+      },
+    }),
+  ],
+  controllers: [AuthController],
+  providers: [GoogleStrategy, AuthService],
+  exports: [AuthService],
+})
+export class AuthModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\auth.service.ts **/
+/** FILE CONTENT START **/
+import { Injectable, UnauthorizedException } from "@nestjs/common";
+import { HttpService } from "@nestjs/axios";
+import { firstValueFrom } from "rxjs";
+
+@Injectable()
+export class AuthService {
+  constructor(private readonly httpService: HttpService) {}
+
+  async validateGoogleToken(token: string): Promise<any> {
+    try {
+      const response = await firstValueFrom(
+        this.httpService.get(
+          `https://www.googleapis.com/oauth2/v3/tokeninfo?access_token=${token}`,
+        ),
+      );
+
+      return response.data; // Данные о пользователе, если токен валиден
+    } catch (error) {
+      throw new UnauthorizedException("Недействительный токен");
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\current-user.decorator.ts **/
+/** FILE CONTENT START **/
+import { createParamDecorator, ExecutionContext } from "@nestjs/common";
+
+export const CurrentUser = createParamDecorator(
+  (data: unknown, ctx: ExecutionContext) => {
+    const req = ctx.switchToHttp().getRequest();
+    return req.user; // предполагается, что JwtAuthGuard положил сюда объект User
+  },
+);
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\google.middleware.ts **/
+/** FILE CONTENT START **/
+import {
+  Injectable,
+  NestMiddleware,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import { AuthService } from "./auth.service"; // Импортируем сервис для валидации токенов
+
+@Injectable()
+export class GoogleAuthMiddleware implements NestMiddleware {
+  constructor(private readonly authService: AuthService) {}
+
+  async use(req: Request, res: Response, next: NextFunction) {
+    const authHeader = req.headers["authorization"];
+
+    if (!authHeader || !authHeader.startsWith("Bearer ")) {
+      throw new UnauthorizedException("Токен не найден");
+    }
+
+    const token = authHeader.split(" ")[1]; // Извлекаем токен из заголовка Authorization
+
+    try {
+      const googleUserData = await this.authService.validateGoogleToken(token);
+      req.user = googleUserData; // Сохраняем данные пользователя в объект запроса
+      console.log(req.user);
+      next(); // Переходим к следующему middleware или контроллеру
+    } catch (error) {
+      throw new UnauthorizedException("Недействительный токен");
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\google.strategy.ts **/
+/** FILE CONTENT START **/
+import { Injectable } from "@nestjs/common";
+import { PassportStrategy } from "@nestjs/passport";
+import { Strategy, VerifyCallback } from "passport-google-oauth20";
+import { ConfigService } from "@nestjs/config";
+import { User } from "src/entities/User.entity";
+import { UsersService } from "src/users/users.service";
+import { GOOGLE_CLIENT_ID, GOOGLE_CLIENT_SECRET, GOOGLE_EXT_ID } from "../cfg";
+import { JwtService } from "@nestjs/jwt";
+
+@Injectable()
+export class GoogleStrategy extends PassportStrategy(Strategy, "google") {
+  constructor(
+    configService: ConfigService,
+    private userService: UsersService,
+    private jwtService: JwtService,
+  ) {
+    super({
+      clientID: GOOGLE_CLIENT_ID,
+      clientSecret: GOOGLE_CLIENT_SECRET,
+      callbackURL: `https://${GOOGLE_EXT_ID}.chromiumapp.org/`, // TODO редирект на страницу, после реги
+      scope: ["email", "profile"],
+    });
+  }
+
+  async validate(
+    accessToken: string,
+    refreshToken: string,
+    profile: any,
+    done: VerifyCallback,
+  ): Promise<any> {
+    const { name, emails, photos, id } = profile;
+
+    const user: Partial<User> = {
+      email: emails[0].value,
+      firstName: name.givenName,
+      lastName: name.familyName,
+      googleId: id,
+      attemptsLeft: 10,
+      attemptsCount: 0,
+    };
+
+    try {
+      // const savedUser = await this.userService.findOrCreate(user, id);
+      const savedUser = await this.userService.findOrCreate(user);
+      const jwtToken = this.jwtService.sign({ googleId: savedUser.googleId });
+
+      done(null, { user: savedUser, token: jwtToken });
+      // done(null, profile); // accessToken
+    } catch (e) {
+      console.log(e);
+      done(e, false);
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\jwt.strategy.ts **/
+/** FILE CONTENT START **/
+// src/auth/jwt-auth.guard.ts
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { Request } from "express";
+import { UsersService } from "../users/users.service";
+
+@Injectable()
+export class JwtAuthGuard implements CanActivate {
+  constructor(private readonly usersService: UsersService) {}
+
+  async canActivate(context: ExecutionContext): Promise<boolean> {
+    const request: Request = context.switchToHttp().getRequest();
+    const token = request.headers.authorization?.split(" ")[1];
+    console.log(token);
+
+    if (!token) {
+      console.log("Неверный токен");
+      return false;
+    }
+
+    try {
+      const u = await this.usersService.getMe(token);
+      const user = await this.usersService.findByGoogleId(u.googleId);
+      if (!user) {
+        console.log("Неверный токен");
+        return false;
+      }
+
+      request["user"] = user;
+      return true;
+    } catch (e) {
+      console.log(e);
+      return false;
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: auth\guards\debug-auth.guard.ts **/
+/** FILE CONTENT START **/
+import { Injectable, CanActivate, ExecutionContext } from "@nestjs/common";
+import { AuthGuard } from "@nestjs/passport";
+import { Observable } from "rxjs";
+import { Reflector } from "@nestjs/core";
+
+@Injectable()
+export class DebugAuthGuard extends AuthGuard("google") implements CanActivate {
+  canActivate(
+    context: ExecutionContext,
+  ): boolean | Promise<boolean> | Observable<boolean> {
+    const debug = process.env.DEBUG_AUTH === "true";
+    const request = context.switchToHttp().getRequest();
+
+    if (debug) {
+      // Назначаем фиктивного пользователя
+      request.user = {
+        user: {
+          id: "debug-user-id",
+          email: "debug@example.com",
+          firstName: "Debug",
+          lastName: "User",
+          googleId: "debug-google-id",
+        },
+        token: "debug-jwt-token",
+      };
+      return true;
+    }
+
+    // В противном случае используем стандартный AuthGuard
+    return super.canActivate(context);
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: common\utils\image\image.controller.spec.ts **/
+/** FILE CONTENT START **/
+import { Test, TestingModule } from "@nestjs/testing";
+import { ImageController } from "./image.controller";
+
+describe("ImageController", () => {
+  let controller: ImageController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [ImageController],
+    }).compile();
+
+    controller = module.get<ImageController>(ImageController);
+  });
+
+  it("should be defined", () => {
+    expect(controller).toBeDefined();
+  });
+});
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: common\utils\image\image.controller.ts **/
+/** FILE CONTENT START **/
+import {
+  Body,
+  Controller,
+  HttpCode,
+  Post,
+  Req,
+  UnauthorizedException,
+} from "@nestjs/common";
+import { OpenAiService } from "../open-ai/open-ai.service";
+import { UsersService } from "../../../users/users.service";
+import { Request } from "express";
+import { JwtService } from "@nestjs/jwt";
+import {
+  Injectable,
+  Logger,
+  InternalServerErrorException,
+} from "@nestjs/common";
+import ChatCompletion from "openai";
+interface IOpenAIChoice {
+  message: {
+    role: string;
+    content: string;
+  };
+  finish_reason: string;
+  index: number;
+}
+
+interface IOpenAIResponse {
+  choices: IOpenAIChoice[];
+}
+
+@Controller("image")
+export class ImageController {
+  private readonly logger = new Logger(ImageController.name);
+  constructor(
+    private readonly openAiService: OpenAiService,
+    private readonly usersService: UsersService,
+    private readonly jwtService: JwtService, // Inject JwtService
+  ) {}
+
+  @HttpCode(200)
+  @Post("upload")
+  async handleScreenshot(
+    @Body("url") url: string,
+    @Body("way") way: string,
+    @Body("language") lang: string,
+    @Req() req: Request,
+  ) {
+    try {
+      // Extract and verify the token
+      const authHeader = req.headers.authorization;
+      if (!authHeader || !authHeader.startsWith("Bearer ")) {
+        throw new UnauthorizedException(
+          "Authorization token is missing or invalid",
+        );
+      }
+
+      const token = authHeader.split(" ")[1];
+      let userId: string;
+      try {
+        const decoded = this.jwtService.verify(token, {
+          secret: "demo-jwt-secret",
+        });
+        userId = decoded.user.googleId; // Use the field matching your JWT payload
+      } catch (err) {
+        this.logger.error(err);
+        throw new UnauthorizedException("Token is invalid or expired");
+      }
+
+      // Fetch the user by their ID
+      const user = await this.usersService.findByGoogleId(userId);
+      if (!user) {
+        this.logger.warn(`User not found id-${userId}`);
+        throw new UnauthorizedException("User not found");
+      }
+      if (!(await this.usersService.hasBalance(user))) {
+        this.logger.warn(`No attempts on account ${user.email}`);
+        throw new Error("No attempts on account");
+      }
+      let gptResponse: { choices: { message: { content: string } }[] } | ChatCompletion = {
+        choices: [
+          {
+            message: { content: "unknown schema" },
+          },
+        ],
+      };
+      // Process the screenshot with GPT
+      if (way === "fast") {
+        gptResponse = await this.openAiService.askGPT(url, lang);
+      }
+      if (way === "complex") {
+        gptResponse = await this.openAiService.ask2step(url, lang);
+      }
+      // Update user's attempts
+      //const updatedUser = await this.usersService.updateAttempts(user.email, 1);
+      //const updatedUser = await this.usersService.useAttempt(user,1)
+
+      const updatedUser=await this.usersService.useAttempt(user,1);
+
+
+      // Log and return the result
+      const responseContent =
+        gptResponse.choices[0]?.message.content || "No response from GPT";
+      console.log("GPT Response:", responseContent);
+
+      return {
+        attemptsLeft: updatedUser.attemptsLeft,
+        message: "Screenshot processed successfully.",
+        gptResponse: responseContent,
+      };
+    } catch (error) {
+      console.error("Error handling screenshot:", error.message);
+      this.logger.error(error);
+      throw new UnauthorizedException(
+        "Failed to process the screenshot. Please try again.",
+      );
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: common\utils\image\image.module.ts **/
+/** FILE CONTENT START **/
+import { MiddlewareConsumer, Module, RequestMethod } from "@nestjs/common";
+import { ImageController } from "./image.controller";
+import { OpenAiService } from "../open-ai/open-ai.service";
+import { JwtModule } from "@nestjs/jwt";
+import { UsersModule } from "src/users/users.module";
+import { GoogleAuthMiddleware } from "src/auth/google.middleware";
+import { AuthModule } from "src/auth/auth.module";
+
+@Module({
+  imports: [
+    JwtModule.register({
+      secret: "demo-jwt-secret",
+      signOptions: {
+        expiresIn: "3d",
+      },
+    }),
+    UsersModule,
+    AuthModule,
+  ],
+  controllers: [ImageController],
+  providers: [OpenAiService],
+})
+export class ImageModule {
+  configure(consumer: MiddlewareConsumer) {
+    consumer
+      .apply(GoogleAuthMiddleware)
+      .forRoutes({ path: "/image", method: RequestMethod.ALL });
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: common\utils\open-ai\open-ai.service.spec.ts **/
+/** FILE CONTENT START **/
+import { Test, TestingModule } from "@nestjs/testing";
+import { OpenAiService } from "./open-ai.service";
+import axios from "axios";
+
+jest.mock("axios");
+
+describe("OpenAiService", () => {
+  let openAiService: OpenAiService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [OpenAiService],
+    }).compile();
+
+    openAiService = module.get<OpenAiService>(OpenAiService);
+  });
+
+  it("should be defined", () => {
+    expect(openAiService).toBeDefined();
+  });
+
+  it("should handle GPT-4 requests", async () => {
+    const mockResponse = {
+      data: { choices: [{ message: { content: "Test" } }] },
+    };
+    (axios.post as jest.Mock).mockResolvedValueOnce(mockResponse);
+
+    const result = await openAiService.askGPT("test-url", "en");
+    expect(result).toBeDefined();
+    expect(result.choices[0].message.content).toEqual("Test");
+  });
+});
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: common\utils\open-ai\open-ai.service.ts **/
+/** FILE CONTENT START **/
+
+// src/common/utils/open-ai/open-ai.service.ts
+import { Injectable, Logger, OnModuleInit } from "@nestjs/common";
+import { join } from "path";
+import { promises as fs } from "fs";
+import OpenAI from "openai";
+import { OPENAI_API_KEY } from "src/cfg";
+
+@Injectable()
+export class OpenAiService implements OnModuleInit {
+  private readonly logger = new Logger(OpenAiService.name);
+
+  /** содержимое prompt.txt для быстрого режима */
+  private promptFast: string;
+
+  /** содержимое o1prompt.txt для «двухшагового» режима */
+  private promptO1: string;
+
+  /** инициализация сервиса: читаем файлы только один раз */
+  async onModuleInit() {
+    try {
+      const promptPath  =  "./prompt.txt";
+      const o1PromptPath = "./o1prompt.txt";
+
+      // читаем оба файла параллельно
+      const [fast, complex] = await Promise.all([
+        fs.readFile(promptPath, "utf8"),
+        fs.readFile(o1PromptPath, "utf8"),
+      ]);
+
+      this.promptFast = fast;
+      this.promptO1   = complex;
+      this.logger.log("Prompts loaded into memory");
+    } catch (err) {
+      this.logger.error("Failed to read prompt files", err);
+      throw err;
+    }
+  }
+
+  /** быстрый однопроходный запрос */
+  async askGPT(url: string, lang: string) {
+    const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+    return openai.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: this.promptFast },
+            { type: "image_url", image_url: { url } },
+          ],
+        },
+      ],
+      model: "gpt-4o-2024-11-20",
+    });
+  }
+
+  /** двухшаговый режим: промежуточное извлечение задачи и последующее решение */
+  async ask2step(url: string, lang: string) {
+    const first = await this.decodeProblemGPT(url);
+    const extracted = first.choices[0]?.message.content?.trim();
+    if (!extracted) {
+      return {
+        choices: [
+          { message: { content: "Could not extract task from image" } },
+        ],
+      };
+    }
+    return this.askOModelGPT(extracted, lang);
+  }
+
+  private async decodeProblemGPT(url: string) {
+    const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+    return openai.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: [
+            {
+              type: "text",
+              text: "provided image contains math problem (equation), use OCR to extract it from image and give me accurate text representation",
+            },
+            { type: "image_url", image_url: { url } },
+          ],
+        },
+      ],
+      model: "gpt-4o-2024-11-20",
+    });
+  }
+
+  private async askOModelGPT(problem: string, lang: string) {
+    const openai = new OpenAI({ apiKey: OPENAI_API_KEY });
+    return openai.chat.completions.create({
+      messages: [
+        {
+          role: "user",
+          content: [
+            { type: "text", text: `Equation:\n${problem}\n${this.promptO1}` },
+          ],
+        },
+      ],
+      model: "o1-mini-2024-09-12",
+    });
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: entities\metric.entity.ts **/
+/** FILE CONTENT START **/
+import { Entity, PrimaryGeneratedColumn, Column } from "typeorm";
+
+@Entity()
+export class Metric {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: "timestamp", default: () => "CURRENT_TIMESTAMP" })
+  timestamp: Date;
+
+  @Column()
+  name: string;
+
+  @Column({ type: "jsonb", nullable: true })
+  data: any;
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: entities\Order.entity.ts **/
+/** FILE CONTENT START **/
+// src/orders/order.entity.ts
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  ManyToOne,
+  JoinColumn,
+  CreateDateColumn,
+  UpdateDateColumn,
+} from "typeorm";
+import { User } from "./User.entity";
+
+export type OrderStatus = "pending" | "paid" | "failed";
+// src/entities/Order.entity.ts
+/* добавили обязательность, дефолты и длину строк,
+   чтобы отражать фактическую схему БД */
+@Entity({ name: 'order' })
+export class Order {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  /*  FK  */
+  @Column({ type: 'int', nullable: false })
+  userId: number;
+
+  @ManyToOne(() => User, u => u.orders, { nullable: false })
+  @JoinColumn({ name: 'userId' })
+  user: User;
+
+  /*  Stripe specific  */
+  @Column({ length: 64, nullable: true })
+  stripeCustomerId: string | null;             // ← дозаполняем веб‑хуком
+
+  @Column({ length: 256, nullable: true })
+  stripeSessionId: string | null;              // кладём при checkout
+
+  @Column({ length: 256, nullable: true })
+  stripePaymentIntentId: string | null;        // ← дозаполняем веб‑хуком
+
+  @Column({ length: 64, nullable: false })
+  priceId: string;
+
+  @Column({ type: 'int', nullable: false })
+  attemptsDelta: number;
+
+  @Column({
+    type:  'enum',
+    enum:  ['pending', 'paid', 'failed'],
+    default: 'pending',
+  })
+  status: OrderStatus;
+
+  @CreateDateColumn({ name: 'createdAt' })
+  createdAt: Date;
+
+  @UpdateDateColumn({ name: 'updatedAt' })
+  updatedAt: Date;
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: entities\User.entity.ts **/
+/** FILE CONTENT START **/
+import { Entity, Column, PrimaryGeneratedColumn, OneToMany } from 'typeorm';
+import { Order } from './Order.entity';
+
+@Entity()
+export class User {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  /* ─── контактные данные ─── */
+  @Column({ unique: true })
+  email: string;
+
+  @Column({ nullable: true })
+  firstName: string;
+
+  @Column({ nullable: true })
+  lastName: string;
+
+  /* ─── Google-OAuth ─── */
+  @Column({ nullable: true })
+  googleId: string;
+
+  /* ─── Stripe ─── */
+  @Column({ nullable: true })
+  stripeCustomerId: string;
+
+  @Column({ type: 'int', default: 0 })
+  attemptsUsedToday: number;          // сколько уже потратил сегодня
+
+  @Column({ type: 'date', nullable: true })
+  attemptsDate: Date;                 // дата, к которой относится счётчик
+
+
+
+  /* подписка (обновляется методом updateSubscriptionByCustomerId) */
+  @Column({ nullable: true })
+  subscriptionId: string;                       // sub_***
+
+  @Column({ type: 'timestamp', nullable: true })
+  subscriptionPeriodEnd: Date;                  // current_period_end
+
+  @Column({ length: 16, default: 'active' })
+  subscriptionStatus: 'active' | 'canceling' | 'canceled';
+
+  @Column({ length: 12, nullable: true })
+  subscriptionPlan: 'Weekly' | 'Monthly' | 'Yearly';
+
+  /* ─── attempts ─── */
+  @Column({ nullable: true })
+  attemptsLeft: number;
+
+  @Column({ nullable: true })
+  attemptsCount: number;
+
+  /* ─── связи ─── */
+  @OneToMany(() => Order, (order) => order.user)
+  orders: Order[];
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: metrics\metrics.module.ts **/
+/** FILE CONTENT START **/
+// src/metrics/metrics.modules.ts
+import { Module } from "@nestjs/common";
+import { MetricsService } from "./metrics.service";
+
+@Module({
+  providers: [MetricsService],
+  exports: [MetricsService], // Export MetricsService to make it available for injection in other modules
+})
+export class MetricsModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: metrics\metrics.service.ts **/
+/** FILE CONTENT START **/
+// src/metrics/metrics.service.ts
+import { Injectable, Logger, OnModuleDestroy } from "@nestjs/common";
+import * as fs from "fs";
+import { join } from "path";
+
+@Injectable()
+export class MetricsService implements OnModuleDestroy {
+  private readonly logger = new Logger(MetricsService.name);
+  private readonly fileLogPath: string;
+  private logStream: fs.WriteStream;
+
+  constructor() {
+    this.fileLogPath = join(process.cwd(), "metrics.log"); // File path for metrics
+    this.logStream = fs.createWriteStream(this.fileLogPath, { flags: "a" });
+    this.logStream.on("error", (err) => {
+      this.logger.error("Error writing to metrics log file:", err);
+    });
+  }
+
+  async logMetric(name: string, data: any) {
+    this.logMetricToFile(name, data);
+  }
+
+  private logMetricToFile(name: string, data: any): void {
+    const logEntry =
+      JSON.stringify({ timestamp: new Date(), name, data }) + "\n";
+    this.logStream.write(logEntry);
+  }
+
+  onModuleDestroy() {
+    if (this.logStream) {
+      this.logStream.end();
+    }
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: middlewares\request-logger.middleware.ts **/
+/** FILE CONTENT START **/
+import { Injectable, NestMiddleware, Logger } from "@nestjs/common";
+import { Request, Response, NextFunction } from "express";
+import { MetricsService } from "src/metrics/metrics.service";
+
+@Injectable()
+export class RequestLoggerMiddleware implements NestMiddleware {
+  private readonly logger = new Logger("HTTP");
+
+  // In-memory storage for metrics (replace with a database or monitoring service in production)
+  private metrics = {
+    requestCounts: {
+      total: 0,
+      perMinute: new Map<number, number>(), // Minute timestamp -> count
+      perHour: new Map<number, number>(), // Hour timestamp -> count
+      perDay: new Map<number, number>(), // Day timestamp -> count
+    },
+    errorCounts: 0,
+    responseTimes: [] as number[], // Array to store response times for calculating percentiles
+  };
+
+  constructor(private metricsService: MetricsService) {
+    // Periodically log and reset metrics (e.g., every minute)
+    setInterval(() => this.logAndResetMetrics(), 60 * 1000);
+  }
+
+  async use(req: Request, res: Response, next: NextFunction) {
+    const { method, originalUrl, url, headers, body } = req;
+
+    const startTime = Date.now();
+    let errorOccurred = false;
+
+    // Increment request counts
+    this.metrics.requestCounts.total++;
+    this.incrementTimeBasedCounts(this.metrics.requestCounts.perMinute);
+    this.incrementTimeBasedCounts(this.metrics.requestCounts.perHour, 60);
+    this.incrementTimeBasedCounts(this.metrics.requestCounts.perDay, 60 * 24);
+
+    res.on("finish", async () => {
+      const { statusCode } = res;
+      const elapsedTime = Date.now() - startTime;
+
+      // Log the request using Winston (your existing logger)
+      this.logger.log(
+        `${method} ${originalUrl} ${statusCode} - ${elapsedTime}ms`,
+        "RequestLogger",
+      );
+
+      this.logger.log(
+        `Incoming Request: ${method} ${url} - Headers: ${JSON.stringify(headers)} - Body: ${JSON.stringify(body)}`,
+        "REQUEST DUPMER",
+      );
+
+      // Store response time
+      this.metrics.responseTimes.push(elapsedTime);
+
+      // Increment error count if status code is 4xx or 5xx
+      if (statusCode >= 400) {
+        this.metrics.errorCounts++;
+        errorOccurred = true;
+        this.logger.error(
+          {
+            method,
+            url: originalUrl,
+            statusCode,
+            elapsedTime,
+            // error: err.message, // Assuming you have an error object
+          },
+          "Request failed",
+        );
+      }
+
+      const metricsData = {
+        method,
+        url: originalUrl,
+        statusCode,
+        elapsedTime,
+      };
+
+      // Log metrics using MetricsService
+      await this.metricsService.logMetric("request", metricsData); // `false` for file logging
+      if (statusCode >= 400) {
+        // Log error metrics using MetricsService
+        await this.metricsService.logMetric("error", metricsData); // `false` for file logging
+      }
+    });
+
+    res.on("close", () => {
+      if (!res.writableFinished && !errorOccurred) {
+        const elapsedTime = Date.now() - startTime;
+        this.logger.warn(
+          {
+            method,
+            url: originalUrl,
+            elapsedTime,
+          },
+          "Connection closed prematurely by the client",
+        );
+
+        // Log aborted request metrics using MetricsService
+        const metricsData = {
+          method,
+          url: originalUrl,
+          elapsedTime,
+          status: "aborted",
+        };
+        this.metricsService.logMetric("request_aborted", metricsData); // `false` for file logging
+      }
+    });
+
+    next();
+  }
+
+  private incrementTimeBasedCounts(
+    counts: Map<number, number>,
+    timeUnitInMinutes = 1,
+  ) {
+    const now = new Date();
+    const timeUnit = Math.floor(
+      now.getTime() / (60 * 1000 * timeUnitInMinutes),
+    ); // Get the current minute, hour, or day
+    counts.set(timeUnit, (counts.get(timeUnit) || 0) + 1);
+  }
+
+  private logAndResetMetrics() {
+    // Calculate average and 95th percentile response times
+    const avgResponseTime =
+      this.metrics.responseTimes.length > 0
+        ? this.metrics.responseTimes.reduce((a, b) => a + b, 0) /
+          this.metrics.responseTimes.length
+        : 0;
+    const p95ResponseTime = this.calculatePercentile(
+      this.metrics.responseTimes,
+      95,
+    );
+
+    // Log the metrics using Winston
+    this.logger.log(
+      `Requests: total=${this.metrics.requestCounts.total}, perMinute=${this.getCountsForCurrentTimeUnit(this.metrics.requestCounts.perMinute)}, perHour=${this.getCountsForCurrentTimeUnit(this.metrics.requestCounts.perHour)}, perDay=${this.getCountsForCurrentTimeUnit(this.metrics.requestCounts.perDay)}, errors=${this.metrics.errorCounts}, avgResponseTime=${avgResponseTime.toFixed(2)}ms, p95ResponseTime=${p95ResponseTime.toFixed(2)}ms`,
+      "Metrics",
+    );
+
+    // Reset the metrics (except for the total request count)
+    this.metrics.requestCounts.perMinute.clear();
+    this.metrics.requestCounts.perHour.clear();
+    this.metrics.requestCounts.perDay.clear();
+    this.metrics.errorCounts = 0;
+    this.metrics.responseTimes = [];
+  }
+
+  private getCountsForCurrentTimeUnit(counts: Map<number, number>): number {
+    const now = new Date();
+    const currentMinute = Math.floor(now.getTime() / (60 * 1000));
+    return counts.get(currentMinute) || 0;
+  }
+
+  private calculatePercentile(values: number[], percentile: number) {
+    if (values.length === 0) return 0;
+
+    values.sort((a, b) => a - b);
+    const index = Math.ceil((percentile / 100) * values.length) - 1;
+    return values[index];
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: orders\orders.module.ts **/
+/** FILE CONTENT START **/
+import { Module } from "@nestjs/common";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { Order } from "src/entities/Order.entity";
+import { OrdersService } from "./orders.service";
+
+@Module({
+  imports: [TypeOrmModule.forFeature([Order])],
+  providers: [OrdersService],
+  exports: [OrdersService],
+})
+export class OrdersModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: orders\orders.service.ts **/
+/** FILE CONTENT START **/
+import { Injectable } from "@nestjs/common";
+import { InjectRepository } from "@nestjs/typeorm";
+import { Repository } from "typeorm";
+import { Order } from "../entities/Order.entity";
+import { User } from "../entities/User.entity";
+
+@Injectable()
+export class OrdersService {
+  constructor(
+    @InjectRepository(Order) private readonly ordersRepo: Repository<Order>,
+  ) {}
+
+  /** Create empty order in status `created` */
+  async createDraft(params: {
+    user: User;
+    userId: number;
+    priceId: string;
+    attemptsDelta: number;
+    stripeSessionId: string;
+  }): Promise<Order> {
+    const order = this.ordersRepo.create({
+      ...params,
+      stripePaymentIntentId: null,
+      status: "pending",
+    });
+    return this.ordersRepo.save(order);
+  }
+  async save(order: Order) {
+    return this.ordersRepo.save(order);
+  }
+  async markPaid(
+      orderId: number,
+      opts: { customerId: string; paymentIntentId: string },
+  ) {
+    await this.ordersRepo.update(orderId, {
+      status: 'paid',
+      stripeCustomerId:   opts.customerId,
+      stripePaymentIntentId: opts.paymentIntentId,
+    });
+  }
+
+  async find(orderId: string) {
+    return this.ordersRepo.findOne({ where: { id: parseInt(orderId) } });
+  }
+
+  async findBySession(sessionId: string) {
+    return this.ordersRepo.findOne({ where: { stripeSessionId: sessionId } });
+  }
+  async create(params: {
+    userId: number;
+    priceId: string;
+    attemptsDelta: number;
+    stripeCustomerId:string;
+  }) {
+    const order = this.ordersRepo.create({
+      ...params,
+      status: "pending",
+    });
+    return this.ordersRepo.save(order);
+  }
+
+  /** Записываем Stripe‑session‑ID */
+  async setSession(orderId: number, sessionId: string) {
+    await this.ordersRepo.update(orderId, { stripeSessionId: sessionId });
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: payments\payments.controller.ts **/
+/** FILE CONTENT START **/
+import { Controller, Post, Body, Res, UseGuards, Get, Render, Query } from '@nestjs/common';
+import { PaymentsService } from "./payments.service";
+import { UsersService } from "./../users/users.service";
+import { Response } from "express";
+import { AuthGuard } from "@nestjs/passport";
+import { User } from "src/entities/User.entity";
+import * as cfg from "./../cfg";
+import { JwtAuthGuard } from "src/auth/jwt.strategy";
+import { CurrentUser } from "src/auth/current-user.decorator";
+import { OrdersService } from "../orders/orders.service";
+import { InjectStripeClient } from "@golevelup/nestjs-stripe";
+import Stripe from "stripe";
+
+@Controller("payments")
+export class PaymentsController {
+  constructor(
+    private readonly payments: PaymentsService,
+    private readonly orders: OrdersService, // <-- фикс ①
+    private readonly users: UsersService,
+    @InjectStripeClient() // <-- фикс ②
+    private readonly stripe: Stripe,
+  ) {}
+
+  @Get('success')
+  @Render('success')  // смотрит в папке views/success.*
+  successPage(@Query('oid') orderId: string) {
+    return { orderId };
+  }
+
+  @Get('cancel')
+  @Render('cancel')
+  cancelPage(@Query('oid') orderId: string) {
+    return { orderId };
+  }
+
+  @Post("checkout")
+  @UseGuards(JwtAuthGuard) // user must be authenticated
+  async createCheckout(
+    @Body() dto: { priceId: string; qty?: number },
+    @CurrentUser() user: User, // декоратор из своего auth модуля
+  ) {
+    // 1) Создаём/ищем stripe customer
+    user = await this.payments.ensureCustomer(user);
+
+    // 2) Создаём запись заказа
+    const order = await this.orders.create({
+      userId: user.id,
+      priceId: dto.priceId,
+      attemptsDelta: dto.qty ?? 1,
+      stripeCustomerId: user.stripeCustomerId,
+    });
+
+    // 3) Создаём checkout‑session
+    const session = await this.stripe.checkout.sessions.create({
+      customer: user.stripeCustomerId,
+      mode: "subscription",
+      line_items: [{ price: dto.priceId, quantity: dto.qty ?? 1 }],
+      metadata: { orderId: order.id }, // <── связь!
+      success_url: `${process.env.STRIPE_WEBHOOK_BACKURL}/payments/success?oid=${order.id}`,
+      cancel_url: `${process.env.STRIPE_WEBHOOK_BACKURL}/payments/cancel?oid=${order.id}`,
+    });
+
+    // 4) Сохраняем sessionId, отдаём URL
+    await this.orders.setSession(order.id, session.id);
+    return { url: session.url };
+  }
+
+  async ensureCustomer(user: User): Promise<string> {
+    if (user.stripeCustomerId) return user.stripeCustomerId;
+
+    const customer = await this.stripe.customers.create({
+      email: user.email,
+      name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim(),
+    });
+
+    const updated = await this.users.setStripeCustomerId(user.id, customer.id);
+    return updated.stripeCustomerId!;
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: payments\payments.module.ts **/
+/** FILE CONTENT START **/
+import { Module } from "@nestjs/common";
+import { PaymentsService } from "./payments.service";
+import * as cfg from "./../cfg";
+import { PaymentsController } from "./payments.controller";
+import { StripeWebhookService } from "./stripe-webhook.service";
+import { UsersModule } from "../users/users.module";
+import { OrdersModule } from "../orders/orders.module";
+@Module({
+  imports: [
+
+    UsersModule,
+    OrdersModule,
+  ],
+  providers: [PaymentsService, StripeWebhookService],
+  controllers: [PaymentsController],
+})
+export class PaymentsModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: payments\payments.service.ts **/
+/** FILE CONTENT START **/
+// src/payments/payments.service.ts
+import { Injectable, Logger } from "@nestjs/common";
+import { InjectStripeClient } from "@golevelup/nestjs-stripe";
+import Stripe from "stripe";
+import { UsersService } from "../users/users.service";
+import { OrdersService } from "../orders/orders.service";
+import { User } from "src/entities/User.entity";
+import { mapPriceToAttempts } from "./price‑map.util";
+import * as fs from "fs";
+import * as cfg from "./../cfg"
+var isof = function (o, cn) {
+  return (
+    Object.getPrototypeOf(o).constructor.name.toUpperCase() === cn.toUpperCase()
+  );
+};
+
+var saveToOutput = function (outputFile, add = false) {
+  // create write stream
+  // https://nodejs.org/api/fs.html#fs_fs_createwritestream_path_options
+  //fs.createWriteStream(outputFile+".bak", {flags: 'w', encoding:'utf-8'}).end();
+  const streamRaw = add
+    ? fs.createWriteStream(outputFile, { flags: "a", encoding: "utf-8" })
+    : fs.createWriteStream(outputFile, { flags: "w", encoding: "utf-8" });
+  streamRaw.on("finish", () => {
+    console.log(`All writes to ${outputFile} are now complete.`);
+  });
+
+  // return wrapper function which simply writes data into the stream
+  return (data) => {
+    // check if the stream is writable
+    if (streamRaw.writable) {
+      if (data === null) {
+        streamRaw.end();
+        return outputFile;
+      } else if (isof(data, "array")) {
+        // let dv=new DataView(x.buffer);
+        try {
+          streamRaw.write(data.join("\n") + "\n");
+        } catch (e) {
+          console.error(e);
+        }
+      } else if (isof(data, "string")) {
+        try {
+          streamRaw.write(data);
+        } catch (e) {
+          console.error(e);
+        }
+      } else {
+        console.error(
+          `input type error! input type is ${Object.getPrototypeOf(data).constructor.name}`,
+        );
+      }
+    } else {
+      console.log(`stream is not writable ${streamRaw.path}`);
+    }
+  };
+};
+
+@Injectable()
+export class PaymentsService {
+  private readonly logger = new Logger("Payment");
+  private readonly fw = saveToOutput("l.log");
+  constructor(
+    @InjectStripeClient() private readonly stripe: Stripe,
+    private readonly orders: OrdersService,
+    private readonly users: UsersService,
+  ) {}
+
+  /** Убеждаемся, что у пользователя есть stripeCustomerId */
+  async ensureCustomer(user: User): Promise<User> {
+    this.fw(JSON.stringify(user));
+    user = await this.users.findByGoogleId(user.googleId);
+    this.fw(JSON.stringify(user));
+    this.fw(
+      `ensureCustomer(): user.id=${user.id}, existing stripeCustomerId=${user.stripeCustomerId}`,
+    );
+    if (user.stripeCustomerId) {
+      this.fw(
+        `ensureCustomer(): Found existing customerId=${user.stripeCustomerId}`,
+      );
+      return user;
+    }
+    this.fw(JSON.stringify(user));
+    try {
+      const customer = await this.stripe.customers.create({
+        email: user.email,
+        name: `${user.firstName ?? ""} ${user.lastName ?? ""}`.trim(),
+      });
+
+      this.fw(JSON.stringify(customer));
+
+      this.fw(
+        `ensureCustomer(): Created new Stripe customer ${customer.id} for user.id=${user.id}`,
+      );
+
+      const updated = await this.users.setStripeCustomerId(
+        user.id,
+        customer.id,
+      );
+      this.fw(
+        `ensureCustomer(): Persisted stripeCustomerId in DB for user.id=${user.id}`,
+      );
+      return updated;
+    } catch (error) {
+      this.fw(
+        `ensureCustomer(): Failed to create Stripe customer for user.id=${user.id}`,
+      );
+      throw error;
+    }
+  }
+
+  /**
+   * Создаёт checkout session и сохраняет его в ордере
+   */
+  // async createCheckoutSession(
+  //   userId: number,
+  //   priceId: string,
+  // ): Promise<Stripe.Checkout.Session> {
+  //   this.fw(
+  //     `createCheckoutSession(): start — userId=${userId}, priceId=${priceId}`,
+  //   );
+  //   // шаг 1: достаём юзера
+  //   const user = await this.users.findById(userId);
+  //   this.fw(
+  //     `createCheckoutSession(): fetched user from DB — stripeCustomerId=${user.stripeCustomerId}`,
+  //   );
+  //
+  //   // шаг 2: считаем сколько попыток даёт этот прайс
+  //   const attemptsDelta = mapPriceToAttempts(priceId);
+  //   this.fw(`createCheckoutSession(): attemptsDelta=${attemptsDelta}`);
+  //
+  //   // шаг 3: создаём «черновик» заказа
+  //   const draft = await this.orders.createDraft({
+  //     user,
+  //     userId,
+  //     priceId,
+  //     attemptsDelta,
+  //     stripeSessionId: "pending",
+  //   });
+  //   this.fw(
+  //     `createCheckoutSession(): draft order created — orderId=${draft.id}`,
+  //   );
+  //
+  //   // шаг 4: создаём Session в Stripe
+  //   try {
+  //     const session = await this.stripe.checkout.sessions.create({
+  //       customer: user.stripeCustomerId ?? undefined,
+  //       mode: "subscription",
+  //       payment_method_types: ["card"],
+  //       line_items: [{ price: priceId, quantity: 1 }],
+  //       metadata: { orderId: draft.id },
+  //       success_url: `${process.env.FRONTEND_URL}/success?oid=${draft.id}`,
+  //       cancel_url: `${process.env.FRONTEND_URL}/cancel?oid=${draft.id}`,
+  //     });
+  //     this.fw(
+  //       `createCheckoutSession(): Stripe session created — sessionId=${session.id}`,
+  //     );
+  //
+  //     // шаг 5: сохраняем sessionId в ордере
+  //     await this.orders.markPaid(
+  //       draft.id.toString(),
+  //       session.payment_intent as string,
+  //     );
+  //     this.fw(
+  //       `createCheckoutSession(): sessionId saved to order — orderId=${draft.id}`,
+  //     );
+  //
+  //     return session;
+  //   } catch (error) {
+  //     this.fw(
+  //       `createCheckoutSession(): Error creating Stripe session for orderId=${draft.id}`,
+  //     );
+  //     throw error;
+  //   }
+  //}
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: payments\price‑map.util.ts **/
+/** FILE CONTENT START **/
+import * as cfg from "./../cfg";
+
+export function mapPriceToAttempts(priceId: string): number {
+  switch (priceId) {
+    case process.env.STRIPE_WEEKLY_ID:
+      return 400; // +10 попыток
+    case process.env.STRIPE_MONTHLY_ID:
+      return 200; // +40 попыток
+    case process.env.STRIPE_YEARLY_ID:
+      return 100; // +600 попыток
+    default:
+      return 0; // неизвестная цена — не даём попыток
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: payments\stripe-webhook.service.ts **/
+/** FILE CONTENT START **/
+// payments/stripe-webhook.service.ts
+import { mapPriceToAttempts } from "./price‑map.util";
+import { Injectable, Logger } from "@nestjs/common";
+import {InjectStripeClient, StripeWebhookHandler} from "@golevelup/nestjs-stripe";
+import Stripe from "stripe";
+import { UsersService } from "../users/users.service";
+import { OrdersService } from "../orders/orders.service";
+@Injectable()
+export class StripeWebhookService {
+  private readonly logger = new Logger(StripeWebhookService.name);
+
+  constructor(
+    private readonly users: UsersService,
+    private readonly orders: OrdersService,
+    @InjectStripeClient() private readonly stripe: Stripe
+  ) {}
+
+  @StripeWebhookHandler('checkout.session.completed')
+  async handleCheckoutCompleted(evt: Stripe.Event) {
+    const session = evt.data.object as Stripe.Checkout.Session;
+    const orderId = session.metadata?.orderId;
+    if (!orderId) return;
+
+    const order = await this.orders.find(orderId);
+    if (!order || order.status === 'paid') return;
+
+    /** ── 1. отмечаем заказ оплаченным ───────────────────── */
+    await this.orders.markPaid(Number(orderId), {
+      customerId      : String(session.customer),
+      paymentIntentId : String(session.payment_intent),
+    });
+
+    /** ── 2. начисляем попытки ───────────────────────────── */
+    const attempts = mapPriceToAttempts(order.priceId);
+    await this.users.incrementAttemptsByCustomerId(
+        order.stripeCustomerId,
+        attempts,
+    );
+
+    /** ── 3. если это подписка – сохраняем данные подписки ─ */
+    if (session.mode === 'subscription' && session.subscription) {
+      const sub = await this.stripe.subscriptions.retrieve(
+          session.subscription as string,
+          { expand: ['items.data.price'] },
+      );
+
+      // определяем план по первому price
+      const priceId = sub.items.data[0].price.id;
+      const plan =
+          priceId === process.env.STRIPE_WEEKLY_ID  ? 'Weekly'  :
+              priceId === process.env.STRIPE_MONTHLY_ID ? 'Monthly' :
+                  priceId === process.env.STRIPE_YEARLY_ID  ? 'Yearly'  : null;
+
+      await this.users.updateSubscriptionByCustomerId(order.stripeCustomerId, {
+        id        : sub.id,
+        status    : sub.cancel_at_period_end ? 'canceling' : (sub.status as any),
+        periodEnd : new Date(sub.items.data[0].current_period_end * 1000),   // ← берем прямо отсюда
+        plan,
+        attemptsLeft:-69,
+      });
+    }
+  }
+  @StripeWebhookHandler('customer.subscription.updated')
+  async handleSubscriptionUpdated(evt: Stripe.Event) {
+    const sub = evt.data.object as Stripe.Subscription;
+    const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+
+    if (sub.cancel_at_period_end) {
+      await this.users.updateSubscriptionByCustomerId(customerId, {
+        id: sub.id,
+        status: 'canceling',
+        periodEnd: new Date((sub.ended_at ?? sub.items.data[0].current_period_end) * 1000),
+        plan: null, // или по sub.items.data[0].price.id
+        attemptsLeft:-69,
+      });
+    }
+  }
+
+  @StripeWebhookHandler("customer.subscription.deleted")
+  async handleSubscriptionRevoked(evt: Stripe.Event) {
+    const sub = evt.data.object as Stripe.Subscription;
+    const customerId = typeof sub.customer === 'string' ? sub.customer : sub.customer.id;
+
+    this.logger.log(`Subscription ${sub.id} deleted for customer ${customerId}`);
+
+    await this.users.updateSubscriptionByCustomerId(customerId, {
+      id: sub.id,
+      status: 'canceled', // 👈 ключевое
+      periodEnd: new Date((sub.ended_at ?? Date.now()) * 1000), // Fallback на now
+      plan: null, // 👈 Можешь обнулить план
+      attemptsLeft:0
+    });
+  }
+  @StripeWebhookHandler("invoice.paid")
+  async handleSubscriptionRenew(evt: Stripe.Event) {
+    this.logger.log(evt);
+  }
+
+  /**
+   * (Optional) You can wire up additional handlers here:
+   *
+   * @StripeWebhookHandler('payment_intent.succeeded')
+   * async handlePaymentIntentSucceeded(event: Stripe.Event) {
+   *   // ...
+   * }
+   */
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: shared\stripe\stripe.module.ts **/
+/** FILE CONTENT START **/
+import { Module, Global } from '@nestjs/common';
+import { StripeModule } from '@golevelup/nestjs-stripe';
+
+@Global()
+@Module({
+    imports: [
+        StripeModule.forRoot({
+            apiKey: process.env.STRIPE_SECRET_KEY,
+            webhookConfig: {
+                stripeSecrets: {
+                    accountTest: process.env.STRIPE_WEBHOOK_SECRET,
+                },
+            },
+        }),
+    ],
+    exports: [StripeModule], // 🔑 Export it for any module to use
+})
+export class SharedStripeModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: subscriptions\subscriptions.controller.ts **/
+/** FILE CONTENT START **/
+// src/subscriptions/subscriptions.controller.ts
+import { Controller, Get, Post, UseGuards } from '@nestjs/common';
+import { JwtAuthGuard }           from '../auth/jwt.strategy';
+import { CurrentUser }            from '../auth/current-user.decorator';
+import { User }                   from '../entities/User.entity';
+import { SubscriptionsService }   from './subscriptions.service';
+
+@UseGuards(JwtAuthGuard)
+@Controller('subscription')
+export class SubscriptionsController {
+  constructor(private readonly subs: SubscriptionsService) {}
+
+  /** GET /subscription � ����� ������ ������� ���������� */
+  @Get()
+  getMySubscription(@CurrentUser() user: User) {
+    console.log('[SUBSCRIPTIONS] subscription requested by', user.email);
+    return this.subs.getSubscription(user);
+  }
+
+  /** POST /subscription/cancel � �������� ��������� � ����� ������� */
+  @Post('cancel')
+  async cancel(@CurrentUser() user: User) {
+    console.log('[SUBSCRIPTIONS] Cancel requested by', user.email);
+    await this.subs.cancelSubscription(user);
+    return { ok: true };
+  }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: subscriptions\subscriptions.module.ts **/
+/** FILE CONTENT START **/
+// src/subscriptions/subscriptions.module.ts
+import { Module }           from '@nestjs/common';
+import { UsersModule }      from '../users/users.module';
+
+import { SubscriptionsController } from './subscriptions.controller';
+import { SubscriptionsService }   from './subscriptions.service';
+import {StripeModule} from "@golevelup/nestjs-stripe";
+import {SharedStripeModule} from "../shared/stripe/stripe.module";
+
+@Module({
+  /* StripeModule.forRoot уже находится в AppModule,
+     поэтому здесь достаточно просто StripeModule (или forFeature()) */
+  imports: [UsersModule,SharedStripeModule],
+  controllers: [SubscriptionsController],
+  providers:   [SubscriptionsService],
+})
+export class SubscriptionsModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: subscriptions\subscriptions.service.ts **/
+/** FILE CONTENT START **/
+// src/subscriptions/subscriptions.service.ts
+import { Injectable, BadRequestException, Logger } from '@nestjs/common';
+import { InjectStripeClient } from '@golevelup/nestjs-stripe';
+import Stripe                 from 'stripe';
+
+import { UsersService } from '../users/users.service';
+import { User }         from '../entities/User.entity';
+
+@Injectable()
+export class SubscriptionsService {
+    private readonly logger = new Logger(SubscriptionsService.name);
+
+    /* Данные, которые нужны фронтенду */
+
+    constructor(
+
+        @InjectStripeClient() private readonly stripe: Stripe,
+        private readonly users: UsersService,
+    ) {}
+    getSubscription(user: User) {
+        return {
+            attemptsLeft: user.attemptsLeft ?? 0,
+            plan        : user.subscriptionPlan,
+            status      : user.subscriptionStatus,
+            periodEnd   : user.subscriptionPeriodEnd,
+        };
+    }
+
+    /* Отмечаем подписку как “отменить в конце текущего периода” */
+    async cancelSubscription(user: User) {
+        if (!user.subscriptionId) {
+            throw new BadRequestException('У пользователя нет активной подписки');
+        }
+
+        /* 1) помечаем в Stripe */
+        await this.stripe.subscriptions.update(user.subscriptionId, {
+            cancel_at_period_end: true,
+        });
+
+        /* 2) фиксируем в БД */
+        await this.users.updateSubscriptionByCustomerId(user.stripeCustomerId, {
+            id       : user.subscriptionId,
+            status   : 'canceling',
+            periodEnd: user.subscriptionPeriodEnd,
+            plan     : user.subscriptionPlan,
+            attemptsLeft:user.attemptsLeft
+        });
+
+        this.logger.log(
+            `Subscription ${user.subscriptionId} set to canceling for user ${user.id}`,
+        );
+    }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: users\users.controller.spec.ts **/
+/** FILE CONTENT START **/
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersController } from "./users.controller";
+
+describe("UsersController", () => {
+  let controller: UsersController;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      controllers: [UsersController],
+    }).compile();
+
+    controller = module.get<UsersController>(UsersController);
+  });
+
+  it("should be defined", () => {
+    expect(controller).toBeDefined();
+  });
+});
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: users\users.controller.ts **/
+/** FILE CONTENT START **/
+import { Controller, Get, Post, Param } from "@nestjs/common";
+import { UsersService } from "./users.service";
+import { UseGuards } from "@nestjs/common";
+import { JwtAuthGuard } from "../auth/jwt.strategy";
+import { CurrentUser } from "../auth/current-user.decorator";
+import { User } from "../entities/User.entity";
+
+@Controller("users")
+export class UsersController {
+  constructor(private readonly usersService: UsersService) {}
+
+  // @UseGuards(JwtAuthGuard)
+  // @Get("me/attempts")
+  // async myAttempts(@CurrentUser() user: User) {
+  //   return { attemptsLeft: user.attemptsLeft ?? 0 };
+  // }
+  //
+  // @Get(":email/attempts")
+  // async getFreeAttempts(@Param("email") email: string) {
+  //   const attemptsLeft = await this.usersService.getFreeAttempts(email);
+  //   return { email, attemptsLeft };
+  // }
+  //
+  //
+  // @Post(":email/use-attempt")
+  // async useAttempt(@Param("email") email: string) {
+  //   const user = await this.usersService.updateAttempts(email, 1);
+  //   return { email, attemptsLeft: user?.attemptsLeft };
+  // }
+  //
+  // @Post(":email/logout")
+  // async logout(@Param("email") email: string) {
+  //   await this.usersService.logout(email);
+  //   return { message: `User ${email} logged out successfully` };
+  // }
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: users\users.module.ts **/
+/** FILE CONTENT START **/
+import { Module } from "@nestjs/common";
+import { UsersController } from "./users.controller";
+import { UsersService } from "./users.service";
+import { TypeOrmModule } from "@nestjs/typeorm";
+import { User } from "src/entities/User.entity";
+import { JwtModule } from "@nestjs/jwt";
+
+@Module({
+  imports: [
+    TypeOrmModule.forFeature([User]),
+    JwtModule.register({
+      secret: process.env.JWT_SECRET || "demo-jwt-secret",
+      signOptions: {
+        expiresIn: process.env.JWT_EXPIRES_IN || "3d",
+      },
+    }),
+  ],
+  controllers: [UsersController],
+  providers: [UsersService],
+  exports: [UsersService, TypeOrmModule], // Export User repository for reuse
+})
+export class UsersModule {}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: users\users.service.spec.ts **/
+/** FILE CONTENT START **/
+import { Test, TestingModule } from "@nestjs/testing";
+import { UsersService } from "./users.service";
+
+describe("UsersService", () => {
+  let service: UsersService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [UsersService],
+    }).compile();
+
+    service = module.get<UsersService>(UsersService);
+  });
+
+  it("should be defined", () => {
+    expect(service).toBeDefined();
+  });
+});
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+
+/*_____ FILE BLOCK START _____*/
+/** FILE PATH: users\users.service.ts **/
+/** FILE CONTENT START **/
+import { Injectable, Logger, UnauthorizedException } from "@nestjs/common";
+import { JwtService } from "@nestjs/jwt";
+import { InjectRepository } from "@nestjs/typeorm";
+import { User } from "src/entities/User.entity";
+import { Repository } from "typeorm";
+
+/** суточный лимит в зависимости от плана */
+export function dailyLimit(plan: string): number {
+  switch (plan) {
+    case 'Weekly':  return 100;
+    case 'Monthly': return 200;
+    case 'Yearly':  return 400;
+    default:        return 10;      // гость / free
+  }
+}
+
+@Injectable()
+export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+  constructor(
+    @InjectRepository(User)
+    private usersRepository: Repository<User>,
+    private readonly jwtService: JwtService,
+  ) {}
+
+  async findOrCreate(userData: Partial<User>): Promise<User> {
+    let user = await this.usersRepository.findOne({
+      where: { email: userData.email },
+    });
+
+    if (!user) {
+      user = this.usersRepository.create({ ...userData, attemptsLeft: 10 });
+      await this.usersRepository.save(user);
+    }
+
+    return user;
+  }
+  async findById(userId: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException("User not found");
+    }
+    return user;
+  }
+  async incrementAttemptsById(userId: number, delta: number): Promise<User> {
+    return this.updateAttemptsById(userId, delta);
+  }
+  async getFreeAttempts(email: string): Promise<number> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) {
+      throw new UnauthorizedException({ message: "User not found" });
+    }
+    return user.attemptsLeft;
+  }
+
+  async updateAttempts(email: string, attemptsUsed: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException({ message: "User not found" });
+    }
+
+    user.attemptsLeft = Math.max(user.attemptsLeft - attemptsUsed, 0);
+    await this.usersRepository.save(user);
+
+    return user;
+  }
+
+  async logout(email: string): Promise<void> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+
+    if (!user) {
+      throw new UnauthorizedException({ message: "User not found" });
+    }
+
+    user.googleId = null;
+    await this.usersRepository.save(user);
+  }
+  /** осталось попыток сегодня */
+  getRemainingAttempts(user: User): number {
+    this.resetCounterIfNeeded(user);
+    return Math.max(dailyLimit(user.subscriptionPlan) - user.attemptsUsedToday, 0);
+  }
+  async getMe(
+    token: string,
+  ): Promise<{ googleId: string; attemptsLeft: number }> {
+    try {
+      const decoded = this.jwtService.verify(token, {
+        secret: "demo-jwt-secret",
+      });
+      const user = await this.usersRepository.findOne({
+        where: { googleId: decoded.user.googleId },
+      });
+
+      if (!user) {
+        throw new UnauthorizedException({ message: "User not found" });
+      }
+
+      return { googleId: user.googleId, attemptsLeft: user.attemptsLeft };
+    } catch (err) {
+      throw new UnauthorizedException({ message: "Invalid token", error: err });
+    }
+  }
+  async incrementAttemptsByEmail(email: string, amount: number): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { email } });
+    if (!user) throw new UnauthorizedException("User not found");
+
+    user.attemptsLeft = (user.attemptsLeft || 0) + amount;
+    return this.usersRepository.save(user);
+  }
+  /**
+   * Обновляет attemptsLeft для пользователя с данным id.
+   * @param userId — id пользователя
+   * @param delta — сколько добавить (если отрицательное, то отнять)
+   */
+  async updateAttemptsById(userId: number, delta: number): Promise<User> {
+    // 1) Найти пользователя
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) {
+      throw new UnauthorizedException(`User with id=${userId} not found`);
+    }
+
+    // 2) Изменить attemptsLeft (не ниже 0)
+    user.attemptsLeft = Math.max((user.attemptsLeft ?? 0) + delta, 0);
+
+    // 3) Сохранить и вернуть
+    return this.usersRepository.save(user);
+  }
+  async findByGoogleId(googleId: string): Promise<User | null> {
+    return this.usersRepository.findOne({ where: { googleId } });
+  }
+  async setStripeCustomerId(
+    userId: number,
+    stripeCustomerId: string,
+  ): Promise<User> {
+    const user = await this.usersRepository.findOne({ where: { id: userId } });
+    if (!user) throw new Error("User not found");
+    user.stripeCustomerId = stripeCustomerId;
+    return this.usersRepository.save(user);
+  }
+
+  async incrementAttemptsByCustomerId(stripeCustomerId: string, delta: number) {
+    // 1) Найти пользователя
+    const user = await this.usersRepository.findOne({ where: { stripeCustomerId: stripeCustomerId } });
+    if (!user) {
+      throw new UnauthorizedException(`User with id=${stripeCustomerId} not found`);
+    }
+
+    // 2) Изменить attemptsLeft (не ниже 0)
+    user.attemptsLeft = Math.max((user.attemptsLeft ?? 0) + delta, 0);
+
+    // 3) Сохранить и вернуть
+    return this.usersRepository.save(user);
+  }
+
+  async updateSubscriptionByCustomerId(
+      customerId: string,
+      data: {
+        id: string;
+        status: 'active' | 'canceling' | 'canceled';
+        periodEnd: Date;
+        plan: 'Weekly' | 'Monthly' | 'Yearly';
+        attemptsLeft:number;
+      },
+  ) {
+    const user = await this.usersRepository.findOne({
+      where: { stripeCustomerId: customerId },
+    });
+    if (!user) throw new Error('User not found');
+
+    Object.assign(user, {
+      subscriptionId       : data.id,
+      subscriptionStatus   : data.status,
+      subscriptionPeriodEnd: data.periodEnd,
+      subscriptionPlan     : data.plan,
+    });
+    const saved = await this.usersRepository.save(user);
+
+    /** ←––– Триггерим алёрт */
+
+
+    return saved;
+  }
+  async useAttempt(user: User, qty = 1): Promise<User> {
+
+    if(user.stripeCustomerId===null){
+      if(user.attemptsLeft>0){
+        user.attemptsLeft -= qty;
+        return this.usersRepository.save(user);
+      }
+      return this.usersRepository.save(user);
+    }
+    if(user.subscriptionStatus=="active"){
+      this.resetCounterIfNeeded(user);
+      const limit = dailyLimit(user.subscriptionPlan);
+      if (user.attemptsUsedToday + qty > limit)
+        throw new UnauthorizedException('Daily limit reached');
+      user.attemptsUsedToday += qty;
+      return this.usersRepository.save(user);
+    } else if(user.attemptsLeft>0){
+      user.attemptsLeft -= qty;
+      return this.usersRepository.save(user);
+    }
+    return this.usersRepository.save(user);
+  }
+
+  async hasBalance(user: User): Promise<boolean> {
+    const limit = dailyLimit(user.subscriptionPlan);
+    if (user.attemptsUsedToday < limit)
+      return true
+    if (user.attemptsLeft > 0)
+      return true
+    return false
+  }
+
+
+  private resetCounterIfNeeded(user: User) {
+    const today = new Date().toISOString().slice(0, 10);      // YYYY-MM-DD
+    if (String(user.attemptsDate) !== today) {
+      user.attemptsUsedToday = 0;
+      user.attemptsDate      = new Date(today);
+    }
+  }
+
+}
+/** FILE CONTENT END **/
+/*_____ FILE BLOCK END _____*/
+/* === END PROJECT STRUCTURE LISTING === */
+```
+

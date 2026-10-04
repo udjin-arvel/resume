@@ -1,0 +1,150 @@
+services:
+  # Прокси-сервер Nginx
+  proxy:
+    container_name: math-help-proxy
+    image: nginx:1.24-alpine-slim
+    volumes:
+      - type: bind
+        source: ./nginx.conf
+        target: /etc/nginx/nginx.conf
+        read_only: true
+    depends_on:
+      math-help-api:
+        condition: service_started
+    ports:
+      - "8080:80"
+    networks:
+      - math-help-net
+
+  # Основное приложение API
+  math-help-api:
+    container_name: math-help-api
+    image: math-help-api
+    build:
+      context: .
+    networks:
+      - math-help-net
+    ports:
+      - "5555:5555"
+    environment:
+      NODE_ENV: dev
+    volumes:
+      - ./logs:/usr/src/app/logs # Монтирование директории логов
+    depends_on:
+      math-help-api-pg:
+        condition: service_healthy
+
+  # Сервис базы данных PostgreSQL
+  math-help-api-pg:
+    container_name: math-help-api-pg
+    image: postgres:14
+    networks:
+      - math-help-net
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_PASSWORD: pass
+      POSTGRES_USER: postgres
+      POSTGRES_DB: math-help-db
+    healthcheck:
+      test: [ "CMD-SHELL", "pg_isready -U postgres" ]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+
+  # Сервис для автоматического резервного копирования базы данных
+
+  math-ai-db-backup:
+    container_name: math-ai-db-backup
+    # if you want to build and use image from current source
+    # execute in terminal --> docker build -t tiredofit/db-backup-mssql-blobxfer .
+    # replace --> image: tiredofit/db-backup-mssql
+    # image: tiredofit/db-backup
+    image: tiredofit/db-backup
+    links:
+     - math-help-api-pg
+    volumes:
+      - ./backups:/backup
+      - ./tmp/backups:/tmp/backups    # shared tmp backup directory
+        #- ./post-script.sh:/assets/custom-scripts/post-script.sh
+    environment:
+      - TIMEZONE=Russia
+      - CONTAINER_ENABLE_MONITORING=FALSE
+      - CONTAINER_NAME=math-ai-db-backup
+      - DEBUG_MODE=TRUE
+      - DB01_TYPE=pgsql
+      - DB01_HOST=math-help-api-pg
+        # - DB01_PORT=1488
+        # create database with name `test1` manually first
+      - DB01_NAME=math-help-db             # Create this database
+      - DB01_USER=postgres
+      - DB01_PASS=pass
+      - DB01_BACKUP_INTERVAL=5        # backup every 5 minute
+      # - DB01_DUMP_BEGIN=0000      # backup starts at midnight vs not set immediately
+      - DB01_CLEANUP_TIME=60         # clean backups they are older than 60 minutes
+      - DB01_CHECKSUM=SHA1          # Set Checksum to be SHA1
+      - DB01_COMPRESSION=GZ         # Set compression to use GZIP
+
+
+        # === S3 Blobxfer ===
+      - DB01_BACKUP_LOCATION=blobxfer
+      - DB01_BLOBXFER_STORAGE_ACCOUNT={TODO Add Storage Name}
+        # Add here azure storage account key
+      - DB01_BLOBXFER_STORAGE_ACCOUNT_KEY={TODO Add Key}
+      - DB01_BLOBXFER_REMOTE_PATH=docker-db-backup
+    restart: always
+    networks:
+      example-mssql-blobxfer-net:
+	  
+	  
+  # Сервис Loki для хранения логов
+  loki:
+    image: grafana/loki:2.7.1
+    container_name: loki
+    ports:
+      - "3100:3100"
+    volumes:
+      - ./loki-config.yaml:/etc/loki/local-config.yaml # Конфигурация Loki
+    command: -config.file=/etc/loki/local-config.yaml
+    networks:
+      - math-help-net
+
+  # Сервис Promtail для сбора логов и отправки их в Loki
+  promtail:
+    image: grafana/promtail:2.7.1
+    container_name: promtail
+    volumes:
+      - ./logs:/var/log/app # Монтирование директории с логами приложения
+      - ./promtail-config.yaml:/etc/promtail/promtail-config.yaml # Конфигурация Promtail
+    command: -config.file=/etc/promtail/promtail-config.yaml
+    networks:
+      - math-help-net
+    depends_on:
+      - math-help-api
+      - loki
+
+  # Сервис Grafana для визуализации логов
+  grafana:
+    image: grafana/grafana:9.3.2
+    container_name: grafana
+    ports:
+      - "3001:3000"
+    environment:
+      - GF_SECURITY_ADMIN_PASSWORD=3oacub # Задайте надёжный пароль
+    volumes:
+      - grafana_data:/var/lib/grafana # Постоянное хранилище данных Grafana
+    networks:
+      - math-help-net
+    depends_on:
+      - loki
+      - promtail
+
+networks:
+  math-help-net:
+    driver: bridge
+
+volumes:
+  grafana_data:
+    driver: local
+  db_backups:
+    driver: local
