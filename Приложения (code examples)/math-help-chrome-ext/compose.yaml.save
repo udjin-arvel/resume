@@ -1,0 +1,59 @@
+version: "3.9"
+
+services:
+  # ——— NGINX HTTPS‑прокси ——————————————————————
+  proxy:
+    container_name: math-help-proxy
+    image: nginx:1.24-alpine-slim
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - /opt/docker-certs:/etc/ssl/certs:ro
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      - math-help-api
+    networks:
+      - math-help-net
+    restart: unless-stopped
+
+  # ——— Основное Node/Nest‑API ————————————————————
+  math-help-api:
+    container_name: math-help-api
+    build:
+      context: . 
+    env_file:
+      - .env.dev            # prod‑переменные
+    environment:
+      NODE_ENV: production   # дефолт, .env.prod может переопределить
+    expose:
+      - "5555"
+    volumes:
+      - ./logs:/usr/src/app/logs
+    depends_on:
+      math-help-api-pg:
+        condition: service_healthy
+    networks:
+      - math-help-net
+    restart: unless-stopped
+
+  # ——— PostgreSQL ————————————————————————————————
+  math-help-api-pg:
+    container_name: math-help-api-pg
+    image: postgres:14
+    environment:
+      POSTGRES_DB:  postgres
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: "1E$3hofxlxU3FDXx|w4@Ya9
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 2s
+      timeout: 5s
+      retries: 10
+    networks:
+      - math-help-net
+    restart: unless-stopped
+
+networks:
+  math-help-net:
+    driver: bridge

@@ -14,5 +14,7 @@
 | [mybook-web-app](./mybook-web-app) | Платформа для историй, лора и заметок одной вселенной |
 | [conquer-web-app](./conquer-web-app) | Разбор сайта конкурента: парсинг, метрики и сводка |
 | [hh-hunter-chrome-ext](./hh-hunter-chrome-ext) | Расширение Chrome: сопроводительные письма к вакансиям HeadHunter |
+| [math-help-chrome-ext](./math-help-chrome-ext) | API расширения Chrome: пошаговое решение задачи по скриншоту |
+| [smart-resume-chrome-ext](./smart-resume-chrome-ext) | Расширение Chrome: резюме и сопроводительное под описание вакансии |
 | [landing-example](./landing-example) | Лендинг выездного сервиса ремонта техники |
 | [goose-mini-game-web-app](./goose-mini-game-web-app) | Браузерная мини-игра с авторизацией и серверным счётом |

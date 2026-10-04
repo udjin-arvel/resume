@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Payment successful 🎉</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 40px 20px;
+      font-family: Arial, sans-serif;
+      background-color: #fff;
+      color: #333;
+    }
+    .title {
+      font-size: 2em;
+      font-weight: bold;
+      color: #000;
+      margin: 0 0 8px;
+    }
+    .subtitle {
+      margin: 0 0 32px;
+      font-size: 1em;
+      color: #000;
+    }
+    .message-box {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 24px;
+      border: 4px solid #c62828;
+      border-radius: 12px;
+      text-align: center;
+      color: #c62828;
+      line-height: 1.5;
+    }
+    .message-box p + p {
+      margin-top: 16px;
+    }
+  </style>
+</head>
+<body>
+
+  <h1 class="title">Payment successful 🎉</h1>
+
+
+  <div class="message-box">
+    <p>Payment successful 🎉</p>
+	<p><strong>order-ID: <%= orderId %></strong></p>
+    <p>Your subscription is now active — everything went through smoothly.</p>
+    <p>You’re all set to unlock faster, unlimited access to problem solving with AI.</p>
+    <p>👉 Open the extension and start learning smarter right now.</p>
+  </div>
+<script src="https://cdn.jsdelivr.net/npm/tsparticles-confetti@2.12.0/tsparticles.confetti.bundle.min.js"></script>
+
+<script>
+  document.addEventListener("DOMContentLoaded", function () {
+    // Конфетти при заходе на страницу
+    const duration = 1500; // 1.5 секунды
+    const animationEnd = Date.now() + duration;
+    const colors = ["#ff46ee", "#5e46ff", "#46c9ff", "#84ff46"];
+
+    (function frame() {
+      confetti({
+        particleCount: 3,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 },
+        colors: colors,
+      });
+
+      confetti({
+        particleCount: 3,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 },
+        colors: colors,
+      });
+
+      if (Date.now() < animationEnd) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  });
+</script>
+
+</body>
+</html>
+x
