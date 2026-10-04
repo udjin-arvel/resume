@@ -1,4 +1,11 @@
-backend/bin/
-backend/tmp/
-backend/uploads/
+bin/
+tmp/
+uploads/
 *.exe
+.git
+.env
+.env.*
+!.env.example
+*.pem
+id_rsa
+

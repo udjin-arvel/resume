@@ -1,0 +1,9 @@
+.git
+.env
+.env.*
+!.env.example
+*.pem
+id_rsa
+node_modules
+dist
+*.log

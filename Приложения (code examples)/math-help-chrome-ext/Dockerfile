@@ -24,6 +24,8 @@ COPY --from=builder /usr/src/app/prompt.txt ./
 COPY --from=builder /usr/src/app/o1prompt.txt ./
 # Set environment variables
 ENV NODE_ENV=production
+RUN mkdir -p logs && chown -R node:node /usr/src/app
+USER node
 # Expose port
 EXPOSE 5555
 # Start the application

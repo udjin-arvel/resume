@@ -18,8 +18,12 @@ RUN npx prisma generate
 # Копируем исходный код
 COPY . .
 
-# Собираем TypeScript
-RUN npm run build
+# Собираем TypeScript. Официальный образ уже содержит пользователя node.
+RUN npm run build \
+ && mkdir -p uploads \
+ && chown -R node:node /app
+
+USER node
 
 # Порт приложения
 EXPOSE 3001
