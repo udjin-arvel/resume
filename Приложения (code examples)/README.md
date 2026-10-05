@@ -8,6 +8,7 @@
 | [network-manager-crm-web-app](./network-manager-crm-web-app) | Mini CRM для объектов, смет и отчётов, в том числе как Telegram Mini App |
 | [media-generator-react-client](./media-generator-react-client) | Студия контента для карточек маркетплейсов |
 | [proxy-python-app](./proxy-python-app) | Backend-прокси к моделям генерации текста, изображений и видео |
+| [product-description-ai-package](./product-description-ai-package) | PHP-библиотека: описание товара по названию и фото |
 | [scanme-mobile-app](./scanme-mobile-app) | Сканер состава продуктов: мобильное приложение, API и админка |
 | [legal-search](./legal-search) | Поиск по статьям УК, ТК, КоАП, ГК и НК |
 | [street-cameras-vue-client](./street-cameras-vue-client) | Карта городских камер с живым видео и архивом |
