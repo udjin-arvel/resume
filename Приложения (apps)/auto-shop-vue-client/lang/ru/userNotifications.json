@@ -1,0 +1,59 @@
+{
+  "entity_types": {
+    "ListingRequest": "Автомобили",
+    "CarLinkAction": "Ссылки",
+    "SearchRequestEvent": "Заявки",
+    "ListingSourceEvent": "Источник"
+  },
+  "types": {
+    "listing_request_video_requested": "Запрошено видео",
+    "listing_request_video_declined": "Запрос на видео отклонен",
+    "listing_request_video_closed": "Загружено видео",
+    "listing_request_video_again": "Запрос на видео переоткрыт",
+
+    "listing_request_diagnostic_requested": "Запрошена диагностика",
+    "listing_request_diagnostic_declined": "Запрос на диагностику отклонен",
+    "listing_request_diagnostic_closed": "Диагностика загружена",
+    "listing_request_diagnostic_again": "Запрос на диагностику переоткрыт",
+
+    "listing_request_compensation_requested": "Запрошены выписки",
+    "listing_request_compensation_declined": "Запрос на выписки отклонен",
+    "listing_request_compensation_closed": "Выписки загружены",
+    "listing_request_compensation_again": "Запрос на выписки переоткрыт",
+
+    "listing_request_booking_requested": "Запрошено бронирование",
+    "listing_request_booking_declined_by_client": "Бронирование отклонено клиентом",
+    "listing_request_booking_declined_by_staff": "Бронирование отклонено",
+    "listing_request_booking_expired": "Бронь отменена автоматически: не подтверждена в течение 24 часов",
+    "listing_request_booking_closed": "Бронирование подтверждено",
+    "listing_request_booking_returned_to_sale": "Забронированное вами авто вернулось в продажу",
+
+
+    "car_link_action_created": "Новая ссылка",
+    "car_link_action_canceled_by_client": "Ссылка отменена покупателем",
+    "car_link_action_canceled_by_staff":  "Ссылка отменена",
+    "car_link_action_taken_in_work": "Взята в работу",
+    "car_link_action_assignee_changed": "Вас назначили исполнителем",
+    "car_link_action_replied": "Предоставлен ответ",
+    "car_link_action_interested": "Клиент заинтересован",
+    "car_link_action_not_interested": "Предложение не заинтересовало клиента",
+    "car_link_action_listing_attached":  "Авто добавлено",
+
+
+    "search_request_event_new": "Новая заявка",
+    "search_request_event_canceled_by_client": "Заявка отменена покупателем",
+    "search_request_event_canceled_by_staff": "Заявка закрыта",
+    "search_request_event_completed_by_client": "Заявка выполнена",
+    "search_request_event_completed_by_staff": "Заявка выполнена",
+    "search_request_event_updated_by_client": "Данные в заявке изменились",
+    "search_request_event_changes_accepted_by_staff": "Изменения по заявке приняты",
+    "search_request_event_taken_in_work": "Заявка взята в работу",
+    "search_request_event_listing_added": "Добавлен автомобиль в заявку",
+    "search_request_event_listing_rejected_by_client": "Авто не подходит",
+    "search_request_event_listing_request_more_by_client": "Клиент запросил еще варианты",
+    "search_request_event_listing_replacement_required": "Вариант в заявке требует замены",
+
+    "listing_source_event_price_changed": "Цена в источнике изменилась",
+    "listing_source_event_unpublished": "Снято с публикации в источнике"
+  }
+}
