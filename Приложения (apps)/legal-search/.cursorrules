@@ -1,0 +1,8 @@
+Stack: React Native + Expo + TypeScript + Supabase + Zustand.
+- Все компоненты функциональные, с хуками.
+- Никаких any. Строгий TS.
+- Стили через StyleSheet.create, не inline-объекты в JSX (кроме одноразовых).
+- Supabase-клиент только через src/lib/supabase.ts.
+- Запросы к БД только через src/lib/api.ts.
+- Комментарии на русском, код на английском.
+- Файлы: PascalCase для компонентов, camelCase для хуков и утилит.

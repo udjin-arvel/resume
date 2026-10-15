@@ -1,0 +1,19 @@
+<!-- views/cancel.ejs -->
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <title>Платёж отменён</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; padding: 2rem; }
+        h1 { color: #dc3545; }
+        a { color: #007bff; text-decoration: none; }
+        a:hover { text-decoration: underline; }
+    </style>
+</head>
+<body>
+<h1>⚠️ Платёж отменён</h1>
+<p>Ваш заказ <strong><%= orderId %></strong> не был завершён.</p>
+<p><a href="/">Попробить ещё раз</a></p>
+</body>
+</html>

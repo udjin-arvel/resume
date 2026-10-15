@@ -1,0 +1,53 @@
+{
+  "expo": {
+    "name": "Поиск по кодексам",
+    "slug": "arvelov",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "icon": "./assets/icon.png",
+    "scheme": "legal-search",
+    "userInterfaceStyle": "automatic",
+    "description": "Полнотекстовый поиск по кодексам РФ: УК, ТК, КоАП и другие.",
+    "primaryColor": "#2563A8",
+    "ios": {
+      "supportsTablet": true,
+      "bundleIdentifier": "com.legalsearch.app",
+      "buildNumber": "1"
+    },
+    "android": {
+      "package": "com.legalsearch.app",
+      "versionCode": 1,
+      "adaptiveIcon": {
+        "backgroundColor": "#E8F0FA",
+        "foregroundImage": "./assets/android-icon-foreground.png",
+        "backgroundImage": "./assets/android-icon-background.png",
+        "monochromeImage": "./assets/android-icon-monochrome.png"
+      },
+      "predictiveBackGestureEnabled": false
+    },
+    "web": {
+      "favicon": "./assets/favicon.png"
+    },
+    "plugins": [
+      "expo-font",
+      [
+        "expo-splash-screen",
+        {
+          "backgroundColor": "#2563A8",
+          "image": "./assets/splash-icon.png",
+          "imageWidth": 240,
+          "dark": {
+            "backgroundColor": "#1A1F2E",
+            "image": "./assets/splash-icon.png"
+          }
+        }
+      ]
+    ],
+    "extra": {
+      "eas": {
+        "projectId": "4694c5ee-8716-49cc-a5a2-852e354eb397"
+      }
+    },
+    "owner": "arvelov-team"
+  }
+}

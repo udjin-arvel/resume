@@ -1,0 +1,13 @@
+{
+  "filter_label": "来源",
+  "types": {
+    "price_changed": "来源价格已变更",
+    "unpublished": "来源已下架"
+  },
+  "price_was_now": "价格：{was} → {now}",
+  "open_source": "在来源网站打开",
+  "delete_confirm_title": "将车辆下架？",
+  "delete_confirm_description": "该车辆在来源网站已不再发布。它将被下架，相关未处理的申请将被关闭。之后可手动重新上架。",
+  "action_skip": "跳过",
+  "action_withdraw": "下架"
+}

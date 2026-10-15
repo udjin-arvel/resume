@@ -1,0 +1,273 @@
+.page {
+    position: absolute;
+    inset: 0;
+}
+
+.controlPanel {
+    position: absolute;
+    bottom: 24px;
+    left: 50%;
+    transform: translateX(-50%);
+    z-index: 2;
+    border-radius: 12px;
+    padding: 8px;
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border-muted);
+    display: flex;
+    gap: 8px;
+    backdrop-filter: blur(20px);
+}
+
+.controlPanel__topRight {
+    top: 60px;
+    left: unset;
+    bottom: unset;
+    right: 8px;
+    transform: translateX(0);
+    align-items: center;
+    padding: 4px;
+}
+
+.controlPanel__button {
+    width: 36px;
+    height: 36px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-standard);
+    transform: scale(1);
+}
+
+.controlPanel__button:hover {
+    background-color: var(--color-bg-muted);
+}
+
+.controlPanel__button:active {
+    background-color: var(--color-bg-solid-alt);
+    transform: scale(0.98);
+}
+
+.controlPanel__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+}
+
+.topRightPanel {
+    position: absolute;
+    top: 16px;
+    right: 16px;
+    z-index: 2;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.zoomSelect {
+    font-size: 13px;
+    font-weight: 500;
+}
+
+.zoomSelect__option {
+    padding: 6px 10px;
+    font-size: 13px;
+}
+
+.shareButton {
+    height: 36px;
+    padding: 0 16px;
+    border-radius: 10px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border-muted);
+    backdrop-filter: blur(20px);
+    transition: background-color 0.2s var(--ease-standard);
+    white-space: nowrap;
+}
+
+.shareButton:hover {
+    background-color: var(--color-bg-solid-alt);
+}
+
+.shareButton:active {
+    transform: scale(0.98);
+}
+
+.sharePopover {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    min-width: 320px;
+}
+
+.sharePopover__unpublishButton {
+    cursor: pointer;
+    background: none;
+    border: none;
+    text-decoration: underline;
+}
+
+.sharePopover__label {
+    color: var(--color-text-muted);
+}
+
+.sharePopover__disclaimer {
+    color: var(--color-text-muted);
+    border: 1px solid var(--color-border-muted);
+    border-radius: 8px;
+    padding: 8px;
+    background: var(--color-bg-solid-alt);
+    backdrop-filter: blur(20px);
+}
+
+.sharePopover__row {
+    display: flex;
+    gap: 8px;
+    align-items: center;
+}
+
+.sharePopover__input {
+    flex: 1;
+    height: 32px;
+    padding: 0 10px;
+    border-radius: 8px;
+    font-size: 12px;
+    border: 1px solid var(--color-border-muted);
+    background: var(--color-bg-solid-alt);
+    color: var(--color-text-muted);
+    outline: none;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.sharePopover__copy {
+    height: 32px;
+    padding: 0 12px;
+    border-radius: 8px;
+    font-size: 13px;
+    font-weight: 500;
+    cursor: pointer;
+    white-space: nowrap;
+    background: var(--ant-color-primary);
+    color: #fff;
+    border: none;
+    transition: opacity 0.15s;
+}
+
+.sharePopover__copy:hover {
+    opacity: 0.85;
+}
+
+.sharePopover__copy:active {
+    opacity: 0.7;
+}
+
+.contextMenu {
+    position: absolute;
+    z-index: 10;
+    min-width: 240px;
+    padding: 6px;
+    border-radius: 12px;
+    background-color: var(--color-bg-muted);
+    border: 1px solid var(--color-border-muted);
+    backdrop-filter: blur(20px);
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.10);
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+
+.contextMenu__header {
+    padding: 6px 10px 4px;
+    font-size: 12px;
+    color: var(--color-text-muted);
+    user-select: none;
+}
+
+.contextMenu__item {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    width: 100%;
+    padding: 8px 10px;
+    border-radius: 8px;
+    font-size: 14px;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 0.15s var(--ease-standard);
+}
+
+.contextMenu__item:hover {
+    background-color: var(--color-bg-solid-alt);
+}
+
+.contextMenu__item:active {
+    transform: scale(0.99);
+}
+
+.contextMenu__item:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+}
+
+.pinControlPanel__button {
+    width: auto;
+    height: 24px;
+    min-width: 24px;
+    border-radius: 8px;
+    display: flex;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: background-color 0.2s var(--ease-standard);
+    transform: scale(1);
+    font-weight: 500;
+    font-size: 12px;
+    line-height: 100%;
+    letter-spacing: 0%;
+    padding: 4px 8px;
+}
+
+.pinControlPanel__button:hover {
+    background-color: var(--color-bg-muted);
+}
+
+.pinControlPanel__button:active {
+    background-color: var(--color-bg-solid-alt);
+    transform: scale(0.98);
+}
+
+.pinControlPanel__button:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    color: var(--color-text-muted);
+}
+
+.viewerModeBanner {
+    position: absolute;
+    top: 60px;
+    left: 50%;
+    min-height: 44px;
+    transform: translateX(-50%);
+    z-index: 2;
+    background-color: var(--color-bg-muted);
+    border-radius: 12px;
+    padding: 4px;
+    padding-left: 10px;
+    border: 1px solid var(--color-border-muted);
+    backdrop-filter: blur(20px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+}
+
+.viewerModeBanner svg {
+    color: var(--color-text-muted);
+}
