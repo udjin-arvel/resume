@@ -5,6 +5,7 @@ from decimal import Decimal
 from typing import Callable, Protocol
 
 
+# Тип заказа (немутабельный)
 @dataclass(frozen=True)
 class Order:
     order_id: str
@@ -13,10 +14,12 @@ class Order:
     subtotal_rub: Decimal
 
 
+# Протокол стратегии доставки
 class DeliveryStrategy(Protocol):
     def calculate(self, order: Order) -> Decimal: ...
 
 
+# Конкретная стратегии
 class DHLDelivery:
     def __init__(self, base_rate: Decimal = Decimal("300"), per_kg: Decimal = Decimal("50")) -> None:
         self._base = base_rate
@@ -25,7 +28,6 @@ class DHLDelivery:
     def calculate(self, order: Order) -> Decimal:
         express = Decimal("1.2") if order.distance_km > Decimal("500") else Decimal("1.0")
         return (self._base + order.weight_kg * self._per_kg) * express
-
 
 class PickPointDelivery:
     def __init__(
@@ -41,19 +43,21 @@ class PickPointDelivery:
             return Decimal("0")
         return self._zone_fee
 
-
 class SelfPickup:
     def calculate(self, order: Order) -> Decimal:
         return Decimal("0")
 
 
+# Тип колбэка доставки
 DeliveryFn = Callable[[Order], Decimal]
 
 
+# Колбэк доставки для самовывоза
 def self_pickup_fn(_order: Order) -> Decimal:
     return Decimal("0")
 
 
+# Контекст доставки (конкретная стратегия доставки передается в конструктор)
 class OrderShipping:
     def __init__(self, strategy: DeliveryStrategy | DeliveryFn) -> None:
         self._strategy = strategy

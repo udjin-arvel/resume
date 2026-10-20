@@ -6,6 +6,7 @@ from decimal import Decimal
 from typing import Awaitable, Callable, Protocol
 
 
+# Тип события (немутабельный)
 @dataclass(frozen=True)
 class PriceChangedEvent:
     product_id: str
@@ -14,13 +15,16 @@ class PriceChangedEvent:
     currency: str = "RUB"
 
 
+# Тип наблюдателя
 class PriceObserver(Protocol):
     async def update(self, event: PriceChangedEvent) -> None: ...
 
 
+# Тип колбэка
 PriceCallback = Callable[[PriceChangedEvent], Awaitable[None]]
 
 
+# Конкретные наблюдатели
 class EmailNotifier:
     def __init__(self, outbox: list[str] | None = None) -> None:
         self._outbox = outbox if outbox is not None else []
@@ -30,14 +34,12 @@ class EmailNotifier:
             f"email:{event.product_id}:{event.old_price}->{event.new_price}"
         )
 
-
 class TelegramBotNotifier:
     def __init__(self, outbox: list[str] | None = None) -> None:
         self._outbox = outbox if outbox is not None else []
 
     async def update(self, event: PriceChangedEvent) -> None:
         self._outbox.append(f"tg:{event.product_id}:{event.new_price}")
-
 
 class AnalyticsTracker:
     def __init__(self, events: list[PriceChangedEvent] | None = None) -> None:
@@ -47,6 +49,7 @@ class AnalyticsTracker:
         self._events.append(event)
 
 
+# Центральный диспетчер
 class AsyncEventDispatcher:
     def __init__(self) -> None:
         self._observers: list[PriceObserver] = []
@@ -65,6 +68,7 @@ class AsyncEventDispatcher:
         return list(results)
 
 
+# Издатель
 class PriceTracker:
     def __init__(self, dispatcher: AsyncEventDispatcher) -> None:
         self._dispatcher = dispatcher

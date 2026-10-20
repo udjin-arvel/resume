@@ -4,12 +4,14 @@ from dataclasses import dataclass
 from typing import Any, Self
 
 
+# Тип запроса (немутабельный)
 @dataclass(frozen=True)
 class SqlQuery:
     sql: str
     params: tuple[Any, ...]
 
 
+# Строитель запроса (паттерн Builder)
 class QueryBuilder:
     def __init__(self) -> None:
         self._select: list[str] = []
@@ -77,3 +79,20 @@ class QueryBuilder:
             sql_parts.append(f"OFFSET {self._offset}")
 
         return SqlQuery(sql=" ".join(sql_parts), params=tuple(self._params))
+
+
+# Пример использования:
+'''
+query = (
+    QueryBuilder()
+    .select("u.id", "u.name", "COUNT(o.id) AS orders_count")
+    .from_table("users u")
+    .join("LEFT JOIN orders o ON o.user_id = u.id")
+    .where("u.active = ?", True)
+    .where("u.created_at > ?", "2024-01-01")
+    .order_by("u.name ASC")
+    .limit(10)
+    .offset(20)
+    .build()
+)
+'''
