@@ -5,25 +5,30 @@ from dataclasses import dataclass
 from typing import Protocol
 
 
+# Тип ошибки платежного шлюза
 class PaymentGatewayError(Exception):
     pass
 
 
+# Тип запроса платежа (немутабельный)
 @dataclass(frozen=True)
 class PaymentRequest:
     order_id: str
     amount_rub: int  # whole rubles
 
 
+# Тип результата платежа (немутабельный)
 @dataclass(frozen=True)
 class PaymentResult:
     payment_id: str
 
 
+# Протокол платежного шлюза
 class PaymentGateway(Protocol):
     def charge(self, request: PaymentRequest) -> PaymentResult: ...
 
 
+# Конкретный клиент (Stripe)
 class StripeClient:
     def create_charge(self, merchant_order_id: str, amount: int) -> dict[str, str]:
         if amount <= 0:
@@ -31,6 +36,7 @@ class StripeClient:
         return {"id": f"ch_{merchant_order_id}", "status": "succeeded"}
 
 
+# Адаптер для Stripe
 class StripeAdapter:
     def __init__(self, sdk: StripeClient) -> None:
         self._sdk = sdk
@@ -43,6 +49,7 @@ class StripeAdapter:
         return PaymentResult(payment_id=raw["id"])
 
 
+# Конкретный клиент (некий OldBankXml)
 class OldBankXmlClient:
     def post_xml(self, payload: str) -> str:
         root = ET.fromstring(payload)
@@ -58,6 +65,7 @@ class OldBankXmlClient:
         )
 
 
+# Адаптер для OldBankXml
 class OldBankXmlAdapter:
     def __init__(self, client: OldBankXmlClient) -> None:
         self._client = client
@@ -80,5 +88,6 @@ class OldBankXmlAdapter:
         return PaymentResult(payment_id=tx_id)
 
 
+# Функция для обработки платежа
 def process_payment(gateway: PaymentGateway, request: PaymentRequest) -> PaymentResult:
     return gateway.charge(request)

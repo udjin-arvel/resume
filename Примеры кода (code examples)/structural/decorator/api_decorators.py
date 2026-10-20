@@ -6,20 +6,19 @@ import time
 from collections import defaultdict, deque
 from typing import Any, Callable, ParamSpec, Protocol, TypeVar
 
-P = ParamSpec("P")
-R = TypeVar("R")
+# Типизация параметров и результата функции 
+P = ParamSpec("P") # P - параметры
+R = TypeVar("R") # R - результат
 
 
-class RateLimitExceededError(Exception):
-    pass
-
-
+# Протокол кэша
 class CacheBackend(Protocol):
     def get(self, key: str) -> bytes | None: ...
 
     def set(self, key: str, value: bytes, ttl_seconds: float) -> None: ...
 
 
+# Конкретный кэш в памяти
 class InMemoryCache:
     def __init__(self, clock: Callable[[], float] | None = None) -> None:
         self._store: dict[str, tuple[bytes, float]] = {}
@@ -39,11 +38,13 @@ class InMemoryCache:
         self._store[key] = (value, self._clock() + ttl_seconds)
 
 
+# Функция для генерации ключа кэша
 def _cache_key(func: Callable[..., Any], args: tuple[Any, ...], kwargs: dict[str, Any]) -> str:
     payload = {"func": func.__qualname__, "args": args, "kwargs": kwargs}
     return json.dumps(payload, sort_keys=True, default=str)
 
 
+# Декоратор кэширования
 def cached(
     timeout: float = 60.0,
     cache: CacheBackend | None = None,
@@ -66,6 +67,7 @@ def cached(
     return decorator
 
 
+# Декоратор лимита скорости
 def rate_limiter(
     max_calls: int,
     period: float,
@@ -94,6 +96,7 @@ def rate_limiter(
     return decorator
 
 
+# Декоратор логирования
 def audit_log(sink: list[str] | None = None) -> Callable[[Callable[P, R]], Callable[P, R]]:
     log = sink if sink is not None else []
 

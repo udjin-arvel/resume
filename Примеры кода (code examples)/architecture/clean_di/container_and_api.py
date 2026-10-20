@@ -17,11 +17,13 @@ from fastapi import Body, Depends, FastAPI, HTTPException
 from pydantic import BaseModel
 
 
+# Тип запроса регистрации (Pydantic модель)
 class RegisterRequest(BaseModel):
     email: str
     password: str
 
 
+# Тип контейнера
 @dataclass
 class Container:
     user_repository: AbstractUserRepository
@@ -36,6 +38,7 @@ class Container:
         )
 
 
+# Метод для создания контейнера (composition root, абстракции склеиваются с реализациями)
 def build_container(use_memory: bool = True) -> Container:
     if use_memory:
         repo: AbstractUserRepository = InMemoryUserRepository()
@@ -48,6 +51,7 @@ def build_container(use_memory: bool = True) -> Container:
     )
 
 
+# Создаем FastAPI приложение
 def create_app(container: Container | None = None) -> FastAPI:
     app = FastAPI(title="Регистрация пользователей")
     _container = container or build_container()
@@ -55,11 +59,13 @@ def create_app(container: Container | None = None) -> FastAPI:
     def get_container() -> Container:
         return _container
 
+    # Получаем зависимость для регистрации пользователя с ленивой подгрузкой контейнера (через замыкание берем контейнер из внешнего контекста)
     def get_register_use_case(
         c: Container = Depends(get_container),
     ) -> RegisterUserUseCase:
         return c.register_user_use_case()
 
+    # Создаем маршрут для регистрации пользователя
     @app.post("/register", response_model=RegisterUserResult)
     def register(
         payload: Annotated[RegisterRequest, Body()],
