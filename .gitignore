@@ -41,3 +41,6 @@ venv/
 .DS_Store
 Thumbs.db
 *.log
+
+# Vector indexes (rebuilt by ingest scripts)
+chroma_db/

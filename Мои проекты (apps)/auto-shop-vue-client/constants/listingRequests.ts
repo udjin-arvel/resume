@@ -1,0 +1,15 @@
+export const RequestStatusNew = "new"
+export const RequestStatusAgain = "again"
+export const RequestStatusClosed = "closed"
+export const RequestStatusConfirmed = "confirmed"
+export const RequestStatusDeclined = "declined"
+
+export const RequestTypeVideo = "video"
+export const RequestTypeDiagnostic = "diagnostic"
+export const RequestTypeCompensation = "compensation"
+export const RequestTypeBooking = "booking"
+export const RequestTypeMessage = "chat"
+
+export const CancellationReasonListingSold = "listing_sold"
+export const CancellationReasonListingWithdrawn = "listing_withdrawn"
+export const CancellationReasonBookingExpired = "booking_expired"

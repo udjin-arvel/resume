@@ -1,0 +1,147 @@
+# SmartResumeAI Docker Commands
+
+.PHONY: help build up down restart logs ps shell db-shell clean env
+
+# Build images
+build:
+	docker-compose build
+
+# Start services
+up:
+	docker-compose up -d
+
+# Easy stop
+stop:
+	docker-compose stop
+
+# Stop services
+down:
+	docker-compose down
+
+# Restart services
+restart: down up
+
+# Show logs
+logs:
+	docker-compose logs -f
+
+# Show API logs
+logs-api:
+	docker-compose logs -f smart-resume-ai-api
+
+# Show database logs
+logs-db:
+	docker-compose logs -f smart-resume-ai-pg
+
+# Show running containers
+ps:
+	docker-compose ps
+
+# Open shell in API container
+shell:
+	docker-compose exec smart-resume-ai-api sh
+
+# Open PostgreSQL shell
+db-shell:
+	docker-compose exec smart-resume-ai-pg sh
+
+# Open psql in PostgreSQL container
+db-psql:
+	docker-compose exec smart-resume-ai-pg psql -U postgres -d smart_resume_ai
+
+# Clean up everything
+clean:
+	docker-compose down -v --remove-orphans
+	docker system prune -f
+
+# Rebuild and restart
+rebuild: clean build up
+
+# Rebuild and restart api container
+rebuild-api:
+	docker-compose down smart-resume-ai-api
+	docker-compose build smart-resume-ai-api
+	docker-compose up -d smart-resume-ai-api
+
+# Development helpers
+dev-logs:
+	docker-compose logs -f --tail=100
+
+# Database operations
+db-backup:
+	docker-compose exec smart-resume-ai-pg pg_dump -U postgres smart_resume_ai > backup_$(shell date +%Y%m%d_%H%M%S).sql
+
+# Quick database access with custom database name
+db-psql-%:
+	docker-compose exec smart-resume-ai-pg psql -U postgres -d $*
+
+env:
+	docker exec smart-resume-ai-api env
+
+# Development commands
+dev-db-up:
+	docker-compose -f docker-compose.dev.yml up -d
+
+dev-db-down:
+	docker-compose -f docker-compose.dev.yml down
+
+dev-db-logs:
+	docker-compose -f docker-compose.dev.yml logs -f
+
+dev-db-shell:
+	docker exec -it smart-resume-ai-pg-dev sh
+
+dev-db-psql:
+	docker exec -it smart-resume-ai-pg-dev psql -U postgres -d smart_resume_ai
+
+dev-install:
+	npm install
+
+dev-start:
+	npm run start:dev
+
+dev-setup: dev-install dev-db-up
+	@echo "Development environment setup complete!"
+	@echo "Run 'make dev-start' to start the API server"
+	@echo "Run 'make dev-db-down' to stop the database"
+
+dev-clean:
+	docker-compose -f docker-compose.dev.yml down -v --remove-orphans
+
+dev-sync:
+	npx typeorm-ts-node-commonjs schema:sync -d src/database/data-source.ts
+
+# Test environment commands
+test-up:
+	docker-compose -f docker-compose.test.yml up -d
+
+test-down:
+	docker-compose -f docker-compose.test.yml down
+
+test-logs:
+	docker-compose -f docker-compose.test.yml logs -f
+
+test-logs-api:
+	docker-compose -f docker-compose.test.yml logs -f smart-resume-ai-api
+
+test-logs-db:
+	docker-compose -f docker-compose.test.yml logs -f smart-resume-ai-pg-test
+
+test-shell:
+	docker-compose -f docker-compose.test.yml exec smart-resume-ai-api-test sh
+
+test-db-shell:
+	docker-compose -f docker-compose.test.yml exec smart-resume-ai-pg-test sh
+
+test-db-psql:
+	docker-compose -f docker-compose.test.yml exec smart-resume-ai-pg-test psql -U postgres -d smart_resume_ai
+
+test-clean:
+	docker-compose -f docker-compose.test.yml down -v --remove-orphans
+
+test-rebuild: test-clean test-up
+
+test-rebuild-api:
+	docker-compose -f docker-compose.test.yml down smart-resume-ai-api
+	docker-compose -f docker-compose.test.yml build smart-resume-ai-api
+	docker-compose -f docker-compose.test.yml up -d smart-resume-ai-api

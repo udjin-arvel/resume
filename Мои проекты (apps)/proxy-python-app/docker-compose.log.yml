@@ -1,0 +1,135 @@
+# RadarArt-Proxy Docker Compose Production конфигурация
+#
+# Kafka на другом сервере: в .env.prod задайте KAFKA_BOOTSTRAP_SERVERS=host:9092
+# (host должен совпадать с advertised listener на брокере).
+#
+# Использование:
+#   docker compose -f docker-compose.prod.yml up -d
+#   docker compose -f docker-compose.prod.yml logs -f
+#   docker compose -f docker-compose.prod.yml down
+#
+# OpenSearch / Dashboards (только localhost):
+#   http://127.0.0.1:5601 — UI; индекс radar-proxy-logs в Discover.
+#   Логи proxy: fluentd → Fluent Bit (см. docker-compose.yml). После смены логирования:
+#   docker compose -f docker-compose.prod.yml up -d --force-recreate radar-art-proxy
+#   Не выставляйте 9200/5601 в интернет без TLS и аутентификации; при необходимости
+#   уберите проброс портов и ходите в Dashboards через reverse proxy.
+# Память: лимиты заданы в deploy.resources; при OOM уменьшите OPENSEARCH_JAVA_OPTS.
+
+services:
+  radar-art-proxy:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: radar-art-proxy
+    restart: unless-stopped
+    ports:
+      - "8090:8090"
+    env_file:
+      - .env.prod
+    environment:
+      - HOST=0.0.0.0
+      - PORT=8090
+      - DEBUG=False
+    volumes:
+      - .:/app
+      - ./.env.prod:/app/.env.prod:ro
+    healthcheck:
+      test: ["CMD", "python", "-c", "import urllib.request; urllib.request.urlopen('http://localhost:8090/health').read()"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+    networks:
+      - proxy-network
+    logging:
+      driver: fluentd
+      options:
+        fluentd-address: 127.0.0.1:24224
+        tag: radar-art-proxy
+        fluentd-async: "true"
+    depends_on:
+      fluent-bit:
+        condition: service_started
+
+  opensearch:
+    image: opensearchproject/opensearch:2.11.1
+    container_name: radar-art-opensearch
+    restart: unless-stopped
+    environment:
+      - discovery.type=single-node
+      - plugins.security.disabled=true
+      - DISABLE_INSTALL_DEMO_CONFIG=true
+      - OPENSEARCH_JAVA_OPTS=-Xms512m -Xmx512m
+    ulimits:
+      memlock:
+        soft: -1
+        hard: -1
+      nofile:
+        soft: 65536
+        hard: 65536
+    volumes:
+      - opensearch-data:/usr/share/opensearch/data
+    ports:
+      - "127.0.0.1:9200:9200"
+    networks:
+      - proxy-network
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1:9200 >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 10s
+      retries: 5
+      start_period: 60s
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          memory: 512M
+
+  opensearch-dashboards:
+    image: opensearchproject/opensearch-dashboards:2.11.1
+    container_name: radar-art-opensearch-dashboards
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:5601:5601"
+    environment:
+      OPENSEARCH_HOSTS: '["http://opensearch:9200"]'
+      DISABLE_SECURITY_DASHBOARDS_PLUGIN: "true"
+    networks:
+      - proxy-network
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "1.0"
+          memory: 1G
+
+  fluent-bit:
+    image: fluent/fluent-bit:2.2.3
+    container_name: radar-art-fluent-bit
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:24224:24224"
+    volumes:
+      - ./fluent-bit/fluent-bit.conf:/fluent-bit/etc/fluent-bit.conf:ro
+    networks:
+      - proxy-network
+    depends_on:
+      opensearch:
+        condition: service_healthy
+    deploy:
+      resources:
+        limits:
+          cpus: "0.5"
+          memory: 256M
+
+networks:
+  proxy-network:
+    driver: bridge
+
+volumes:
+  opensearch-data:

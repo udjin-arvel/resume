@@ -1,0 +1,123 @@
+.featureCard_customElementCanvas {
+    width: 100%;
+    border: 1px solid var(--color-border-muted);
+    border-radius: 12px;
+    backdrop-filter: blur(20px);
+    container: featureCardCanvas / inline-size;
+    animation: featureCardEnter 0.5s var(--ease-spring) both;
+    animation-delay: calc(var(--i, 0) * 0.08s);
+    transform: translateY(0);
+    transition: transform 0.3s var(--ease-standard);
+    grid-column: span 2;
+    background: linear-gradient(to right, #5329FF 0%, #BFB0FF 100%);
+    /* background-image: url('/dots.png'); */
+    position: relative;
+    overflow: hidden;
+}
+
+.featureCard_customElementCanvas::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background-image: url('/dots.png');
+    z-index: -1;
+}
+
+
+@keyframes featureCardEnter {
+    from {
+        opacity: 0;
+        translate: 0 24px;
+    }
+
+    to {
+        opacity: 1;
+        translate: 0 0;
+    }
+}
+
+.featureCard_customElementCanvas:hover {
+    transform: translateY(-3px);
+}
+
+.featureCard_customElementCanvas__wrapper {
+    width: 100%;
+    height: 100%;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 8px;
+
+    @container featureCardCanvas (width < 480px) {
+        display: flex;
+        flex-direction: column-reverse;
+        justify-content: space-between;
+    }
+}
+
+
+.featureCard_customElementCanvas__content {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    gap: 8px;
+    padding: 16px 0 16px 16px;
+
+    @container featureCardCanvas (width < 480px) {
+        height: 100%;
+    }
+}
+
+.featureCard_customElementCanvas__txtContent {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    flex: 1 1 auto;
+    padding-top: 20px;
+    gap: 8px;
+}
+
+.featureCard__photo_customElementCanvas {
+    width: 100%;
+    height: 35cqw;
+    max-height: 220px;
+    border-radius: 8px;
+    overflow: hidden;
+    align-self: stretch;
+
+    @container featureCardCanvas (width < 550px) {
+        max-height: none;
+        height: 100%;
+    }
+
+    @container featureCardCanvas (width < 480px) {
+        height: 50cqw;
+        flex: 0 0 auto;
+    }
+}
+
+.featureCard__photo_customElementCanvas img {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    object-position: right bottom;
+}
+
+.featureCard__tagsBlock {
+    width: 100%;
+    display: flex;
+    gap: 4px;
+    flex-wrap: wrap;
+}
+
+.featureCard__tag {
+    padding: 0 6px;
+    border-radius: 6px;
+    height: 20px;
+    white-space: nowrap;
+    background-color: var(--color-bg-muted);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}

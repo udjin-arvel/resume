@@ -1,0 +1,159 @@
+{% extends "base.html" %}
+
+{% block title %}Отчёт — Conquer{% endblock %}
+
+{% block page_class %}page--wide{% endblock %}
+
+{% block content %}
+  <section class="report">
+    <div class="report__head">
+      <p class="brand">Conquer</p>
+      <h1>{{ parsed.title if parsed and parsed.title else "Отчёт по сайту" }}</h1>
+      <p class="mono url-line">
+        <a href="{{ analysis_request.url }}" target="_blank" rel="noopener noreferrer">
+          {{ analysis_request.url }}
+        </a>
+      </p>
+      <p class="actions">
+        <a class="btn" href="/">Новый анализ</a>
+      </p>
+    </div>
+
+    <article class="surface-card report-block">
+      <h2>Сводка</h2>
+      <p class="summary">{{ result.summary }}</p>
+    </article>
+
+    <div class="report-grid">
+      <article class="surface-card report-block">
+        <h2>Отрасль</h2>
+        <p>{{ metrics.get("industry") or "нет данных" }}</p>
+        <h3>Ценовой сегмент</h3>
+        <p>{{ metrics.get("price_segment") or "нет данных" }}</p>
+        {% if metrics.get("tone") %}
+          <h3>Тональность</h3>
+          <p>{{ metrics.get("tone") }}</p>
+        {% endif %}
+      </article>
+
+      <article class="surface-card report-block">
+        <h2>Продукты / услуги</h2>
+        {% set products = metrics.get("products") or [] %}
+        {% if products %}
+          <ul>
+            {% for item in products %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">нет данных</p>
+        {% endif %}
+      </article>
+
+      <article class="surface-card report-block">
+        <h2>УТП</h2>
+        {% set usp = metrics.get("usp") or [] %}
+        {% if usp %}
+          <ul>
+            {% for item in usp %}
+              <li>{{ item }}</li>
+            {% endfor %}
+          </ul>
+        {% else %}
+          <p class="muted">нет данных</p>
+        {% endif %}
+      </article>
+
+      <article class="surface-card report-block">
+        <h2>Ключевые слова</h2>
+        {% set keywords = metrics.get("keywords") or [] %}
+        {% if keywords %}
+          <div class="chips">
+            {% for item in keywords %}
+              <span class="chip">{{ item }}</span>
+            {% endfor %}
+          </div>
+        {% else %}
+          <p class="muted">нет данных</p>
+        {% endif %}
+      </article>
+    </div>
+
+    <article class="surface-card report-block">
+      <h2>Оценки</h2>
+      {% set scores = metrics.get("scores") or [] %}
+      {% if scores %}
+        <ul class="scores">
+          {% for score in scores %}
+            {% set raw = score.get("value", 0) or 0 %}
+            {% set width = raw if raw < 100 else 100 %}
+            <li>
+              <div class="scores__row">
+                <span>{{ score.get("label", "—") }}</span>
+                <span>{{ raw }}</span>
+              </div>
+              <div class="score-bar">
+                <span style="width: {{ width }}%"></span>
+              </div>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">нет данных</p>
+      {% endif %}
+    </article>
+
+    <article class="surface-card report-block">
+      <h2>Риски</h2>
+      {% set risks = metrics.get("risks") or [] %}
+      {% if risks %}
+        <ul class="risks">
+          {% for risk in risks %}
+            <li>
+              <span class="risk-level risk-level--{{ risk.get('level', 'medium') }}">
+                {{ risk.get("level", "medium") }}
+              </span>
+              <span>{{ risk.get("text", "") }}</span>
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">нет данных</p>
+      {% endif %}
+    </article>
+
+    <article class="surface-card report-block">
+      <h2>Контакты</h2>
+      {% set contacts = metrics.get("contacts") or [] %}
+      {% if contacts %}
+        <ul>
+          {% for contact in contacts %}
+            <li>
+              <strong>{{ contact.get("type", "contact") }}:</strong>
+              {{ contact.get("value", "") }}
+            </li>
+          {% endfor %}
+        </ul>
+      {% else %}
+        <p class="muted">нет данных</p>
+      {% endif %}
+    </article>
+
+    {% if parsed %}
+      <article class="surface-card report-block">
+        <h2>Исходные данные парсинга</h2>
+        {% if parsed.description %}
+          <p>{{ parsed.description }}</p>
+        {% endif %}
+        {% if parsed.headings %}
+          <h3>Заголовки</h3>
+          <ul>
+            {% for h in parsed.headings[:12] %}
+              <li>{{ h }}</li>
+            {% endfor %}
+          </ul>
+        {% endif %}
+      </article>
+    {% endif %}
+  </section>
+{% endblock %}

@@ -1,0 +1,69 @@
+.formBlock {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 20px;
+    width: 100%;
+    max-width: 300px;
+}
+
+.formBlock__form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.formBlock__title {
+    color: var(--color-text-dk-primary);
+}
+.formBlock__text {
+    color: var(--color-text-dk-primary);
+}
+.formBlock__text_gray {
+    color: var(--color-text-muted);
+    text-align: center;
+}
+
+.formBlock__textButton {
+    align-self: flex-end;
+    color: var(--color-text-muted);
+}
+
+.formBlock__buttons {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin-top: 20px;
+}
+
+.formBlock__darkButton {
+    width: 100%;
+    height: 40px;
+    border-radius: 8px;
+    background-color: var(--color-bg-dk-muted);
+    color: var(--color-text-dk-primary);
+    font-weight: 600;
+    opacity: 1;
+    transition: all .15s var(--ease-standard);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.formBlock__darkButton:hover {
+    opacity: 0.8;
+}
+.formBlock__darkButton:active {
+    opacity: 0.5;
+}
+
+.formBlock__link {
+    color: var(--color-primary);
+    transition: color .15s var(--ease-standard);
+}
+
+.formBlock__link:hover {
+    color: var(--color-primary-hover);
+}
