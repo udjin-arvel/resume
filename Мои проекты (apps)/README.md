@@ -32,4 +32,4 @@
 | Проект | Что это | Стек |
 | --- | --- | --- |
 | [scanme-mobile-app](./scanme-mobile-app) | Сканер состава продуктов по штрих-коду: приложение, API и админка | Flutter, Go, PostgreSQL, Redis, React |
-| [legal-search-web-app](./legal-search-web-app) | Полнотекстовый поиск по статьям УК, ТК, КоАП, ГК и НК | React Native (Expo), Supabase, PostgreSQL FTS |
+| [legal-search-mobile-app](./legal-search-web-app) | Полнотекстовый поиск по статьям УК, ТК, КоАП, ГК и НК | React Native (Expo), Supabase, PostgreSQL FTS |
