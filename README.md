@@ -15,6 +15,12 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 
 Контакты: Telegram [@arvelov](https://t.me/arvelov) · udjin.arvel@gmail.com · [резюме на hh.ru](https://hh.ru/resume/59a0cd89ff114ae8f50039ed1f6b51454d3951)
 
+## Как это выглядит
+
+| Студия контента для маркетплейсов | AI-агент по УК РФ | Radar CRM |
+| --- | --- | --- |
+| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot3.png" alt="Студия контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+
 ## Стек
 
 | Направление | Технологии |

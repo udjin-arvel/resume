@@ -13,7 +13,7 @@
 | [proxy-python-app](./proxy-python-app) | Backend студии: собирает спецификацию правки и промпт под конкретную модель, ходит в модели генерации текста, изображений и видео | Python, FastAPI, Pydantic, OpenAI, Runway |
 | [conquer-web-app](./conquer-web-app) | Разбор сайта конкурента: парсинг страницы, анализ моделью, метрики и сводка; тяжёлая работа в очереди | FastAPI, Celery, Redis, PostgreSQL, Playwright, DeepSeek |
 | [product-description-ai-package](./product-description-ai-package) | PHP-библиотека на Packagist: продающее описание товара по названию и фото | PHP 8.1, PSR, Vision API, PHPUnit, PHPStan lvl 8 |
-| [math-help-chrome-ext](./math-help-chrome-ext) | API расширения Chrome: пошаговое решение задачи по скриншоту, стриминг ответа, подписки | NestJS, TypeORM, PostgreSQL, OpenAI, Stripe |
+| [math-help-chrome-ext](./math-help-chrome-ext) | API расширения Chrome: пошаговое решение задачи по скриншоту, стриминг ответа, подписки. **В Chrome Web Store: 871 пользователь, рейтинг 5,0** | NestJS, TypeORM, PostgreSQL, OpenAI, Stripe |
 | [hh-hunter-chrome-ext](./hh-hunter-chrome-ext) | Расширение Chrome: сопроводительное письмо под вакансию HeadHunter и опыт кандидата | WXT, React 19, Zustand, Zod, Vitest, DeepSeek |
 | [smart-resume-chrome-ext](./smart-resume-chrome-ext) | Расширение Chrome: резюме и сопроводительное под описание вакансии, тарифы и оплата | React, NestJS, PostgreSQL, OpenAI, Stripe |
 
