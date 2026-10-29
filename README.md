@@ -19,7 +19,9 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 
 | Студия контента для маркетплейсов | AI-агент по УК РФ | Radar CRM |
 | --- | --- | --- |
-| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot3.png" alt="Студия контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot2.png" alt="Канвас студии контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+| **Math Help AI** (871 пользователь в Chrome Web Store) | **TheBook** | **Личный сайт arvelov.online** |
+| [<img src="./Мои%20проекты%20(apps)/math-help-chrome-ext/screenshot1.png" alt="Math Help AI в Chrome Web Store" width="300">](./Мои%20проекты%20(apps)/math-help-chrome-ext) | [<img src="./Мои%20проекты%20(apps)/mybook-web-app/screenshot.png" alt="TheBook" width="300">](./Мои%20проекты%20(apps)/mybook-web-app) | [<img src="./Мои%20проекты%20(apps)/landing-example/preview.png" alt="arvelov.online" width="300">](./Мои%20проекты%20(apps)/landing-example) |
 
 ## Стек
 

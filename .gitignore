@@ -44,3 +44,4 @@ Thumbs.db
 
 # Vector indexes (rebuilt by ingest scripts)
 chroma_db/
+.wrangler/
