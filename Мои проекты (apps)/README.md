@@ -1,6 +1,6 @@
 # Мои проекты
 
-16 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
+17 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
 
 [← На главную](../README.md)
 
@@ -22,6 +22,7 @@
 | Проект | Что это | Стек |
 | --- | --- | --- |
 | [auto-shop-vue-client](./auto-shop-vue-client) | Сервис импорта автомобилей из Китая: витрина и кабинет менеджера от заявки до логистики, RU/CN | Nuxt 3, Vue 3, TypeScript, Pinia, Tailwind, Docker, GitLab CI |
+| [food-source-web-app](./food-source-web-app) | B2B-помощник закупщика: подбор поставщиков под запрос, прозрачный скоринг с объяснением причин, сравнение 2–3 вариантов, шортлист в CSV | FastAPI, SQLModel, pytest, React 19, TanStack, Docker Compose |
 | [network-manager-crm-web-app](./network-manager-crm-web-app) | Mini CRM для полевых команд: объекты, сметы, отчёты; работает как Telegram Mini App | Go (Gin), PostgreSQL, React, TanStack |
 | [mybook-web-app](./mybook-web-app) | Платформа для историй, лора и заметок одной вселенной с уровнями и внутренней экономикой | Nuxt 4, Vue 3, Express, Prisma, PostgreSQL |
 | [street-cameras-vue-client](./street-cameras-vue-client) | Карта городских камер с живым видео и архивом | Vue 3, Leaflet, Video.js |

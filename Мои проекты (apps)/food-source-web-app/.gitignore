@@ -1,0 +1,6 @@
+.env
+
+.project/*
+!.project/DEPLOY.md
+!.project/DECISION.md
+!.project/smoke-test.md

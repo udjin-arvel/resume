@@ -34,6 +34,7 @@ venv/
 .local/
 .layout/
 .project/
+!/Мои проекты (apps)/food-source-web-app/.project/
 
 # Editors and OS
 .idea/
