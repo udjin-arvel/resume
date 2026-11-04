@@ -1,6 +1,6 @@
 # Мои проекты
 
-15 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
+16 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
 
 [← На главную](../README.md)
 
@@ -26,6 +26,12 @@
 | [mybook-web-app](./mybook-web-app) | Платформа для историй, лора и заметок одной вселенной с уровнями и внутренней экономикой | Nuxt 4, Vue 3, Express, Prisma, PostgreSQL |
 | [street-cameras-vue-client](./street-cameras-vue-client) | Карта городских камер с живым видео и архивом | Vue 3, Leaflet, Video.js |
 | [landing-example](./landing-example) | Личный сайт [arvelov.online](https://arvelov.online): услуги, TheBook, контакты; статика с деплоем на shared-хостинг | HTML, CSS, JS, React (прототип), Bash |
+
+## DevOps и инфраструктура
+
+| Проект | Что это | Стек |
+| --- | --- | --- |
+| [gitops-demo (k8s)](./gitops-demo%20%28k8s%29) | GitOps-стенд: кластер целиком описан в Git, Argo CD (App of Apps) разворачивает приложение и мониторинг сам. Sync waves, SOPS-секреты, сценарий сбоя и восстановления через коммит | Kubernetes (Kind), Argo CD, Helm, Prometheus, Grafana, SOPS |
 
 ## Мобильные приложения
 
