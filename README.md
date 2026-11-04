@@ -17,15 +17,15 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 
 ## Как это выглядит
 
-| Студия контента для маркетплейсов | AI-агент по УК РФ | Radar CRM |
+| Студия контента для маркетплейсов | FoodSource: помощник закупщика | Импорт автомобилей из Китая |
 | --- | --- | --- |
-| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot2.png" alt="Канвас студии контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot2.png" alt="Канвас студии контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/food-source-web-app/screenshot.png" alt="FoodSource" width="300">](./Мои%20проекты%20(apps)/food-source-web-app) | [<img src="./Мои%20проекты%20(apps)/auto-shop-vue-client/preview.png" alt="Импорт автомобилей из Китая" width="300">](./Мои%20проекты%20(apps)/auto-shop-vue-client) |
 | **Math Help AI** (871 пользователь в Chrome Web Store) | **TheBook** | **Личный сайт arvelov.online** |
 | [<img src="./Мои%20проекты%20(apps)/math-help-chrome-ext/screenshot1.png" alt="Math Help AI в Chrome Web Store" width="300">](./Мои%20проекты%20(apps)/math-help-chrome-ext) | [<img src="./Мои%20проекты%20(apps)/mybook-web-app/screenshot.png" alt="TheBook" width="300">](./Мои%20проекты%20(apps)/mybook-web-app) | [<img src="./Мои%20проекты%20(apps)/landing-example/preview.png" alt="arvelov.online" width="300">](./Мои%20проекты%20(apps)/landing-example) |
 | **GitOps на Kubernetes: Argo CD** | **Мониторинг: Grafana** | **Сбой и восстановление через Git** |
 | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot2.png" alt="Argo CD: App of Apps" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot4-preview.png" alt="Grafana: ресурсы пода" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot6.png" alt="Grafana Explore: под вернулся в Running" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) |
-| **FoodSource: помощник закупщика** | **ScanMe: мобильное приложение** | **Импорт автомобилей из Китая** |
-| [<img src="./Мои%20проекты%20(apps)/food-source-web-app/screenshot.png" alt="FoodSource" width="300">](./Мои%20проекты%20(apps)/food-source-web-app) | [<img src="./Мои%20проекты%20(apps)/scanme-mobile-app/screenshot.jpg" alt="ScanMe" width="200">](./Мои%20проекты%20(apps)/scanme-mobile-app) | [<img src="./Мои%20проекты%20(apps)/auto-shop-vue-client/preview.png" alt="Импорт автомобилей из Китая" width="300">](./Мои%20проекты%20(apps)/auto-shop-vue-client) |
+| **ScanMe: мобильное приложение** | **AI-агент по УК РФ** | **Radar CRM** |
+| [<img src="./Мои%20проекты%20(apps)/scanme-mobile-app/screenshot.jpg" alt="ScanMe" width="200">](./Мои%20проекты%20(apps)/scanme-mobile-app) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
 
 ## Стек
 
