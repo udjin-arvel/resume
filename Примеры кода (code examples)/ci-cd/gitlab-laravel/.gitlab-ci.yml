@@ -1,0 +1,220 @@
+# CI/CD для Laravel API: качество кода → тесты → сборка образов → деплой.
+#
+# Инфраструктурные значения (хосты, пользователи, ключи, URL окружений) в репозитории
+# не хранятся: это CI/CD Variables в GitLab со scope на окружение (staging / production).
+#   SSH_PRIVATE_KEY   File, protected — ключ deploy-пользователя (не root)
+#   SSH_KNOWN_HOSTS   Variable — отпечатки серверов, вместо ssh-keyscan на лету
+#   DEPLOY_HOST, DEPLOY_USER, DEPLOY_PATH, APP_URL
+# Для pull образов на сервере — deploy token `gitlab-deploy-token` (read_registry):
+# GitLab сам отдаёт его в джоб как CI_DEPLOY_USER / CI_DEPLOY_PASSWORD.
+
+stages:
+  - prepare
+  - quality
+  - test
+  - build
+  - deploy
+
+variables:
+  GIT_DEPTH: "10"
+  PHP_CI_IMAGE: $CI_REGISTRY_IMAGE/ci-php:8.4
+  IMAGE_TAG: $CI_COMMIT_SHORT_SHA
+  COMPOSE_FILE: docker-compose.prod.yml
+  COMPOSER_CACHE_DIR: $CI_PROJECT_DIR/.composer-cache
+  FF_NETWORK_PER_BUILD: "true"
+
+default:
+  interruptible: true
+  retry:
+    max: 2
+    when: [runner_system_failure, stuck_or_timeout_failure, api_failure]
+
+workflow:
+  auto_cancel:
+    on_new_commit: interruptible
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    # Ветка с открытым MR: пайплайн уже идёт как merge_request_event, дубль не нужен.
+    - if: $CI_COMMIT_BRANCH && $CI_OPEN_MERGE_REQUESTS && $CI_PIPELINE_SOURCE == "push"
+      when: never
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+# ---------- Шаблоны ----------
+
+.docker:
+  image: docker:27
+  services:
+    - docker:27-dind
+  variables:
+    DOCKER_TLS_CERTDIR: "/certs"
+  before_script:
+    - echo "$CI_REGISTRY_PASSWORD" | docker login -u "$CI_REGISTRY_USER" --password-stdin "$CI_REGISTRY"
+
+.php:
+  image: $PHP_CI_IMAGE
+  cache:
+    key:
+      files: [composer.lock]
+    paths:
+      - vendor/
+      - .composer-cache/
+  before_script:
+    - composer install --no-interaction --prefer-dist --no-progress
+
+.on_checks:
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+# ---------- prepare: образ для PHP-джобов ----------
+# Расширения (gd, intl, redis, pcov…) собираются один раз в образ,
+# а не в before_script каждого джоба: пайплайн быстрее на несколько минут.
+
+build:ci-image:
+  extends: .docker
+  stage: prepare
+  script:
+    - docker build -f ci/php.Dockerfile -t "$PHP_CI_IMAGE" ci/
+    - docker push "$PHP_CI_IMAGE"
+  rules:
+    - changes: [ci/php.Dockerfile]
+
+# ---------- quality ----------
+
+pint:
+  extends: [.php, .on_checks]
+  stage: quality
+  script:
+    - vendor/bin/pint --test
+
+phpstan:
+  extends: [.php, .on_checks]
+  stage: quality
+  script:
+    - vendor/bin/phpstan analyse --no-progress --memory-limit=1G --error-format=gitlab > gl-code-quality.json
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      codequality: gl-code-quality.json
+
+# ---------- test ----------
+
+test:
+  extends: [.php, .on_checks]
+  stage: test
+  # Не ждёт quality-джобов, но дождётся пересборки CI-образа, если она есть в пайплайне.
+  needs:
+    - job: build:ci-image
+      optional: true
+  services:
+    - name: mysql:8.4
+      alias: mysql
+      command: ["--character-set-server=utf8mb4", "--collation-server=utf8mb4_unicode_ci"]
+    - name: redis:7.4-alpine
+      alias: redis
+  variables:
+    MYSQL_ROOT_PASSWORD: root
+    MYSQL_DATABASE: app_test
+    MYSQL_USER: app_test
+    MYSQL_PASSWORD: app_test
+    # Переменные окружения важнее .env: Laravel читает его в immutable-режиме.
+    APP_ENV: testing
+    DB_CONNECTION: mysql
+    DB_HOST: mysql
+    DB_DATABASE: app_test
+    DB_USERNAME: app_test
+    DB_PASSWORD: app_test
+    REDIS_HOST: redis
+    CACHE_STORE: array
+    QUEUE_CONNECTION: sync
+    SESSION_DRIVER: array
+    MAIL_MAILER: array
+  script:
+    - cp .env.ci .env
+    - |
+      for i in $(seq 1 30); do
+        php -r 'exit(@fsockopen("mysql", 3306) ? 0 : 1);' && break
+        [ "$i" -eq 30 ] && { echo "MySQL не поднялся за 60 секунд"; exit 1; }
+        sleep 2
+      done
+    - php artisan migrate --force --no-interaction
+    - php artisan db:seed --class='Database\Seeders\LocalUsersSeeder' --force --no-interaction
+    # Без --stop-on-failure: в отчёте должны быть видны все упавшие тесты.
+    - php -d memory_limit=512M artisan test --log-junit=junit.xml --coverage-cobertura=coverage.xml --coverage-text --colors=never
+  coverage: '/^\s*Lines:\s*(\d+\.\d+)%/'
+  artifacts:
+    when: always
+    expire_in: 1 week
+    reports:
+      junit: junit.xml
+      coverage_report:
+        coverage_format: cobertura
+        path: coverage.xml
+
+# ---------- build: образы приложения в registry ----------
+# На сервер едут готовые образы с тегом коммита, а не исходники:
+# прод ничего не собирает, а откат — это просто предыдущий тег.
+
+build:images:
+  extends: .docker
+  stage: build
+  needs: [test]
+  script:
+    - export COMPOSE_BAKE=true
+    - docker compose build app nginx smtp-proxy
+    - docker compose push app nginx smtp-proxy
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+# ---------- deploy ----------
+
+.deploy:
+  stage: deploy
+  image: alpine:3.21
+  interruptible: false          # деплой нельзя обрывать новым коммитом на середине
+  before_script:
+    - apk add --no-cache openssh-client curl
+    - install -m 700 -d ~/.ssh
+    - install -m 600 "$SSH_PRIVATE_KEY" ~/.ssh/id_deploy
+    - echo "$SSH_KNOWN_HOSTS" > ~/.ssh/known_hosts
+    - export SSH_TARGET="$DEPLOY_USER@$DEPLOY_HOST"
+    - export SSH_OPTS="-i $HOME/.ssh/id_deploy -o IdentitiesOnly=yes -o BatchMode=yes"
+  script:
+    - scp $SSH_OPTS "$COMPOSE_FILE" "$SSH_TARGET:$DEPLOY_PATH/$COMPOSE_FILE"
+    - >
+      ssh $SSH_OPTS "$SSH_TARGET"
+      "MODE=deploy DEPLOY_PATH='$DEPLOY_PATH' IMAGE_TAG='$IMAGE_TAG' COMPOSE_FILE='$COMPOSE_FILE' CI_REGISTRY_IMAGE='$CI_REGISTRY_IMAGE'
+      REGISTRY='$CI_REGISTRY' REGISTRY_USER='$CI_DEPLOY_USER' REGISTRY_PASSWORD='$CI_DEPLOY_PASSWORD' sh -s"
+      < ci/deploy.sh
+    # Smoke-check: health-эндпоинт Laravel. Не ответил — откатываемся на прошлый тег.
+    - |
+      if ! curl -fsS --retry 10 --retry-delay 5 --retry-all-errors "$APP_URL/up" > /dev/null; then
+        echo "Health check не прошёл, откат на предыдущий релиз"
+        ssh $SSH_OPTS "$SSH_TARGET" "MODE=rollback DEPLOY_PATH='$DEPLOY_PATH' COMPOSE_FILE='$COMPOSE_FILE' CI_REGISTRY_IMAGE='$CI_REGISTRY_IMAGE' sh -s" < ci/deploy.sh
+        exit 1
+      fi
+
+deploy:staging:
+  extends: .deploy
+  needs: [build:images]
+  environment:
+    name: staging
+    url: $APP_URL
+  resource_group: staging
+  rules:
+    - if: $CI_COMMIT_BRANCH == "dev"
+
+deploy:production:
+  extends: .deploy
+  needs: [test, build:images]
+  environment:
+    name: production
+    url: $APP_URL
+  resource_group: production
+  rules:
+    - if: $CI_COMMIT_BRANCH == $CI_DEFAULT_BRANCH
+      when: manual

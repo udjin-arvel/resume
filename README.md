@@ -43,5 +43,5 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 | Раздел | Что там |
 | --- | --- |
 | [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) | 17 проектов: AI и LLM, веб-продукты, DevOps (Kubernetes, GitOps), мобильные приложения, расширения Chrome |
-| [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) | Паттерны проектирования и Clean Architecture на Python, покрыты pytest |
+| [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) | Паттерны и Clean Architecture на Python (покрыты pytest); [CI/CD-пайплайн GitLab для Laravel](./Примеры%20кода%20(code%20examples)/ci-cd/gitlab-laravel/) с деплоем, health check и откатом |
 | [Теория (short posts)](./Теория%20(short%20posts)/README.md) | Короткие статьи: Docker и безопасность, FSD, надёжность интеграций, React Hooks, ООП, работа с контекстом LLM |
