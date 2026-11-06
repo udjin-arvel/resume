@@ -12,6 +12,7 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 - [Студия контента для маркетплейсов](./Мои%20проекты%20(apps)/media-generator-react-client) + [прокси к моделям генерации](./Мои%20проекты%20(apps)/proxy-python-app) — AI-генератор фото и видео, ~8 000 генераций за первый месяц.
 - [AI-агент по УК РФ](./Мои%20проекты%20(apps)/criminal-search-web-app) — RAG и tool calling: агент сам ищет статьи кодекса по описанию случая.
 - [Импорт автомобилей из Китая](./Мои%20проекты%20(apps)/auto-shop-vue-client) — витрина и кабинет менеджера: от заявки до логистики, RU/CN.
+- [DB Demo](./Мои%20проекты%20(apps)/db-demo) — ClickHouse против PostgreSQL, MySQL и SQLite на 5 млн строк: Go-бэкенд, разбор планов запросов, на агрегациях ClickHouse быстрее в 4–140 раз.
 
 Контакты: Telegram [@arvelov](https://t.me/arvelov) · udjin.arvel@gmail.com · [резюме на hh.ru](https://hh.ru/resume/59a0cd89ff114ae8f50039ed1f6b51454d3951)
 
@@ -24,8 +25,8 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 | [<img src="./Мои%20проекты%20(apps)/math-help-chrome-ext/screenshot1.png" alt="Math Help AI в Chrome Web Store" width="300">](./Мои%20проекты%20(apps)/math-help-chrome-ext) | [<img src="./Мои%20проекты%20(apps)/mybook-web-app/screenshot.png" alt="TheBook" width="300">](./Мои%20проекты%20(apps)/mybook-web-app) | [<img src="./Мои%20проекты%20(apps)/landing-example/preview.png" alt="arvelov.online" width="300">](./Мои%20проекты%20(apps)/landing-example) |
 | **GitOps на Kubernetes: Argo CD** | **Мониторинг: Grafana** | **Сбой и восстановление через Git** |
 | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot2.png" alt="Argo CD: App of Apps" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot4-preview.png" alt="Grafana: ресурсы пода" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot6.png" alt="Grafana Explore: под вернулся в Running" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) |
-| **ScanMe: мобильное приложение** | **AI-агент по УК РФ** | **Radar CRM** |
-| [<img src="./Мои%20проекты%20(apps)/scanme-mobile-app/screenshot.jpg" alt="ScanMe" width="200">](./Мои%20проекты%20(apps)/scanme-mobile-app) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+| **DB Demo: ClickHouse против PostgreSQL, MySQL, SQLite** | **AI-агент по УК РФ** | **Radar CRM** |
+| [<img src="./Мои%20проекты%20(apps)/db-demo/docs/preview.png" alt="DB Demo: сравнение четырёх СУБД" width="300">](./Мои%20проекты%20(apps)/db-demo) | [<img src="./Мои%20проекты%20(apps)/criminal-search-web-app/screenshot.png" alt="AI-агент по УК РФ" width="300">](./Мои%20проекты%20(apps)/criminal-search-web-app) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
 
 ## Стек
 
@@ -34,7 +35,7 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 | AI / LLM | RAG, tool calling, structured output, OpenAI API, DeepSeek, ChromaDB, sentence-transformers, Claude Code, Cursor |
 | Backend | Python (FastAPI, Celery, SQLAlchemy), PHP (Laravel), Go (Gin, chi), Node.js (NestJS, Express) |
 | Frontend | React, TypeScript, Redux Toolkit, Zustand, TanStack, Vue 3, Nuxt, Pinia, Tailwind CSS |
-| Данные | PostgreSQL, ClickHouse, MySQL, Redis, Kafka |
+| Данные | PostgreSQL, ClickHouse, MySQL, SQLite, Redis, Kafka; планы запросов и индексы ([сравнение СУБД](./Мои%20проекты%20(apps)/db-demo)) |
 | Mobile | Flutter, React Native (Expo) |
 | Инфраструктура | Kubernetes, Argo CD (GitOps), Helm, SOPS, Docker, GitLab CI/CD, Nginx, Linux, Sentry, Prometheus, Grafana |
 
@@ -42,6 +43,6 @@ Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; 
 
 | Раздел | Что там |
 | --- | --- |
-| [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) | 17 проектов: AI и LLM, веб-продукты, DevOps (Kubernetes, GitOps), мобильные приложения, расширения Chrome |
+| [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) | 18 проектов: AI и LLM, базы данных, веб-продукты, DevOps (Kubernetes, GitOps), мобильные приложения, расширения Chrome |
 | [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) | Паттерны и Clean Architecture на Python (покрыты pytest); [CI/CD-пайплайн GitLab для Laravel](./Примеры%20кода%20(code%20examples)/ci-cd/gitlab-laravel/) с деплоем, health check и откатом |
 | [Теория (short posts)](./Теория%20(short%20posts)/README.md) | Короткие статьи: Docker и безопасность, FSD, надёжность интеграций, React Hooks, ООП, работа с контекстом LLM |

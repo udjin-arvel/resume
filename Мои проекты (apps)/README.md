@@ -1,6 +1,6 @@
 # Мои проекты
 
-17 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
+18 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
 
 [← На главную](../README.md)
 
@@ -16,6 +16,12 @@
 | [math-help-chrome-ext](./math-help-chrome-ext) | API расширения Chrome: пошаговое решение задачи по скриншоту, стриминг ответа, подписки. **В Chrome Web Store: 871 пользователь, рейтинг 5,0** | NestJS, TypeORM, PostgreSQL, OpenAI, Stripe |
 | [hh-hunter-chrome-ext](./hh-hunter-chrome-ext) | Расширение Chrome: сопроводительное письмо под вакансию HeadHunter и опыт кандидата | WXT, React 19, Zustand, Zod, Vitest, DeepSeek |
 | [smart-resume-chrome-ext](./smart-resume-chrome-ext) | Расширение Chrome: резюме и сопроводительное под описание вакансии, тарифы и оплата | React, NestJS, PostgreSQL, OpenAI, Stripe |
+
+## Базы данных и производительность
+
+| Проект | Что это | Стек |
+| --- | --- | --- |
+| [db-demo](./db-demo) | **ClickHouse против PostgreSQL, MySQL и SQLite** на одних и тех же 5 млн строк: пять запросов, латентность и планы каждой СУБД. На агрегациях ClickHouse быстрее в 4–140 раз, на точечном поиске проигрывает B-tree | Go (chi, pgx, clickhouse-go), PostgreSQL, MySQL, SQLite, ClickHouse, React, Docker Compose |
 
 ## Веб-продукты
 

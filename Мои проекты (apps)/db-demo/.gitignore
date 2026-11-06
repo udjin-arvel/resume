@@ -1,0 +1,23 @@
+.project
+
+# Databases & local data
+data/
+
+# Dependencies & build output
+**/node_modules/
+frontend/.output/
+frontend/.nitro/
+frontend/dist/
+
+# Go binaries & caches
+backend/bin/
+**/main.exe
+**/*.exe
+
+# Env
+.env
+.env.*
+
+# OS
+Thumbs.db
+.DS_Store
