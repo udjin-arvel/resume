@@ -1,6 +1,6 @@
 # Мои проекты
 
-18 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
+19 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
 
 [← На главную](../README.md)
 
@@ -17,10 +17,11 @@
 | [hh-hunter-chrome-ext](./hh-hunter-chrome-ext) | Расширение Chrome: сопроводительное письмо под вакансию HeadHunter и опыт кандидата | WXT, React 19, Zustand, Zod, Vitest, DeepSeek |
 | [smart-resume-chrome-ext](./smart-resume-chrome-ext) | Расширение Chrome: резюме и сопроводительное под описание вакансии, тарифы и оплата | React, NestJS, PostgreSQL, OpenAI, Stripe |
 
-## Базы данных и производительность
+## Бэкенд, базы данных и производительность
 
 | Проект | Что это | Стек |
 | --- | --- | --- |
+| [polyglot-backend-benchmark](./polyglot-backend-benchmark) | **Один REST API на Go, Node.js, PHP и Python** без фреймворков: общий OpenAPI-контракт, PostgreSQL на 100 000 записей, нагрузочные прогоны k6 с RPS, p95/p99, памятью и cold start, сверка ответов всех бэкендов в UI | Go, Node.js, PHP, Python, PostgreSQL, OpenAPI, k6, Docker Compose, GitHub Actions, React |
 | [db-demo](./db-demo) | **ClickHouse против PostgreSQL, MySQL и SQLite** на одних и тех же 5 млн строк: пять запросов, латентность и планы каждой СУБД. На агрегациях ClickHouse быстрее в 4–140 раз, на точечном поиске проигрывает B-tree | Go (chi, pgx, clickhouse-go), PostgreSQL, MySQL, SQLite, ClickHouse, React, Docker Compose |
 
 ## Веб-продукты
