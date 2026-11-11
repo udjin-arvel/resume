@@ -33,7 +33,7 @@
 | [network-manager-crm-web-app](./network-manager-crm-web-app) | Mini CRM для полевых команд: объекты, сметы, отчёты; работает как Telegram Mini App | Go (Gin), PostgreSQL, React, TanStack |
 | [mybook-web-app](./mybook-web-app) | Платформа для историй, лора и заметок одной вселенной с уровнями и внутренней экономикой | Nuxt 4, Vue 3, Express, Prisma, PostgreSQL |
 | [street-cameras-vue-client](./street-cameras-vue-client) | Карта городских камер с живым видео и архивом | Vue 3, Leaflet, Video.js |
-| [landing-example](./landing-example) | Личный сайт [arvelov.online](https://arvelov.online): услуги, TheBook, контакты; статика с деплоем на shared-хостинг | HTML, CSS, JS, React (прототип), Bash |
+| [landing-example](./landing-example) | Личный сайт [arvelov.space](https://arvelov.space): услуги, TheBook, контакты; статика с деплоем на shared-хостинг | HTML, CSS, JS, React (прототип), Bash |
 
 ## DevOps и инфраструктура
 

@@ -41,7 +41,7 @@ const allowedOrigins = isDev
       'http://127.0.0.1:3000',
       'http://127.0.0.1:3001',
     ]
-  : ['https://thebook.arvelov.online'];
+  : ['https://thebook.arvelov.space'];
 
 app.use(cors({
   origin: (origin, callback) => {

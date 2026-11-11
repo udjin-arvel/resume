@@ -78,7 +78,7 @@ function Index() {
               <h2>TheBook<span className="text-muted-foreground">.</span></h2>
               <p className="book-intro">Мой личный арт-проект<br />в виде сайта-книги.</p>
               <p>Это web-книга (в будущем git-книга) нового формата. Если ты ищешь необычную вселенную, долгоиграющий интересный сюжет и запоминающихся персонажей, а также хочешь принять во всём этом участие, то добро пожаловать.</p>
-              <a className="book-link" href="https://thebook.arvelov.online" target="_blank" rel="noopener noreferrer">Открыть TheBook <ArrowUpRight className="size-4" /></a>
+              <a className="book-link" href="https://thebook.arvelov.space" target="_blank" rel="noopener noreferrer">Открыть TheBook <ArrowUpRight className="size-4" /></a>
             </div>
           </div>
         </section>
