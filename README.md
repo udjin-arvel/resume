@@ -1,48 +1,45 @@
-# Евгений Арвелов — портфолио
+# Привет, я Евгений Арвелов
 
-**Fullstack / AI-разработчик** · 10 лет коммерческой разработки · Томск, удалённо
+Fullstack-разработчик из Томска, в коммерческой разработке с 2016 года. Начинал с PHP и образовательных порталов для школьников (да, там ещё были Flash-игры), потом были IPTV-плеер для смарт-телевизоров, городские сервисы Томска, сайт интернет-провайдера и аналитика для селлеров Wildberries. Последний год с лишним больше всего занимаюсь продуктами на LLM - и всем, что вокруг них: RAG, tools, интеграции, бэкенд, очереди, деплой, мониторинг.
 
-[Резюме на hh.ru](https://hh.ru/resume/59a0cd89ff114ae8f50039ed1f6b51454d3951) · [Telegram @arvelov](https://t.me/arvelov) · udjin.arvel@gmail.com
+Этот репозиторий - что-то вроде моей витрины. Коммерческий код по понятным причинам остался у заказчиков, поэтому здесь лежит то, что можно показать публично: проекты, примеры кода и несколько статей. У каждого проекта свой README, где написано, зачем он нужен, как устроен и как его запустить.
 
-Публичные проекты, примеры кода и короткие статьи по веб-разработке и работе с LLM. У каждого проекта свой README: задача, что внутри, стек и как запустить.
+Связаться со мной проще всего в Telegram [@arvelov](https://t.me/arvelov), ещё есть почта udjin.arvel@gmail.com и [резюме на hh.ru](https://hh.ru/resume/59a0cd89ff114ae8f50039ed1f6b51454d3951). Работаю удалённо.
 
-## Для рекрутера
+## Если времени мало
 
-Fullstack / AI-разработчик: Python, PHP, Go, TypeScript, React, Vue; запускаю продукты на LLM до production.
-- [Студия контента для маркетплейсов](./Мои%20проекты%20(apps)/media-generator-react-client) + [прокси к моделям генерации](./Мои%20проекты%20(apps)/proxy-python-app) — AI-генератор фото и видео, ~8 000 генераций за первый месяц.
-- [Polyglot Backend Benchmark](./Мои%20проекты%20(apps)/polyglot-backend-benchmark) — один REST API на Go, Node.js, PHP и Python по общему OpenAPI-контракту: нагрузочные тесты k6, CI, сверка ответов всех бэкендов.
-- [Импорт автомобилей из Китая](./Мои%20проекты%20(apps)/auto-shop-vue-client) — витрина и кабинет менеджера: от заявки до логистики, RU/CN.
-- [DB Demo](./Мои%20проекты%20(apps)/db-demo) — ClickHouse против PostgreSQL, MySQL и SQLite на 5 млн строк: Go-бэкенд, разбор планов запросов, на агрегациях ClickHouse быстрее в 4–140 раз.
+Вот что я бы открыл первым:
 
-Контакты: Telegram [@arvelov](https://t.me/arvelov) · udjin.arvel@gmail.com · [резюме на hh.ru](https://hh.ru/resume/59a0cd89ff114ae8f50039ed1f6b51454d3951)
+- [Студия контента для маркетплейсов](./Мои%20проекты%20(apps)/media-generator-react-client) и [прокси к моделям генерации](./Мои%20проекты%20(apps)/proxy-python-app). Генератор фото и видео для карточек товаров, вырос из задачи на прошлой работе. За первый месяц после запуска через него прошло около 8 000 генераций. Самое интересное там не модели, а то, что промпт пользователя не уходит в модель как есть: сначала из него собирается жёсткая спецификация правки, и только потом генерация.
+- [Polyglot Backend Benchmark](./Мои%20проекты%20(apps)/polyglot-backend-benchmark) - один и тот же API, написанный четыре раза: на Go, Node.js, PHP и Python, без фреймворков. Хотелось честно посмотреть, чем рантаймы отличаются при одинаковых условиях. Спойлер: на небольшой нагрузке почти ничем, а вот по памяти и размеру образа разница в разы. И да, бенчмарк нашёл у PHP ошибки на записи, разбираюсь :)
+- [DB Demo](./Мои%20проекты%20(apps)/db-demo) - ClickHouse против PostgreSQL, MySQL и SQLite на одних и тех же 5 млн строк. На агрегациях ClickHouse быстрее в 4-140 раз, а на поиске по id проигрывает всем трём. Люблю такие штуки: цифры объясняют теорию лучше любой статьи.
+- [GitOps-стенд на Kubernetes](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29) - кластер, который целиком описан в Git. Argo CD сам всё разворачивает, Grafana показывает, что происходит, а ещё там разобран сценарий "сломал деплой - починил коммитом".
+- [Импорт автомобилей из Китая](./Мои%20проекты%20(apps)/auto-shop-vue-client) - коммерческий проект, самый большой фронтенд в этом репозитории (заказчик скрыт). Витрина и кабинет менеджера, весь путь машины от заявки до порта, на русском и китайском.
 
-## Как это выглядит
+## Скриншоты
 
-| Студия контента для маркетплейсов | FoodSource: помощник закупщика | Импорт автомобилей из Китая |
-| --- | --- | --- |
-| [<img src="./Мои%20проекты%20(apps)/media-generator-react-client/screenshot2.png" alt="Канвас студии контента" width="300">](./Мои%20проекты%20(apps)/media-generator-react-client) | [<img src="./Мои%20проекты%20(apps)/food-source-web-app/screenshot.png" alt="FoodSource" width="300">](./Мои%20проекты%20(apps)/food-source-web-app) | [<img src="./Мои%20проекты%20(apps)/auto-shop-vue-client/preview.png" alt="Импорт автомобилей из Китая" width="300">](./Мои%20проекты%20(apps)/auto-shop-vue-client) |
-| **Math Help AI** (871 пользователь в Chrome Web Store) | **TheBook** | **Личный сайт arvelov.space** |
-| [<img src="./Мои%20проекты%20(apps)/math-help-chrome-ext/screenshot1.png" alt="Math Help AI в Chrome Web Store" width="300">](./Мои%20проекты%20(apps)/math-help-chrome-ext) | [<img src="./Мои%20проекты%20(apps)/mybook-web-app/screenshot.png" alt="TheBook" width="300">](./Мои%20проекты%20(apps)/mybook-web-app) | [<img src="./Мои%20проекты%20(apps)/landing-example/preview.png" alt="arvelov.space" width="300">](./Мои%20проекты%20(apps)/landing-example) |
-| **GitOps на Kubernetes: Argo CD** | **Мониторинг: Grafana** | **Сбой и восстановление через Git** |
-| [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot2.png" alt="Argo CD: App of Apps" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot4-preview.png" alt="Grafana: ресурсы пода" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) | [<img src="./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot6.png" alt="Grafana Explore: под вернулся в Running" width="300">](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/) |
-| **DB Demo: ClickHouse против PostgreSQL, MySQL, SQLite** | **Polyglot Benchmark: Go, Node.js, PHP, Python** | **Radar CRM** |
-| [<img src="./Мои%20проекты%20(apps)/db-demo/docs/preview.png" alt="DB Demo: сравнение четырёх СУБД" width="300">](./Мои%20проекты%20(apps)/db-demo) | [<img src="./Мои%20проекты%20(apps)/polyglot-backend-benchmark/docs/screen1.png" alt="Polyglot Backend Benchmark: графики RPS, латентности, памяти и cold start" width="300">](./Мои%20проекты%20(apps)/polyglot-backend-benchmark) | [<img src="./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png" alt="Radar CRM" width="300">](./Мои%20проекты%20(apps)/network-manager-crm-web-app) |
+| Студия контента для маркетплейсов                                                                 | FoodSource: помощник закупщика                                                                                                                     | Импорт автомобилей из Китая                                                                                          |
+| ------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------- | -------------------------------------------------------------------------------------------------------------------- |
+| ![Канвас студии контента](./Мои%20проекты%20(apps)/media-generator-react-client/screenshot2.png)  | ![FoodSource](./Мои%20проекты%20(apps)/food-source-web-app/screenshot.png)                                                                         | ![Импорт автомобилей из Китая](./Мои%20проекты%20(apps)/auto-shop-vue-client/preview.png)                            |
+| **Math Help AI** (871 пользователь в Chrome Web Store)                                            | **TheBook**                                                                                                                                        | **Личный сайт arvelov.space**                                                                                        |
+| ![Math Help AI в Chrome Web Store](./Мои%20проекты%20(apps)/math-help-chrome-ext/screenshot1.png) | ![TheBook](./Мои%20проекты%20(apps)/mybook-web-app/screenshot.png)                                                                                 | ![arvelov.space](./Мои%20проекты%20(apps)/landing-example/preview.png)                                               |
+| **GitOps на Kubernetes: Argo CD**                                                                 | **Мониторинг: Grafana**                                                                                                                            | **Сбой и восстановление через Git**                                                                                  |
+| ![Argo CD: App of Apps](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot2.png) | ![Grafana: ресурсы пода](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot4-preview.png)                                         | ![Grafana Explore: под вернулся в Running](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29/screens/screenshot6.png) |
+| **DB Demo: ClickHouse против PostgreSQL, MySQL, SQLite**                                          | **Polyglot Benchmark: Go, Node.js, PHP, Python**                                                                                                   | **Radar CRM**                                                                                                        |
+| ![DB Demo: сравнение четырёх СУБД](./Мои%20проекты%20(apps)/db-demo/docs/preview.png)             | ![Polyglot Backend Benchmark: графики RPS, латентности, памяти и cold start](./Мои%20проекты%20(apps)/polyglot-backend-benchmark/docs/screen1.png) | ![Radar CRM](./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png)                                    |
 
-## Стек
+## Чем пользуюсь
 
-| Направление | Технологии |
-| --- | --- |
-| AI / LLM | RAG, tool calling, structured output, OpenAI API, DeepSeek, ChromaDB, sentence-transformers, Claude Code, Cursor |
-| Backend | Python (FastAPI, Celery, SQLAlchemy), PHP (Laravel), Go (Gin, chi), Node.js (NestJS, Express) |
-| Frontend | React, TypeScript, Redux Toolkit, Zustand, TanStack, Vue 3, Nuxt, Pinia, Tailwind CSS |
-| Данные | PostgreSQL, ClickHouse, MySQL, SQLite, Redis, Kafka; планы запросов и индексы ([сравнение СУБД](./Мои%20проекты%20(apps)/db-demo)) |
-| Mobile | Flutter, React Native (Expo) |
-| Инфраструктура | Kubernetes, Argo CD (GitOps), Helm, SOPS, Docker, GitLab CI/CD, Nginx, Linux, Sentry, Prometheus, Grafana |
+Пишу в основном на Python (FastAPI, Celery), PHP (Laravel) и TypeScript (React, Vue и Nuxt). Go тоже нравится, на нём сделаны бэкенды для DB Demo, Radar CRM и ScanMe. Базы - PostgreSQL, MySQL, ClickHouse и Redis, иногда Kafka. С языковыми моделями работаю через OpenAI-совместимые API и DeepSeek: RAG, tool calling, structured output.
 
-## Что внутри
+Инфраструктуру привык поднимать сам: Docker, GitLab CI, Nginx, Sentry (GlitchTip для слабых серверов), Prometheus с Grafana. Kubernetes и Argo CD - скорее для души, но [стенд](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29) вполне рабочий. Мобильные приложения на Flutter и React Native тоже есть, но это пет-проекты.
 
-| Раздел | Что там |
-| --- | --- |
-| [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) | 19 проектов: AI и LLM, бэкенд и базы данных, веб-продукты, DevOps (Kubernetes, GitOps), мобильные приложения, расширения Chrome |
-| [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) | Паттерны и Clean Architecture на Python (покрыты pytest); [CI/CD-пайплайн GitLab для Laravel](./Примеры%20кода%20(code%20examples)/ci-cd/gitlab-laravel/) с деплоем, health check и откатом |
-| [Теория (short posts)](./Теория%20(short%20posts)/README.md) | Короткие статьи: Docker и безопасность, FSD, надёжность интеграций, React Hooks, ООП, работа с контекстом LLM |
+Каждый день пользуюсь Cursor и Claude Code, но без фанатизма. Почему вайб-кодинг без контроля над контекстом заканчивается плохо, я расписал в [отдельной статье](./Теория%20(short%20posts)/Управлении%20контекстом%20при%20разработке%20с%20помощью%20LLM.md).
+
+## Что ещё тут есть
+
+- [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) - все 19 проектов по разделам: AI, бэкенд и базы данных, DevOps, веб, мобильные приложения и расширения для Chrome. Одно из них, Math Help, опубликовано в Chrome Web Store, им пользуется больше 800 человек.
+- [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) - паттерны и Clean Architecture на Python с тестами, плюс [CI/CD-пайплайн для Laravel](./Примеры%20кода%20(code%20examples)/ci-cd/gitlab-laravel/): переписал и обезличил его с реального проекта, с деплоем, health check и откатом.
+- [Теория (short posts)](./Теория%20(short%20posts)/README.md) - статьи про Docker и безопасность, FSD, надёжность интеграций с внешними API, React Hooks, ООП и работу с контекстом LLM.
+
+Если что-то заинтересовало - пишите в [Telegram](https://t.me/arvelov), обсудим.
