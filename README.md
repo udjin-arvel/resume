@@ -12,6 +12,7 @@ Fullstack-разработчик из Томска, в коммерческой 
 
 - [Студия контента для маркетплейсов](./Мои%20проекты%20(apps)/media-generator-react-client) и [прокси к моделям генерации](./Мои%20проекты%20(apps)/proxy-python-app). Генератор фото и видео для карточек товаров, вырос из задачи на прошлой работе. За первый месяц после запуска через него прошло около 8 000 генераций. Самое интересное там не модели, а то, что промпт пользователя не уходит в модель как есть: сначала из него собирается жёсткая спецификация правки, и только потом генерация.
 - [Polyglot Backend Benchmark](./Мои%20проекты%20(apps)/polyglot-backend-benchmark) - один и тот же API, написанный четыре раза: на Go, Node.js, PHP и Python, без фреймворков. Хотелось честно посмотреть, чем рантаймы отличаются при одинаковых условиях. Спойлер: на небольшой нагрузке почти ничем, а вот по памяти и размеру образа разница в разы. И да, бенчмарк нашёл у PHP ошибки на записи, разбираюсь :)
+- [BMap](./Мои%20проекты%20(apps)/bmap-web-app) - карта рынка в виде графа, её можно потрогать вживую на [bmap.arvelov.space](https://bmap.arvelov.space). Цепочки лежат в Neo4j, бэкенд на Go, а по кнопке DeepSeek достраивает цепочку от выбранного узла, и остальные редакторы сразу видят это по WebSocket.
 - [DB Demo](./Мои%20проекты%20(apps)/db-demo) - ClickHouse против PostgreSQL, MySQL и SQLite на одних и тех же 5 млн строк. На агрегациях ClickHouse быстрее в 4-140 раз, а на поиске по id проигрывает всем трём. Люблю такие штуки: цифры объясняют теорию лучше любой статьи.
 - [GitOps-стенд на Kubernetes](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29) - кластер, который целиком описан в Git. Argo CD сам всё разворачивает, Grafana показывает, что происходит, а ещё там разобран сценарий "сломал деплой - починил коммитом".
 - [Импорт автомобилей из Китая](./Мои%20проекты%20(apps)/auto-shop-vue-client) - коммерческий проект, самый большой фронтенд в этом репозитории (заказчик скрыт). Витрина и кабинет менеджера, весь путь машины от заявки до порта, на русском и китайском.
@@ -28,9 +29,13 @@ Fullstack-разработчик из Томска, в коммерческой 
 | **DB Demo: ClickHouse против PostgreSQL, MySQL, SQLite**                                          | **Polyglot Benchmark: Go, Node.js, PHP, Python**                                                                                                   | **Radar CRM**                                                                                                        |
 | ![DB Demo: сравнение четырёх СУБД](./Мои%20проекты%20(apps)/db-demo/docs/preview.png)             | ![Polyglot Backend Benchmark: графики RPS, латентности, памяти и cold start](./Мои%20проекты%20(apps)/polyglot-backend-benchmark/docs/screen1.png) | ![Radar CRM](./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png)                                    |
 
+[<img src="./Мои%20проекты%20(apps)/bmap-web-app/docs/screen1.png" alt="BMap: карта рынка с цепочками узлов" width="920">](./Мои%20проекты%20(apps)/bmap-web-app)
+
+**BMap** - [bmap.arvelov.space](https://bmap.arvelov.space)
+
 ## Чем пользуюсь
 
-Пишу в основном на Python (FastAPI, Celery), PHP (Laravel) и TypeScript (React, Vue и Nuxt). Go тоже нравится, на нём сделаны бэкенды для DB Demo, Radar CRM и ScanMe. Базы - PostgreSQL, MySQL, ClickHouse и Redis, иногда Kafka. С языковыми моделями работаю через OpenAI-совместимые API и DeepSeek: RAG, tool calling, structured output.
+Пишу в основном на Python (FastAPI, Celery), PHP (Laravel) и TypeScript (React, Vue и Nuxt). Go тоже нравится, на нём сделаны бэкенды для BMap, DB Demo, Radar CRM и ScanMe. Базы - PostgreSQL, MySQL, ClickHouse и Redis, иногда Kafka. С языковыми моделями работаю через OpenAI-совместимые API и DeepSeek: RAG, tool calling, structured output.
 
 Инфраструктуру привык поднимать сам: Docker, GitLab CI, Nginx, Sentry (GlitchTip для слабых серверов), Prometheus с Grafana. Kubernetes и Argo CD - скорее для души, но [стенд](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29) вполне рабочий. Мобильные приложения на Flutter и React Native тоже есть, но это пет-проекты.
 
@@ -38,7 +43,7 @@ Fullstack-разработчик из Томска, в коммерческой 
 
 ## Что ещё тут есть
 
-- [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) - все 19 проектов по разделам: AI, бэкенд и базы данных, DevOps, веб, мобильные приложения и расширения для Chrome. Одно из них, Math Help, опубликовано в Chrome Web Store, им пользуется больше 800 человек.
+- [Мои проекты (apps)](./Мои%20проекты%20(apps)/README.md) - все 20 проектов по разделам: AI, бэкенд и базы данных, DevOps, веб, мобильные приложения и расширения для Chrome. Одно из них, Math Help, опубликовано в Chrome Web Store, им пользуется больше 800 человек.
 - [Примеры кода (code examples)](./Примеры%20кода%20(code%20examples)/README.md) - паттерны и Clean Architecture на Python с тестами, плюс [CI/CD-пайплайн для Laravel](./Примеры%20кода%20(code%20examples)/ci-cd/gitlab-laravel/): переписал и обезличил его с реального проекта, с деплоем, health check и откатом.
 - [Теория (short posts)](./Теория%20(short%20posts)/README.md) - статьи про Docker и безопасность, FSD, надёжность интеграций с внешними API, React Hooks, ООП и работу с контекстом LLM.
 

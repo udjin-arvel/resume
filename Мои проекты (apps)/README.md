@@ -1,6 +1,6 @@
 # Мои проекты
 
-19 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
+20 публичных проектов. Каждый каталог — отдельный продукт со своим README: задача, что внутри, стек и как запустить.
 
 [← На главную](../README.md)
 
@@ -9,6 +9,7 @@
 | Проект | Что это | Стек |
 | --- | --- | --- |
 | [criminal-search-web-app](./criminal-search-web-app) | AI-агент по УК РФ: описываешь случай своими словами, агент находит статьи и объясняет квалификацию. **RAG + tool calling**, шаги поиска стримятся в интерфейс | Python, FastAPI, DeepSeek, ChromaDB, e5-эмбеддинги, React |
+| [bmap-web-app](./bmap-web-app) | Карта рынка в виде графа: цепочки процессов, участников и ресурсов, AI достраивает следующие шаги, правки приходят редакторам по WebSocket. Живёт на [bmap.arvelov.space](https://bmap.arvelov.space) | Go, Neo4j, SQLite, DeepSeek, WebSocket, React, Docker Compose |
 | [media-generator-react-client](./media-generator-react-client) | Студия контента для карточек маркетплейсов: генерация и редактирование изображений, канвас из цепочек шагов | React 19, Redux Toolkit, FSD, React Flow, Konva, GraphQL |
 | [proxy-python-app](./proxy-python-app) | Backend студии: собирает спецификацию правки и промпт под конкретную модель, ходит в модели генерации текста, изображений и видео | Python, FastAPI, Pydantic, OpenAI, Runway |
 | [conquer-web-app](./conquer-web-app) | Разбор сайта конкурента: парсинг страницы, анализ моделью, метрики и сводка; тяжёлая работа в очереди | FastAPI, Celery, Redis, PostgreSQL, Playwright, DeepSeek |

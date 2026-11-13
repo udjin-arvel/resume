@@ -1,0 +1,127 @@
+# BMap — обёртки над docker compose и локальной разработкой.
+# Linux / macOS / Git Bash / WSL: `make help`
+
+COMPOSE   ?= docker compose
+ENV_FILE  ?= .env
+WEB_PORT  ?= 18480
+API_URL   ?= http://127.0.0.1:18400/api/health
+WEB_URL   ?= http://127.0.0.1:$(WEB_PORT)/api/health
+
+.PHONY: help env up up-build up-d down restart ps logs logs-api logs-web \
+        dev-infra dev-client backend-install backend-dev backend-test \
+        client-install client-dev client-build client-test client-lint \
+        health shell-api shell-neo4j clean clean-volumes rebuild rebuild-api \
+        deploy
+
+help: ## Список команд
+	@echo BMap — доступные цели:
+	@echo.
+	@grep -E '^[a-zA-Z0-9_-]+:.*##' $(MAKEFILE_LIST) | sort | awk 'BEGIN {FS = ":.*## "}; {printf "  \033[36m%-18s\033[0m %s\n", $$1, $$2}'
+
+env: ## Создать .env из .env.example (если ещё нет)
+	@if [ ! -f $(ENV_FILE) ]; then cp .env.example $(ENV_FILE) && echo "Created $(ENV_FILE)"; else echo "$(ENV_FILE) already exists"; fi
+
+up: env ## Запустить neo4j + api + web (foreground)
+	$(COMPOSE) up
+
+up-build: env ## Собрать образы и запустить стек
+	$(COMPOSE) up --build
+
+up-d: env ## Запустить стек в фоне
+	$(COMPOSE) up -d
+
+down: ## Остановить контейнеры (данные в volumes сохраняются)
+	$(COMPOSE) down
+
+restart: ## Перезапустить сервисы
+	$(COMPOSE) restart
+
+ps: ## Статус контейнеров
+	$(COMPOSE) ps
+
+logs: ## Логи всех сервисов
+	$(COMPOSE) logs -f --tail=200
+
+logs-api: ## Логи API
+	$(COMPOSE) logs -f --tail=200 api
+
+logs-web: ## Логи web (nginx + Nitro)
+	$(COMPOSE) logs -f --tail=200 web
+
+dev-infra: env ## Только Neo4j + API (для Vite на хосте)
+	$(COMPOSE) up neo4j api
+
+dev-client: ## Подсказка: клиент с прокси /api -> :18400
+	@echo "cd client && copy .env.example .env.local  (Windows)"
+	@echo "cd client && cp .env.example .env.local    (Unix)"
+	@echo "cd client && bun run dev   # или: npm run dev"
+	@echo "Откройте URL Vite; VITE_API_URL=/ и proxy на http://127.0.0.1:18400"
+
+backend-install: ## Скачать Go-зависимости backend
+	cd backend && go mod download
+
+backend-dev: ## Запустить Go API (Neo4j должен быть доступен)
+	cd backend && go run . -debug
+
+backend-test: ## go test ./... в backend
+	cd backend && go test ./...
+
+client-install: ## Установить зависимости клиента
+	cd client && (bun install 2>/dev/null || npm install)
+
+client-dev: ## Dev-сервер клиента (TanStack Start / Vite)
+	cd client && (bun run dev 2>/dev/null || npm run dev)
+
+client-build: ## Production-сборка клиента
+	cd client && (bun run build 2>/dev/null || npm run build)
+
+client-test: ## Vitest
+	cd client && (bun run test 2>/dev/null || npm run test)
+
+client-lint: ## ESLint клиента
+	cd client && (bun run lint 2>/dev/null || npm run lint)
+
+deploy: ## Прод на VPS: git pull, сборка, health, vhost nginx
+	@test -f $(ENV_FILE) || { echo "Нет $(ENV_FILE). Создайте его из .env.example и задайте секреты."; exit 1; }
+	git pull --ff-only
+	$(COMPOSE) up -d --build --remove-orphans
+	@i=0; \
+	until curl -sf "$(WEB_URL)" >/dev/null; do \
+	  i=$$((i+1)); \
+	  if [ $$i -ge 30 ]; then echo "Нет ответа $(WEB_URL)"; exit 1; fi; \
+	  sleep 2; \
+	done
+	@curl -sf "$(WEB_URL)"; echo
+	@if command -v nginx >/dev/null 2>&1 && [ -d /etc/nginx/sites-available ]; then \
+	  sudo cp docker/bmap.arvelov.space.conf /etc/nginx/sites-available/bmap.arvelov.space.conf; \
+	  sudo ln -sfn /etc/nginx/sites-available/bmap.arvelov.space.conf /etc/nginx/sites-enabled/bmap.arvelov.space.conf; \
+	  sudo nginx -t; \
+	  sudo systemctl reload nginx; \
+	else \
+	  echo "Хостовый nginx не найден — vhost не обновлялся"; \
+	fi
+
+health: ## Проверить /api/health (API :18400 и web :$(WEB_PORT))
+	@echo "API direct: $(API_URL)"
+	@curl -sf "$(API_URL)" && echo || echo "API not reachable"
+	@echo "Via web:    $(WEB_URL)"
+	@curl -sf "$(WEB_URL)" && echo || echo "Web proxy not reachable"
+
+shell-api: ## Shell в контейнере api
+	$(COMPOSE) exec api sh
+
+shell-neo4j: ## Cypher-shell в Neo4j (пароль из .env)
+	$(COMPOSE) exec neo4j cypher-shell -u neo4j -p "$${NEO4J_PASSWORD:-change-me-neo4j}"
+
+rebuild: ## Пересобрать все образы без кэша
+	$(COMPOSE) build --no-cache
+
+rebuild-api: env ## Пересобрать образ api и перезапустить (NO_CACHE=1 — без кэша Docker)
+	$(COMPOSE) build $(if $(NO_CACHE),--no-cache,) api
+	$(COMPOSE) up -d --force-recreate api
+
+clean: down ## alias: down
+
+clean-volumes: ## ОСТОРОЖНО: down + удалить volumes (Neo4j + SQLite)
+	@echo "This removes neo4j_data and api_data volumes."
+	$(COMPOSE) down -v
