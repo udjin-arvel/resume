@@ -1,0 +1,41 @@
+name: video-compressor
+
+services:
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    environment:
+      PORT: 8080
+      WORKERS: ${WORKERS:-2}
+      QUEUE_SIZE: ${QUEUE_SIZE:-100}
+      MAX_UPLOAD_MB: ${MAX_UPLOAD_MB:-200}
+      FFMPEG_TIMEOUT: ${FFMPEG_TIMEOUT:-10m}
+      FILE_TTL: ${FILE_TTL:-1h}
+      CLEANUP_INTERVAL: ${CLEANUP_INTERVAL:-10m}
+      SHUTDOWN_TIMEOUT: ${SHUTDOWN_TIMEOUT:-30s}
+      CRF: ${CRF:-23}
+      PRESET: ${PRESET:-veryfast}
+      LOG_LEVEL: ${LOG_LEVEL:-info}
+      DATA_DIR: /data
+    volumes:
+      - media:/data
+    expose: ["8080"]
+    # Give running ffmpeg jobs time to finish on `docker compose down`
+    # (must exceed SHUTDOWN_TIMEOUT).
+    stop_grace_period: 40s
+
+  # nginx image with the built React SPA baked in (multi-stage build in client/).
+  nginx:
+    build: ./client
+    restart: unless-stopped
+    ports:
+      - "${HTTP_PORT:-8080}:80"
+    volumes:
+      - ./nginx/nginx.conf:/etc/nginx/conf.d/default.conf:ro
+      - media:/data:ro
+    depends_on:
+      backend:
+        condition: service_healthy
+
+volumes:
+  media:

@@ -29,13 +29,13 @@ Fullstack-разработчик из Томска, в коммерческой 
 | **DB Demo: ClickHouse против PostgreSQL, MySQL, SQLite**                                          | **Polyglot Benchmark: Go, Node.js, PHP, Python**                                                                                                   | **Radar CRM**                                                                                                        |
 | ![DB Demo: сравнение четырёх СУБД](./Мои%20проекты%20(apps)/db-demo/docs/preview.png)             | ![Polyglot Backend Benchmark: графики RPS, латентности, памяти и cold start](./Мои%20проекты%20(apps)/polyglot-backend-benchmark/docs/screen1.png) | ![Radar CRM](./Мои%20проекты%20(apps)/network-manager-crm-web-app/screenshot.png)                                    |
 
-[<img src="./Мои%20проекты%20(apps)/bmap-web-app/docs/screen1.png" alt="BMap: карта рынка с цепочками узлов" width="920">](./Мои%20проекты%20(apps)/bmap-web-app)
-
-**BMap** - [bmap.arvelov.space](https://bmap.arvelov.space)
+| BMap: карта рынка, [bmap.arvelov.space](https://bmap.arvelov.space) | Video Compressor: микросервис сжатия видео |
+| --- | --- |
+| [<img src="./Мои%20проекты%20(apps)/bmap-web-app/docs/screen1.png" alt="BMap: карта рынка с цепочками узлов" width="460">](./Мои%20проекты%20(apps)/bmap-web-app) | [<img src="./Мои%20проекты%20(apps)/vc-microservice/docs/screen1.png" alt="Video Compressor: загрузка видео" width="460">](./Мои%20проекты%20(apps)/vc-microservice) |
 
 ## Чем пользуюсь
 
-Пишу в основном на Python (FastAPI, Celery), PHP (Laravel) и TypeScript (React, Vue и Nuxt). Go тоже нравится, на нём сделаны бэкенды для BMap, DB Demo, Radar CRM и ScanMe. Базы - PostgreSQL, MySQL, ClickHouse и Redis, иногда Kafka. С языковыми моделями работаю через OpenAI-совместимые API и DeepSeek: RAG, tool calling, structured output.
+Пишу в основном на Python (FastAPI, Celery), PHP (Laravel) и TypeScript (React, Vue и Nuxt). Go тоже нравится, на нём сделаны бэкенды для BMap, DB Demo, Video Compressor, Radar CRM и ScanMe, причём в Video Compressor - только стандартная библиотека, без сторонних зависимостей. Базы - PostgreSQL, MySQL, ClickHouse и Redis, иногда Kafka. С языковыми моделями работаю через OpenAI-совместимые API и DeepSeek: RAG, tool calling, structured output.
 
 Инфраструктуру привык поднимать сам: Docker, GitLab CI, Nginx, Sentry (GlitchTip для слабых серверов), Prometheus с Grafana. Kubernetes и Argo CD - скорее для души, но [стенд](./Мои%20проекты%20(apps)/gitops-demo%20%28k8s%29) вполне рабочий. Мобильные приложения на Flutter и React Native тоже есть, но это пет-проекты.
 

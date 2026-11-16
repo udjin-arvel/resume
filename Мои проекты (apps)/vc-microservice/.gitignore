@@ -1,0 +1,6 @@
+.project
+.env
+backend/server
+backend/*.test
+backend/*.out
+*.swp

@@ -23,6 +23,7 @@
 | Проект | Что это | Стек |
 | --- | --- | --- |
 | [polyglot-backend-benchmark](./polyglot-backend-benchmark) | **Один REST API на Go, Node.js, PHP и Python** без фреймворков: общий OpenAPI-контракт, PostgreSQL на 100 000 записей, нагрузочные прогоны k6 с RPS, p95/p99, памятью и cold start, сверка ответов всех бэкендов в UI | Go, Node.js, PHP, Python, PostgreSQL, OpenAPI, k6, Docker Compose, GitHub Actions, React |
+| [vc-microservice](./vc-microservice) | Микросервис сжатия видео: загрузка потоком без буферизации, очередь с пулом воркеров FFmpeg, проверка сигнатур файлов, атомарная запись результата, graceful shutdown, отдача через nginx с Range. Около 30 тестов | Go (только stdlib), FFmpeg, nginx, React, Docker Compose |
 | [db-demo](./db-demo) | **ClickHouse против PostgreSQL, MySQL и SQLite** на одних и тех же 5 млн строк: пять запросов, латентность и планы каждой СУБД. На агрегациях ClickHouse быстрее в 4–140 раз, на точечном поиске проигрывает B-tree | Go (chi, pgx, clickhouse-go), PostgreSQL, MySQL, SQLite, ClickHouse, React, Docker Compose |
 
 ## Веб-продукты
@@ -33,7 +34,6 @@
 | [food-source-web-app](./food-source-web-app) | B2B-помощник закупщика: подбор поставщиков под запрос, прозрачный скоринг с объяснением причин, сравнение 2–3 вариантов, шортлист в CSV | FastAPI, SQLModel, pytest, React 19, TanStack, Docker Compose |
 | [network-manager-crm-web-app](./network-manager-crm-web-app) | Mini CRM для полевых команд: объекты, сметы, отчёты; работает как Telegram Mini App | Go (Gin), PostgreSQL, React, TanStack |
 | [mybook-web-app](./mybook-web-app) | Платформа для историй, лора и заметок одной вселенной с уровнями и внутренней экономикой | Nuxt 4, Vue 3, Express, Prisma, PostgreSQL |
-| [street-cameras-vue-client](./street-cameras-vue-client) | Карта городских камер с живым видео и архивом | Vue 3, Leaflet, Video.js |
 | [landing-example](./landing-example) | Личный сайт [arvelov.space](https://arvelov.space): услуги, TheBook, контакты; статика с деплоем на shared-хостинг | HTML, CSS, JS, React (прототип), Bash |
 
 ## DevOps и инфраструктура
