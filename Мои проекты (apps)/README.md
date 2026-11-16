@@ -16,7 +16,6 @@
 | [product-description-ai-package](./product-description-ai-package) | PHP-библиотека на Packagist: продающее описание товара по названию и фото | PHP 8.1, PSR, Vision API, PHPUnit, PHPStan lvl 8 |
 | [math-help-chrome-ext](./math-help-chrome-ext) | API расширения Chrome: пошаговое решение задачи по скриншоту, стриминг ответа, подписки. **В Chrome Web Store: 871 пользователь, рейтинг 5,0** | NestJS, TypeORM, PostgreSQL, OpenAI, Stripe |
 | [hh-hunter-chrome-ext](./hh-hunter-chrome-ext) | Расширение Chrome: сопроводительное письмо под вакансию HeadHunter и опыт кандидата | WXT, React 19, Zustand, Zod, Vitest, DeepSeek |
-| [smart-resume-chrome-ext](./smart-resume-chrome-ext) | Расширение Chrome: резюме и сопроводительное под описание вакансии, тарифы и оплата | React, NestJS, PostgreSQL, OpenAI, Stripe |
 
 ## Бэкенд, базы данных и производительность
 
@@ -24,6 +23,7 @@
 | --- | --- | --- |
 | [polyglot-backend-benchmark](./polyglot-backend-benchmark) | **Один REST API на Go, Node.js, PHP и Python** без фреймворков: общий OpenAPI-контракт, PostgreSQL на 100 000 записей, нагрузочные прогоны k6 с RPS, p95/p99, памятью и cold start, сверка ответов всех бэкендов в UI | Go, Node.js, PHP, Python, PostgreSQL, OpenAPI, k6, Docker Compose, GitHub Actions, React |
 | [vc-microservice](./vc-microservice) | Микросервис сжатия видео: загрузка потоком без буферизации, очередь с пулом воркеров FFmpeg, проверка сигнатур файлов, атомарная запись результата, graceful shutdown, отдача через nginx с Range. Около 30 тестов | Go (только stdlib), FFmpeg, nginx, React, Docker Compose |
+| [speedometer-web-and-cli-app](./speedometer-web-and-cli-app) | Замер скорости загрузки URL: CLI на Node.js считает байты «по проводу» до распаковки, отдельно заголовки и первый «холодный» запрос, ретраит только сеть, 5xx и 429; веб-версия с графиком серии | Node.js, TypeScript, undici, node:test, React |
 | [db-demo](./db-demo) | **ClickHouse против PostgreSQL, MySQL и SQLite** на одних и тех же 5 млн строк: пять запросов, латентность и планы каждой СУБД. На агрегациях ClickHouse быстрее в 4–140 раз, на точечном поиске проигрывает B-tree | Go (chi, pgx, clickhouse-go), PostgreSQL, MySQL, SQLite, ClickHouse, React, Docker Compose |
 
 ## Веб-продукты
